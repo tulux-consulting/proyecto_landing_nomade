@@ -1,0 +1,113 @@
+/* ============================================================
+   NÓMADE — Panel interno (backoffice). Acceso oculto por URL.
+   Reutiliza los tokens de marca (../styles/tokens.css).
+   ============================================================ */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--sans);color:var(--fg1);-webkit-font-smoothing:antialiased}
+
+/* ---------- Pantalla de acceso ---------- */
+.access{min-height:100svh;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--space-5);
+  background:var(--forest);
+  background-image:radial-gradient(120% 90% at 50% -10%, #3a4a3d 0%, var(--forest) 45%, #232f27 100%);
+  position:relative;overflow:hidden}
+.access::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% 38%, transparent, rgba(20,22,19,.45))}
+
+.access-card{position:relative;z-index:1;width:100%;max-width:420px;background:var(--ivory-warm);
+  border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow-xl);
+  padding:clamp(2rem,4vw,2.75rem)}
+.access-mark{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:clamp(1.5rem,3vw,2rem)}
+.access-mark img{height:46px;width:auto;display:block}
+.access-eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-deep);
+  margin:2px 0 0;display:flex;align-items:center;gap:9px}
+.access-eyebrow::before,.access-eyebrow::after{content:"";width:18px;height:1px;background:currentColor;opacity:.55}
+.access-card h1{font-family:var(--serif-display);font-weight:500;font-size:clamp(1.6rem,3vw,2rem);
+  letter-spacing:-.01em;line-height:1.15;text-align:center;margin:0;color:var(--forest)}
+.access-sub{font-size:14px;line-height:1.6;color:var(--fg3);text-align:center;margin:10px 0 0;max-width:32ch;margin-inline:auto}
+
+.access-form{display:flex;flex-direction:column;gap:16px;margin-top:clamp(1.75rem,3vw,2.25rem)}
+.access-field{display:flex;flex-direction:column;gap:7px}
+.access-field label{font-size:13px;font-weight:500;color:var(--fg2);letter-spacing:.01em}
+.access-input-wrap{position:relative;display:flex;align-items:center}
+.access-field input{width:100%;font-family:var(--sans);font-size:15px;color:var(--fg1);background:var(--bg);
+  border:1px solid var(--line-strong);border-radius:var(--radius-md);padding:13px 15px;outline:none;
+  transition:border-color var(--dur-fast),box-shadow var(--dur-fast)}
+.access-field input::placeholder{color:var(--stone)}
+.access-field input:focus{border-color:var(--moss);box-shadow:0 0 0 3px rgba(85,100,79,.13)}
+.access-field input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.access-toggle{position:absolute;right:6px;background:none;border:none;cursor:pointer;color:var(--fg3);
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)}
+.access-toggle:hover{color:var(--forest)}
+.access-toggle svg{width:19px;height:19px;stroke-width:1.6;pointer-events:none}
+
+.access-error{display:flex;align-items:center;gap:9px;font-size:13.5px;line-height:1.45;color:var(--critical);
+  background:rgba(154,91,79,.08);border:1px solid rgba(154,91,79,.28);border-radius:var(--radius-md);
+  padding:11px 14px;margin:0}
+.access-error svg{width:17px;height:17px;stroke-width:1.7;flex:none}
+.access-error[hidden]{display:none}
+
+.access-btn{font-family:var(--sans);font-size:15px;font-weight:500;letter-spacing:.01em;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  background:var(--forest);color:var(--ivory);border:1px solid transparent;border-radius:var(--radius-md);
+  padding:15px 22px;cursor:pointer;margin-top:4px;line-height:1;
+  transition:background var(--dur-fast) var(--ease-soft),transform var(--dur-fast) var(--ease-soft)}
+.access-btn:hover{background:var(--forest-deep)}
+.access-btn:active{transform:translateY(1px)}
+.access-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.access-btn svg{width:17px;height:17px;stroke-width:1.7}
+
+.access-foot{margin-top:clamp(1.5rem,3vw,2rem);text-align:center;font-size:12px;line-height:1.5;color:var(--stone)}
+.access-foot svg{width:13px;height:13px;stroke-width:1.6;vertical-align:-2px;margin-right:5px}
+
+/* ---------- Backoffice (shell protegido) ---------- */
+.bo{min-height:100svh;min-height:100vh;background:var(--ivory);display:flex;flex-direction:column}
+.bo-topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:14px clamp(1.25rem,4vw,2.5rem);background:var(--forest);color:var(--ivory);box-shadow:var(--shadow-sm)}
+.bo-brand{display:inline-flex;align-items:center;gap:11px;line-height:0;text-decoration:none}
+.bo-brand img.mark{height:26px;width:auto}
+.bo-brand img.word{height:15px;width:auto}
+.bo-brand .bo-tag{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-soft);
+  border-left:1px solid var(--line-on-dark);padding-left:12px;margin-left:3px;line-height:1.2}
+.bo-topbar-right{display:flex;align-items:center;gap:16px}
+.bo-user{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--fg-on-dark-2)}
+.bo-user svg{width:17px;height:17px;stroke-width:1.6}
+.bo-logout{font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--ivory);
+  background:rgba(246,243,238,.1);border:1px solid var(--line-on-dark);border-radius:var(--radius-md);
+  padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  transition:background var(--dur-fast) var(--ease-soft)}
+.bo-logout:hover{background:rgba(246,243,238,.2)}
+.bo-logout:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.bo-logout svg{width:16px;height:16px;stroke-width:1.6}
+
+.bo-main{flex:1;width:100%;max-width:1180px;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1.25rem,4vw,2.5rem)}
+.bo-head{display:flex;flex-direction:column;gap:8px;margin-bottom:clamp(2rem,4vw,3rem)}
+.bo-head .eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-deep);margin:0}
+.bo-head h2{font-family:var(--serif-display);font-weight:500;font-size:clamp(1.9rem,4vw,2.8rem);
+  letter-spacing:-.02em;line-height:1.1;margin:0;color:var(--fg1)}
+.bo-head p{font-weight:300;font-size:var(--text-md);line-height:1.65;color:var(--fg2);margin:4px 0 0;max-width:60ch}
+
+.bo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:clamp(1rem,2vw,1.5rem)}
+.bo-card{text-align:left;background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:24px 24px 22px;box-shadow:var(--shadow-xs);cursor:pointer;font-family:var(--sans);
+  display:flex;flex-direction:column;gap:10px;
+  transition:box-shadow var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out),border-color var(--dur-fast)}
+.bo-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--sand)}
+.bo-card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.bo-card-ic{width:40px;height:40px;border-radius:50%;background:rgba(85,100,79,.1);color:var(--moss);
+  display:flex;align-items:center;justify-content:center}
+.bo-card-ic svg{width:21px;height:21px;stroke-width:1.5}
+.bo-card h3{font-family:var(--serif-display);font-weight:500;font-size:20px;letter-spacing:-.01em;margin:4px 0 0;color:var(--fg1)}
+.bo-card p{font-size:13.5px;line-height:1.55;color:var(--fg3);margin:0}
+.bo-card-meta{display:flex;align-items:center;gap:7px;margin-top:6px;font-size:12.5px;color:var(--accent-deep);font-weight:500}
+.bo-card-meta svg{width:14px;height:14px;stroke-width:1.7}
+
+.bo-note{display:flex;gap:12px;align-items:flex-start;margin-top:clamp(2rem,4vw,3rem);
+  background:rgba(85,100,79,.06);border:1px solid var(--line);border-left:3px solid var(--moss);
+  border-radius:var(--radius-md);padding:16px 18px}
+.bo-note svg{width:18px;height:18px;stroke-width:1.5;color:var(--moss);flex:none;margin-top:2px}
+.bo-note p{margin:0;font-size:13px;line-height:1.6;color:var(--fg2)}
+
+@media(max-width:560px){
+  .bo-brand .bo-tag{display:none}
+}

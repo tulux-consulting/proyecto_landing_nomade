@@ -1,0 +1,56 @@
+/* ============================================================
+   NÓMADE — Modal "Quiero ser Partner" (landing).
+   Reutiliza .field / .btn / tokens de marca. Estado base = visible;
+   la animación entra desde oculto (print / reduced-motion seguros).
+   ============================================================ */
+.pm-scrim{position:fixed;inset:0;background:rgba(29,29,27,.55);backdrop-filter:blur(4px);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;
+  opacity:1;animation:pm-fade var(--dur-base) var(--ease-out)}
+@keyframes pm-fade{from{opacity:0}}
+.pm-modal{background:var(--ivory-warm);border-radius:var(--radius-xl);box-shadow:var(--shadow-xl);
+  width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;margin:auto;
+  transform:translateY(0) scale(1);opacity:1;animation:pm-rise var(--dur-slow) var(--ease-out)}
+@keyframes pm-rise{from{transform:translateY(14px) scale(.99);opacity:0}}
+
+.pm-head{position:relative;padding:30px clamp(1.5rem,4vw,2.5rem) 20px;border-bottom:1px solid var(--line)}
+.pm-eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-deep);
+  margin:0 0 10px;display:flex;align-items:center;gap:9px}
+.pm-eyebrow::before{content:"";width:20px;height:1px;background:currentColor;opacity:.6}
+.pm-head h2{font-family:var(--serif-display);font-weight:500;font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.02em;
+  line-height:1.12;margin:0;color:var(--fg1);max-width:24ch}
+.pm-head p{font-weight:300;font-size:15px;line-height:1.6;color:var(--fg2);margin:12px 0 0;max-width:52ch}
+.pm-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:var(--radius-md);
+  border:1px solid var(--line-strong);background:var(--bg-raised);color:var(--fg2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:border-color var(--dur-fast),color var(--dur-fast)}
+.pm-close:hover{border-color:var(--stone);color:var(--fg1)}
+.pm-close:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.pm-close svg{width:19px;height:19px;stroke-width:1.7}
+
+.pm-body{padding:24px clamp(1.5rem,4vw,2.5rem);overflow-y:auto}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px}
+.pm-grid .field.full{grid-column:1/-1}
+.pm-foot{border-top:1px solid var(--line);padding:18px clamp(1.5rem,4vw,2.5rem);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pm-foot .pm-legal{font-size:12px;line-height:1.5;color:var(--fg3);max-width:34ch;margin:0}
+.pm-foot .btn{min-width:170px;justify-content:center}
+.pm-foot .btn[disabled]{opacity:.65;cursor:default}
+
+.pm-spin{width:16px;height:16px;border:2px solid rgba(246,243,238,.4);border-top-color:var(--ivory);
+  border-radius:50%;animation:pm-rot .7s linear infinite}
+@keyframes pm-rot{to{transform:rotate(360deg)}}
+
+/* success */
+.pm-done{padding:clamp(2.5rem,5vw,3.5rem) clamp(1.5rem,4vw,2.5rem);text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.pm-done-mark{width:62px;height:62px;border-radius:50%;background:rgba(63,107,74,.12);color:#3f6b4a;
+  display:flex;align-items:center;justify-content:center}
+.pm-done-mark svg{width:30px;height:30px;stroke-width:1.8}
+.pm-done h2{font-family:var(--serif-display);font-weight:500;font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.02em;line-height:1.15;margin:4px 0 0;color:var(--fg1)}
+.pm-done p{font-weight:300;font-size:15px;line-height:1.65;color:var(--fg2);margin:0;max-width:46ch}
+.pm-done .pm-done-meta{font-size:12.5px;color:var(--fg3);margin-top:2px}
+
+@media(max-width:560px){
+  .pm-grid{grid-template-columns:1fr}
+  .pm-foot{flex-direction:column-reverse;align-items:stretch}
+  .pm-foot .btn{width:100%}
+  .pm-foot .pm-legal{max-width:none;text-align:center}
+}
