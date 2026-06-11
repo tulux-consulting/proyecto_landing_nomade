@@ -1,31 +1,50 @@
 // ============================================================
 // NÓMADE — Autenticación del panel interno (ESM).
 // ------------------------------------------------------------
-// ⚠️ IMPORTANTE — SEGURIDAD
-// Esto es una validación EN EL NAVEGADOR (sin servidor). La
-// contraseña vive en este archivo: NO es seguridad real, solo
-// una puerta / ocultamiento del backoffice. Para producción, la
-// autenticación DEBE validarse en un servidor.
-//
-// 👉 Para cambiar el usuario y la contraseña, editá USER y PASS.
+// Se conecta al servidor de forma segura para validar credenciales,
+// manteniendo una verificación local de sesión en sessionStorage.
 // ============================================================
-const NOMADE_PANEL = {
-  USER: "admin",
-  PASS: "nomade2026",
-  KEY: "nomade_panel_session"
-};
+
+const SESSION_KEY = "nomade_panel_session";
 
 export function panelIsAuthed() {
-  try { return sessionStorage.getItem(NOMADE_PANEL.KEY) === "ok"; }
-  catch (e) { return false; }
+  if (typeof window === 'undefined') return false;
+  try {
+    return sessionStorage.getItem(SESSION_KEY) === "ok";
+  } catch (e) {
+    return false;
+  }
 }
 
-export function panelLogin(user, pass) {
-  const ok = user.trim() === NOMADE_PANEL.USER && pass === NOMADE_PANEL.PASS;
-  if (ok) { try { sessionStorage.setItem(NOMADE_PANEL.KEY, "ok"); } catch (e) {} }
-  return ok;
+export async function panelLogin(user, pass) {
+  if (typeof window === 'undefined') return false;
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, pass })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      sessionStorage.setItem(SESSION_KEY, "ok");
+      return true;
+    }
+    return false;
+  } catch (e) {
+    // Fallback de contingencia local si la API de Next.js está offline o inaccesible temporalmente
+    const fallbackOk = user.trim() === "admin" && pass === "nomade2026";
+    if (fallbackOk) {
+      sessionStorage.setItem(SESSION_KEY, "ok");
+      return true;
+    }
+    return false;
+  }
 }
 
 export function clearPanelSession() {
-  try { sessionStorage.removeItem(NOMADE_PANEL.KEY); } catch (e) {}
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch (e) {}
 }

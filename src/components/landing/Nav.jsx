@@ -9,7 +9,7 @@ function Nav() {
   const [active, setActive] = useState(null);
   useEffect(() => {
     const read = () => setSolid(window.scrollY > 80);
-    window.addEventListener("scroll", read);
+    window.addEventListener("scroll", read, { passive: true });
     read();
     return () => window.removeEventListener("scroll", read);
   }, []);

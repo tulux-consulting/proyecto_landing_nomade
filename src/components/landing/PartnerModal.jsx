@@ -43,9 +43,14 @@ function PartnerModal({ open, onClose }) {
     if (!open) return;
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => { if (firstRef.current) firstRef.current.focus(); });
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
   // reset shortly after closing so the success state isn't seen on reopen
