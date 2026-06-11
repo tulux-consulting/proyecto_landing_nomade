@@ -3,7 +3,7 @@
 // Navegación con React Router (Link / pathname activo).
 // ============================================================
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { BO } from '../../lib/store.js';
 import { Icon, useLucide, Empty } from './ui.jsx';
 
@@ -25,7 +25,7 @@ export function Sidebar({ route, navOpen, onNav, user, onLogout }) {
   const allowed = BO.MODULES.filter((m) => user.permisos.includes(m.key));
   return (
     <aside className="side">
-      <Link className="side-brand" to="/panel" onClick={() => onNav()}>
+      <Link className="side-brand" href="/panel" onClick={() => onNav()}>
         <img className="mark" src="/assets/brand/isotipo-ivory.svg" alt="" aria-hidden="true" />
         <img className="word" src="/assets/brand/wordmark-ivory.svg" alt="NÓMADE" />
       </Link>
@@ -34,7 +34,7 @@ export function Sidebar({ route, navOpen, onNav, user, onLogout }) {
           const active = route === m.route || (m.route !== "/panel" && route.indexOf(m.route) === 0);
           const pend = pendingCount(m.key);
           return (
-            <Link key={m.key} to={m.route} className={"side-link" + (active ? " active" : "")} onClick={() => onNav()} aria-current={active ? "page" : undefined}>
+            <Link key={m.key} href={m.route} className={"side-link" + (active ? " active" : "")} onClick={() => onNav()} aria-current={active ? "page" : undefined}>
               <Icon name={m.icon} />
               {m.label}
               {pend > 0 && <span className="side-count">{pend}</span>}

@@ -16,11 +16,17 @@ const BO = (function () {
 
   function emit() { subs.forEach(function (fn) { try { fn(); } catch (e) {} }); }
   function read(key, fallback) {
-    try { var r = localStorage.getItem(PREFIX + key); return r ? JSON.parse(r) : fallback; }
+    try {
+      if (typeof window === 'undefined') return fallback;
+      var r = localStorage.getItem(PREFIX + key); return r ? JSON.parse(r) : fallback;
+    }
     catch (e) { return fallback; }
   }
   function write(key, val) {
-    try { localStorage.setItem(PREFIX + key, JSON.stringify(val)); } catch (e) {}
+    try {
+      if (typeof window === 'undefined') return;
+      localStorage.setItem(PREFIX + key, JSON.stringify(val));
+    } catch (e) {}
     emit();
   }
   function uid(p) { return (p || "id") + "_" + Math.random().toString(36).slice(2, 9); }
@@ -63,7 +69,9 @@ const BO = (function () {
   var PROVS = ["Buenos Aires", "Río Negro", "Mendoza", "Córdoba", "Neuquén", "Salta", "Chubut", "Tierra del Fuego", "Misiones", "San Juan", "Santa Fe", "Tucumán"];
 
   function seed() {
-    if (localStorage.getItem(SEED_FLAG)) return;
+    if (typeof window === 'undefined') return;
+    try {
+      if (localStorage.getItem(SEED_FLAG)) return;
 
     // — POSTULACIONES (terrenos) —
     var ESTADOS = ["Nuevo", "Pendiente de revisión", "Contactado", "En negociación", "Aprobado", "Rechazado"];
@@ -301,6 +309,7 @@ const BO = (function () {
 
     localStorage.setItem(SEED_FLAG, "1");
     emit();
+    } catch (e) {}
   }
 
   // ---- Module metadata (single source of truth) ------------------------

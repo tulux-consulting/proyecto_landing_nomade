@@ -22,9 +22,15 @@ function DestinoModal({ name, region, onClose }) {
       if (e.key === "ArrowLeft") {setZoom(false);setIdx((i) => (i - 1 + n) % n);}
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
+    const prevBody = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-    return () => {document.removeEventListener("keydown", onKey);document.body.style.overflow = prev;};
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = prevHtml;
+      document.body.style.overflow = prevBody;
+    };
   }, [region, onClose, zoom, n]);
 
   if (!region) return null;
