@@ -1,0 +1,26 @@
+{
+  "name": "nomade-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "NÓMADE — public landing + internal backoffice (Next.js).",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "lucide-react": "^0.460.0",
+    "next": "^14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
+    "eslint": "^8",
+    "eslint-config-next": "^14.2.3",
+    "typescript": "^6.0.3"
+  }
+}
