@@ -16,6 +16,6 @@ export function relDays(iso) {
 
 export function resolveImg(v) {
   if (!v) return "";
-  if (/^https?:|^assets\/|^data:|^blob:/.test(v)) return v;
+  if (/^https?:|^\/?assets\/|^data:|^blob:/.test(v)) return v;
   return "https://images.unsplash.com/photo-" + v + "?w=1100&q=80&auto=format&fit=crop";
 }

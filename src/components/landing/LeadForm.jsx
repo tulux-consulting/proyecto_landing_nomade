@@ -14,12 +14,12 @@ function Field({ id, label, hint, error, children, full, optional, raw }) {
   const describedBy = [hintId, errId].filter(Boolean).join(" ") || undefined;
   // Clone the control to wire id + aria (skip when raw — caller wires it)
   const control = !raw && React.isValidElement(children) ?
-  React.cloneElement(children, {
-    id,
-    "aria-invalid": error ? "true" : undefined,
-    "aria-describedby": describedBy
-  }) :
-  children;
+    React.cloneElement(children, {
+      id,
+      "aria-invalid": error ? "true" : undefined,
+      "aria-describedby": describedBy
+    }) :
+    children;
   return (
     <div className={"field" + (full ? " full" : "") + (error ? " has-error" : "")}>
       <label className="field-label" htmlFor={id}>
@@ -34,7 +34,7 @@ function Field({ id, label, hint, error, children, full, optional, raw }) {
 }
 
 // Single / multi chip group. Wired as a labelled group of toggle buttons.
-function Chips({ options, value, onChange, multi, labelId, invalid, describedBy }) {
+function Chips({ options, value, onChange, multi, labelId, invalid, describedBy, hideCheck }) {
   const isOn = (o) => multi ? (value || []).includes(o) : value === o;
   const pick = (o) => {
     if (multi) {
@@ -47,11 +47,11 @@ function Chips({ options, value, onChange, multi, labelId, invalid, describedBy 
   return (
     <div className="chips" role="group" aria-labelledby={labelId} aria-invalid={invalid ? "true" : undefined} aria-describedby={describedBy}>
       {options.map((o) =>
-      <button type="button" key={o}
-      className={"chip" + (isOn(o) ? " active" : "") + (multi ? " chip-multi" : "")}
-      aria-pressed={isOn(o)}
-      onClick={() => pick(o)}>
-          {multi && <span className="chip-check" aria-hidden="true"><Icon name="check" /></span>}{o}
+        <button type="button" key={o}
+          className={"chip" + (isOn(o) ? " active" : "") + (multi ? " chip-multi" : "")}
+          aria-pressed={isOn(o)}
+          onClick={() => pick(o)}>
+          {multi && !hideCheck && <span className="chip-check" aria-hidden="true"><Icon name="check" /></span>}{o}
         </button>
       )}
     </div>);
@@ -116,7 +116,7 @@ function LeadForm({ d }) {
           setSavedAt(saved.t || null);
         }
       }
-    } catch (e) {/* ignore */}
+    } catch (e) {/* ignore */ }
   }, []);
 
   // Autosave (debounced) whenever vals/step change
@@ -127,7 +127,7 @@ function LeadForm({ d }) {
         const now = Date.now();
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ vals, step, maxReached, t: now }));
         setSavedAt(now);
-      } catch (e) {/* ignore quota */}
+      } catch (e) {/* ignore quota */ }
     }, 600);
     return () => clearTimeout(t);
   }, [vals, step, maxReached, done]);
@@ -180,7 +180,7 @@ function LeadForm({ d }) {
     });
   };
 
-  const announce = (msg) => {if (liveRef.current) liveRef.current.textContent = msg;};
+  const announce = (msg) => { if (liveRef.current) liveRef.current.textContent = msg; };
 
   const goTo = (s) => {
     setStep(s);
@@ -188,31 +188,31 @@ function LeadForm({ d }) {
     announce("Paso " + (s + 1) + " de " + STEPS.length + ": " + STEPS[s]);
     requestAnimationFrame(() => {
       if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
-      if (panelRef.current) {panelRef.current.setAttribute("tabindex", "-1");panelRef.current.focus({ preventScroll: true });}
+      if (panelRef.current) { panelRef.current.setAttribute("tabindex", "-1"); panelRef.current.focus({ preventScroll: true }); }
     });
   };
 
   const next = () => {
     const e = validateStep(step);
-    if (Object.keys(e).length) {setErrors(e);focusFirstError(e);announce("Revisá los campos obligatorios.");return;}
+    if (Object.keys(e).length) { setErrors(e); focusFirstError(e); announce("Revisá los campos obligatorios."); return; }
     setErrors({});
     if (step < STEPS.length - 1) goTo(step + 1);
   };
-  const back = () => {setErrors({});if (step > 0) goTo(step - 1);};
+  const back = () => { setErrors({}); if (step > 0) goTo(step - 1); };
 
   const jump = (s) => {
     if (s === step) return;
-    if (s < step) {setErrors({});goTo(s);return;}
+    if (s < step) { setErrors({}); goTo(s); return; }
     // forward only into already-reached steps
-    if (s <= maxReached) {setErrors({});goTo(s);}
+    if (s <= maxReached) { setErrors({}); goTo(s); }
   };
 
   const submit = () => {
     // validate every required step
-    let firstBad = -1;let allErr = {};
+    let firstBad = -1; let allErr = {};
     [0, 1, 2, 7].forEach((s) => {
       const e = validateStep(s);
-      if (Object.keys(e).length && firstBad === -1) {firstBad = s;allErr = e;}
+      if (Object.keys(e).length && firstBad === -1) { firstBad = s; allErr = e; }
     });
     if (firstBad >= 0) {
       setMaxReached((m) => Math.max(m, firstBad));
@@ -220,17 +220,17 @@ function LeadForm({ d }) {
       setErrors(allErr);
       focusFirstError(allErr);
       announce("Faltan datos obligatorios en el paso " + (firstBad + 1) + ".");
-      requestAnimationFrame(() => {if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });});
+      requestAnimationFrame(() => { if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" }); });
       return;
     }
     setDone(true);
-    try {localStorage.removeItem(STORAGE_KEY);} catch (e) {}
-    requestAnimationFrame(() => {if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });});
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
+    requestAnimationFrame(() => { if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" }); });
   };
 
   const reset = () => {
-    setVals(blank);setFiles([]);setStep(0);setMaxReached(0);setDone(false);setErrors({});setSavedAt(null);
-    try {localStorage.removeItem(STORAGE_KEY);} catch (e) {}
+    setVals(blank); setFiles([]); setStep(0); setMaxReached(0); setDone(false); setErrors({}); setSavedAt(null);
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
   };
 
   const pct = Math.round((step + 1) / STEPS.length * 100);
@@ -238,8 +238,8 @@ function LeadForm({ d }) {
   // ---- Step content ------------------------------------------------------
   const renderStep = () => {
     switch (step) {
-      case 0:return (
-          <div className="form-grid">
+      case 0: return (
+        <div className="form-grid">
           <Field id="nombre" label="Nombre" error={errors.nombre}>
             <input value={vals.nombre} onChange={set("nombre")} placeholder="Tu nombre" autoComplete="given-name" />
           </Field>
@@ -257,8 +257,8 @@ function LeadForm({ d }) {
           </ChipField>
         </div>);
 
-      case 1:return (
-          <div className="form-grid">
+      case 1: return (
+        <div className="form-grid">
           <Field id="provincia" label="Provincia" error={errors.provincia} raw>
             <div className="select-wrap">
               <select id="provincia" value={vals.provincia} onChange={set("provincia")}
@@ -281,8 +281,8 @@ function LeadForm({ d }) {
           </Field>
         </div>);
 
-      case 2:return (
-          <React.Fragment>
+      case 2: return (
+        <React.Fragment>
           <ChipField id="tamano" label="Tamaño del terreno" error={errors.tamano} full>
             <Chips options={d.sizes} value={vals.tamano} onChange={setVal("tamano")} />
           </ChipField>
@@ -290,14 +290,14 @@ function LeadForm({ d }) {
             <Chips options={d.topografias} value={vals.topografia} onChange={setVal("topografia")} />
           </ChipField>
           <ChipField id="paisaje" label="Tipo de paisaje" hint="Podés elegir más de uno" full>
-            <Chips options={d.paisajes} value={vals.paisaje} onChange={setVal("paisaje")} multi />
+            <Chips options={d.paisajes} value={vals.paisaje} onChange={setVal("paisaje")} multi hideCheck />
           </ChipField>
         </React.Fragment>);
 
-      case 3:return (
-          <React.Fragment>
+      case 3: return (
+        <React.Fragment>
           <ChipField id="aguas" label="Cuerpos de agua" hint="Podés elegir más de uno" full>
-            <Chips options={d.aguas} value={vals.aguas} onChange={setVal("aguas")} multi />
+            <Chips options={d.aguas} value={vals.aguas} onChange={setVal("aguas")} multi hideCheck />
           </ChipField>
           <div className="form-grid">
             <Field id="vistas" label="Vistas predominantes" optional>
@@ -318,18 +318,18 @@ function LeadForm({ d }) {
           </Field>
         </React.Fragment>);
 
-      case 4:return (
-          <React.Fragment>
+      case 4: return (
+        <React.Fragment>
           <ChipField id="servicios" label="Servicios disponibles" hint="Podés elegir más de uno" full>
-            <Chips options={d.servicios} value={vals.servicios} onChange={setVal("servicios")} multi />
+            <Chips options={d.servicios} value={vals.servicios} onChange={setVal("servicios")} multi hideCheck />
           </ChipField>
           <ChipField id="construcciones" label="Construcciones existentes" full>
             <Chips options={d.construcciones} value={vals.construcciones} onChange={setVal("construcciones")} />
           </ChipField>
         </React.Fragment>);
 
-      case 5:return (
-          <React.Fragment>
+      case 5: return (
+        <React.Fragment>
           <ChipField id="titulo" label="Título de propiedad" full>
             <Chips options={d.titulo} value={vals.titulo} onChange={setVal("titulo")} />
           </ChipField>
@@ -341,10 +341,10 @@ function LeadForm({ d }) {
           </Field>
         </React.Fragment>);
 
-      case 6:return (
-          <React.Fragment>
+      case 6: return (
+        <React.Fragment>
           <ChipField id="actividades" label="Actividades posibles en la zona" hint="Podés elegir más de una" full>
-            <Chips options={d.actividades} value={vals.actividades} onChange={setVal("actividades")} multi />
+            <Chips options={d.actividades} value={vals.actividades} onChange={setVal("actividades")} multi hideCheck />
           </ChipField>
           <Field id="atractivos" label="Atractivos cercanos" optional full>
             <input value={vals.atractivos} onChange={set("atractivos")} placeholder="Parques, bodegas, pueblos, hitos" />
@@ -354,8 +354,8 @@ function LeadForm({ d }) {
           </ChipField>
         </React.Fragment>);
 
-      case 7:return (
-          <React.Fragment>
+      case 7: return (
+        <React.Fragment>
           <ChipField id="modelo" label="Modelo de participación de interés" error={errors.modelo} full>
             <Chips options={d.modelos} value={vals.modelo} onChange={setVal("modelo")} />
           </ChipField>
@@ -367,8 +367,8 @@ function LeadForm({ d }) {
           </ChipField>
         </React.Fragment>);
 
-      case 8:return (
-          <React.Fragment>
+      case 8: return (
+        <React.Fragment>
           <Field id="comentarios" label="Comentarios" hint="Contanos qué hace único a tu lugar" optional full>
             <textarea value={vals.comentarios} onChange={set("comentarios")} rows="4"
               placeholder="Paisaje, acceso, agua, vistas, historia del lugar… lo que quieras compartir."></textarea>
@@ -384,17 +384,17 @@ function LeadForm({ d }) {
             {files.length > 0 &&
               <div className="thumbs">
                 {files.map((f, i) =>
-                <div className="thumb" key={i} style={{ backgroundImage: `url(${f.url})` }}>
-                    <button type="button" className="thumb-x" onClick={(e) => {e.stopPropagation();removeFile(i);}} aria-label={"Quitar " + f.name}><Icon name="x" /></button>
+                  <div className="thumb" key={i} style={{ backgroundImage: `url(${f.url})` }}>
+                    <button type="button" className="thumb-x" onClick={(e) => { e.stopPropagation(); removeFile(i); }} aria-label={"Quitar " + f.name}><Icon name="x" /></button>
                   </div>
                 )}
               </div>
-              }
+            }
             <p className="field-hint">Las fotos no se guardan en el borrador; volvé a adjuntarlas si recargás la página.</p>
           </div>
         </React.Fragment>);
 
-      default:return null;
+      default: return null;
     }
   };
 
@@ -416,15 +416,14 @@ function LeadForm({ d }) {
         <div className="form-main">
           <span ref={liveRef} className="sr-only" aria-live="polite"></span>
           {done ?
-          <div className="form-card nm-card form-done">
+            <div className="form-card nm-card form-done">
               <span className="form-done-mark" aria-hidden="true"><Icon name="check" /></span>
               <h3>Gracias, {vals.nombre || "recibimos tu postulación"}.</h3>
               <p>Recibimos la información de tu terreno en {vals.localidad || "tu zona"}{vals.provincia ? ", " + vals.provincia : ""}. Nuestro equipo la revisará y, si avanza, te contactará para conversar sobre su potencial.</p>
-              <p className="form-done-meta">Este es un envío de demostración — no se transmitió ningún dato.</p>
               <Button variant="secondary" onClick={reset}>Cargar otra postulación</Button>
             </div> :
 
-          <div className="form-card nm-card">
+            <div className="form-card nm-card">
               {/* progress */}
               <div className="wizard-progress">
                 <div className="wizard-progress-meta">
@@ -443,14 +442,14 @@ function LeadForm({ d }) {
               <div className="wizard-nav">
                 <div className="wizard-nav-left">
                   {step > 0 &&
-                <button type="button" className="btn-text" onClick={back}><Icon name="arrow-left" />Atrás</button>
-                }
+                    <button type="button" className="btn-text" onClick={back}><Icon name="arrow-left" />Atrás</button>
+                  }
                 </div>
                 <div className="wizard-nav-right">
                   {savedAt && <span className="wizard-saved" aria-hidden="true"><Icon name="check" />Borrador guardado</span>}
                   {step < STEPS.length - 1 ?
-                <Button variant="primary" icon="arrow-right" onClick={next}>Continuar</Button> :
-                <Button variant="primary" icon="arrow-right" onClick={submit}>Enviar postulación</Button>}
+                    <Button variant="primary" icon="arrow-right" onClick={next}>Continuar</Button> :
+                    <Button variant="primary" icon="arrow-right" onClick={submit}>Enviar postulación</Button>}
                 </div>
               </div>
             </div>
