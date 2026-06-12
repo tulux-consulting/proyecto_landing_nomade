@@ -11,7 +11,7 @@
    No inventory, bookings, prices or reviews — the network is in formation.
    Imagery: Unsplash CDN placeholders (nature, golden hour). Swap for licensed photos. */
 const IMG = (id, w) => (typeof window !== 'undefined' && window.__resources && window.__resources[id])
-  || `https://images.unsplash.com/photo-${id}?w=${w||1600}&q=80&auto=format&fit=crop`;
+  || `https://images.unsplash.com/photo-${id}?w=${w || 1600}&q=80&auto=format&fit=crop`;
 // Local (real) photography. Resolves to an inlined blob in the standalone build,
 // otherwise to the project-relative path. data-resource-id must match `id`.
 const LIMG = (path, id) => (typeof window !== 'undefined' && window.__resources && window.__resources[id]) || path;

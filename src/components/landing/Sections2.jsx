@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Icon, Eyebrow, useLucide } from './primitives.jsx';
 import { ARGENTINA } from '../../lib/argentina.js';
+import { resolveImg } from '../panel/ui/Helpers.jsx';
 // NÓMADE — 5 Destinations worth discovering (potential) · 6 How we create destinations (model)
 
 function DestinoModal({ name, region, onClose }) {
@@ -115,131 +116,151 @@ function DestinoModal({ name, region, onClose }) {
 
 }
 
-function Destinations({ d }) {
+function Destinations(props) {
+  const d = props.d || props;
   const A = ARGENTINA;
   const [active, setActive] = useState(null);
   const [open, setOpen] = useState(null);
+
+  const types = d.types || [];
+  const terrainImg = resolveImg(d.terrain);
+
   return (
     <section className="section sand has-band" id="destinos">
       <div className="wrap">
         <div className="section-head">
-          <Eyebrow>{d.eyebrow}</Eyebrow>
+          {d.eyebrow && <Eyebrow>{d.eyebrow}</Eyebrow>}
           <h2>{d.h2}</h2>
-          <p className="lead">{d.lead}</p>
+          {d.lead && <p className="lead">{d.lead}</p>}
         </div>
-        <div className="types">
-          {d.types.map((t, i) =>
-          <figure className="type-frame" key={i}>
-              <div className="type-img" style={{ backgroundImage: `url(${t.img})`, backgroundColor: "#3a4a3d" }}></div>
-              <figcaption className="type-cap">{t.cap}</figcaption>
-            </figure>
-          )}
-        </div>
-        <p className="types-note"><Icon name="info" />{d.note}</p>
+        {types.length > 0 && (
+          <div className="types">
+            {types.map((t, i) => {
+              const typeImg = resolveImg(t.img);
+              return (
+                <figure className="type-frame" key={i}>
+                  <div className="type-img" style={{ backgroundImage: typeImg ? `url(${typeImg})` : undefined, backgroundColor: "#3a4a3d" }}></div>
+                  <figcaption className="type-cap">{t.cap}</figcaption>
+                </figure>
+              );
+            })}
+          </div>
+        )}
+        {d.note && <p className="types-note"><Icon name="info" />{d.note}</p>}
       </div>
 
       {/* Regions in exploration — map */}
       <div className="destinos-map">
         <div className="wrap">
           <div className="map-intro">
-            <Eyebrow onDark>{d.mapEyebrow}</Eyebrow>
+            {d.mapEyebrow && <Eyebrow onDark>{d.mapEyebrow}</Eyebrow>}
             <h3 className="map-h">{d.mapH}</h3>
-            <p className="map-lead">{d.mapLead}</p>
+            {d.mapLead && <p className="map-lead">{d.mapLead}</p>}
           </div>
           <div className="map-grid">
             <div className="map-side">
               <div className="region-list">
-                {A.pins.map((p, i) =>
-                <button
-                  className={"region" + (active === p.name ? " active" : "")}
-                  key={p.name}
-                  onMouseEnter={() => setActive(p.name)}
-                  onMouseLeave={() => setActive(null)}
-                  onFocus={() => setActive(p.name)}
-                  onBlur={() => setActive(null)}
-                  onClick={() => setOpen(p.name)}
-                  aria-haspopup="dialog">
+                {A.pins.map((p, i) => {
+                  const reg = d.regions?.[p.name];
+                  if (!reg) return null;
+                  const thumbImg = resolveImg(reg.photos?.[0]);
+                  return (
+                    <button
+                      className={"region" + (active === p.name ? " active" : "")}
+                      key={p.name}
+                      onMouseEnter={() => setActive(p.name)}
+                      onMouseLeave={() => setActive(null)}
+                      onFocus={() => setActive(p.name)}
+                      onBlur={() => setActive(null)}
+                      onClick={() => setOpen(p.name)}
+                      aria-haspopup="dialog">
 
-                    <span className="region-thumb" aria-hidden="true" style={{ backgroundImage: `url(${d.regions[p.name].photos[0]})` }}></span>
-                    <span className="region-text">
-                      <span className="rname">{p.name}</span>
-                      <span className="rgeo">{d.regions[p.name].geo}</span>
-                    </span>
-                    <span className="region-go" aria-hidden="true"><Icon name="arrow-up-right" /></span>
-                  </button>
-                )}
+                      <span className="region-thumb" aria-hidden="true" style={{ backgroundImage: thumbImg ? `url(${thumbImg})` : undefined }}></span>
+                      <span className="region-text">
+                        <span className="rname">{p.name}</span>
+                        <span className="rgeo">{reg.geo}</span>
+                      </span>
+                      <span className="region-go" aria-hidden="true"><Icon name="arrow-up-right" /></span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
             <div className="map-figure">
-            <div className="map-canvas">
-                <div className="map-terrain" style={{ backgroundImage: `url(${d.terrain})` }}></div>
+              <div className="map-canvas">
+                <div className="map-terrain" style={{ backgroundImage: terrainImg ? `url(${terrainImg})` : undefined }}></div>
                 <svg className="map-svg" viewBox={A.viewBox} preserveAspectRatio="xMidYMid meet">
                   <path className="map-path" d={A.path} />
                   {A.pins.map((p) => {
-                      const on = active === p.name;
-                      return (
-                        <g key={p.name} className={"map-pin" + (on ? " on" : "")}
+                    const on = active === p.name;
+                    return (
+                      <g key={p.name} className={"map-pin" + (on ? " on" : "")}
                         onMouseEnter={() => setActive(p.name)} onMouseLeave={() => setActive(null)}
                         onClick={() => setOpen(p.name)}>
                         <circle className="map-ping" cx={p.x} cy={p.y} r="5" />
                         <circle className="map-halo" cx={p.x} cy={p.y} r="10" />
                         <circle className="map-dot" cx={p.x} cy={p.y} r="3.4" />
-                      </g>);
-
-                    })}
+                      </g>
+                    );
+                  })}
                 </svg>
                 {A.pins.map((p) =>
                   <span
                     key={p.name}
                     className={"map-label" + (active === p.name ? " on" : "") + (p.xp > 50 ? " flip" : "")}
                     style={{ left: p.xp + "%", top: p.yp + "%" }}>
-                  {p.name}</span>
-                  )}
-            </div>
-            <p className="map-disclaimer-below">{d.disclaimer}</p>
+                    {p.name}</span>
+                )}
+              </div>
+              {d.disclaimer && <p className="map-disclaimer-below">{d.disclaimer}</p>}
             </div>
           </div>
         </div>
       </div>
-      <DestinoModal name={open} region={open ? d.regions[open] : null} onClose={() => setOpen(null)} />
-    </section>);
-
+      <DestinoModal name={open} region={open ? d.regions?.[open] : null} onClose={() => setOpen(null)} />
+    </section>
+  );
 }
 
-function Model({ d }) {
+function Model(props) {
+  const d = props.d || props;
+  const parts = d.parts || [];
+
   return (
     <section className="section" id="modelo">
       <div className="wrap">
         <div className="section-head center" style={{ marginInline: "auto" }}>
-          <Eyebrow center>{d.eyebrow}</Eyebrow>
+          {d.eyebrow && <Eyebrow center>{d.eyebrow}</Eyebrow>}
           <h2>{d.h2}</h2>
-          <p className="lead">{d.lead}</p>
+          {d.lead && <p className="lead">{d.lead}</p>}
         </div>
         <div className="equation">
           <div className="eq-terms eq-3">
-            {d.parts.map((p, i) =>
-            <React.Fragment key={i}>
+            {parts.map((p, i) =>
+              <React.Fragment key={i}>
                 <div className="eq-term">
                   <span className="eq-ic"><Icon name={p.icon} /></span>
                   <h3>{p.h}</h3>
                   <p>{p.p}</p>
                 </div>
-                {i < d.parts.length - 1 && <span className="eq-op" aria-hidden="true">+</span>}
+                {i < parts.length - 1 && <span className="eq-op" aria-hidden="true">+</span>}
               </React.Fragment>
             )}
           </div>
           <div className="eq-rule"><span className="eq-eq" aria-hidden="true">=</span></div>
-          <div className="eq-result">
-            <span className="eq-result-mark"><Icon name="map-pin" /></span>
-            <div>
-              <h3>{d.result.h}</h3>
-              <p>{d.result.p}</p>
+          {d.result && (
+            <div className="eq-result">
+              <span className="eq-result-mark"><Icon name="map-pin" /></span>
+              <div>
+                <h3>{d.result.h}</h3>
+                <p>{d.result.p}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 }
 
 export { Destinations, Model };

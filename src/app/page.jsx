@@ -1,8 +1,9 @@
 'use client';
 
 // NÓMADE — public landing page in Next.js (App Router).
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NOMADE } from '../data/content.js';
+import { ContenidoRepository } from '../repositories/index.ts';
 import { useLucide, scrollToId } from '../components/landing/primitives.jsx';
 import { Nav } from '../components/landing/Nav.jsx';
 import { Hero, WhatIs, Experience, Split } from '../components/landing/Sections1.jsx';
@@ -21,10 +22,26 @@ const PartnerModal = dynamic(() => import('../components/landing/PartnerModal.js
 });
 
 export default function LandingPage() {
-  const D = NOMADE;
+  const [content, setContent] = useState(null);
   const [toast, setToast] = useState(null);
   const [partnerOpen, setPartnerOpen] = useState(false);
   useLucide();
+
+  useEffect(() => {
+    ContenidoRepository.get().then((data) => {
+      setContent(data);
+    });
+  }, []);
+
+  if (!content) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1d1d1b', color: '#e0d9cf', fontFamily: 'sans-serif' }}>
+        Cargando NÓMADE...
+      </div>
+    );
+  }
+
+  const D = content;
 
   const cta = (label) => {
     setToast(
@@ -110,11 +127,11 @@ export default function LandingPage() {
         <Model d={D.model} />
         <Landowners d={D.landowners} />
         <Process d={D.process} />
-        <LeadForm d={D.form} />
+        <LeadForm d={NOMADE.form} />
         <Partners d={D.partners} onCta={cta} onPartner={() => setPartnerOpen(true)} />
         <FutureGuests d={D.guests} />
       </main>
-      <Footer onCta={cta} />
+      <Footer d={D.footer} onCta={cta} />
       <PartnerModal open={partnerOpen} onClose={() => setPartnerOpen(false)} />
       {toast && <div className="nm-toast" role="status" aria-live="polite">{toast}</div>}
     </React.Fragment>

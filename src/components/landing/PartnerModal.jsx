@@ -102,7 +102,7 @@ function PartnerModal({ open, onClose }) {
             origen: "Formulario web"
           });
         }
-      } catch (err) {/* ignore */}
+      } catch (err) {/* ignore */ }
       setLoading(false);
       setDone(true);
     }, 900);
@@ -118,7 +118,6 @@ function PartnerModal({ open, onClose }) {
             <span className="pm-done-mark"><SvCheck /></span>
             <h2>Gracias, recibimos tu interés.</h2>
             <p>Vamos a revisar la información de <strong>{v.nombre}</strong> y, si hay una buena sintonía, nuestro equipo te va a contactar para conversar sobre cómo sumar tu establecimiento a la red.</p>
-            <p className="pm-done-meta">Este es un envío de demostración — no se transmitió ningún dato.</p>
             <button className="btn btn-primary" onClick={onClose} style={{ marginTop: 6 }}>Cerrar</button>
           </div>
         ) : (
