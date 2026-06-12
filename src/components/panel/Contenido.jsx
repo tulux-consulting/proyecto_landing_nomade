@@ -282,7 +282,7 @@ function Contenido({ onToast }) {
             <Model d={draft.model} />
             <Landowners d={draft.landowners} />
             <Process d={draft.process} />
-            <LeadForm d={NOMADE.form} />
+            <LeadForm d={NOMADE.form} isPreview={true} />
             <Partners d={draft.partners} onCta={() => {}} onPartner={() => {}} />
             <FutureGuests d={draft.guests} />
             <Footer d={draft.footer} />

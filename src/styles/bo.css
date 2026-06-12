@@ -1631,7 +1631,7 @@ table.tbl {
   background: var(--ivory-warm);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 14px 42px 14px 14px;
+  padding: 44px 14px 14px 14px;
   position: relative
 }
 
