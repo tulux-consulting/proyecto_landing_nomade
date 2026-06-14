@@ -1,50 +1,42 @@
-// ============================================================
-// NÓMADE — Autenticación del panel interno (ESM).
-// ------------------------------------------------------------
-// Se conecta al servidor de forma segura para validar credenciales,
-// manteniendo una verificación local de sesión en sessionStorage.
-// ============================================================
-
-const SESSION_KEY = "nomade_panel_session";
+import { createClient } from './supabase/client';
 
 export function panelIsAuthed() {
   if (typeof window === 'undefined') return false;
   try {
-    return sessionStorage.getItem(SESSION_KEY) === "ok";
+    const keys = Object.keys(localStorage);
+    return keys.some(key => key.startsWith('sb-') && key.endsWith('-auth-token'));
   } catch (e) {
     return false;
   }
 }
 
-export async function panelLogin(user, pass) {
+export async function panelLogin(email, password) {
   if (typeof window === 'undefined') return false;
   try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user, pass })
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
     
-    const data = await res.json();
-    if (data.success) {
-      sessionStorage.setItem(SESSION_KEY, "ok");
-      return true;
+    if (error) {
+      console.error('Error de autenticación:', error.message);
+      return false;
     }
-    return false;
+    
+    return true;
   } catch (e) {
-    // Fallback de contingencia local si la API de Next.js está offline o inaccesible temporalmente
-    const fallbackOk = user.trim() === "admin" && pass === "nomade2026";
-    if (fallbackOk) {
-      sessionStorage.setItem(SESSION_KEY, "ok");
-      return true;
-    }
+    console.error('Error de conexión:', e);
     return false;
   }
 }
 
-export function clearPanelSession() {
+export async function clearPanelSession() {
   if (typeof window === 'undefined') return;
   try {
-    sessionStorage.removeItem(SESSION_KEY);
-  } catch (e) {}
+    const supabase = createClient();
+    await supabase.auth.signOut();
+  } catch (e) {
+    console.error('Error al cerrar sesión:', e);
+  }
 }

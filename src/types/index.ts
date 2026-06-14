@@ -37,6 +37,7 @@ export interface Postulacion {
   accesoDisp?: string;
   servicios?: string[];
   construcciones?: string;
+  aeropuerto?: string;
   legal?: {
     titulo: string;
     usoSuelo: string;

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Button, Eyebrow, useLucide } from './primitives.jsx';
+import { PostulacionesRepository } from '../../repositories/index';
+
 // NÓMADE — 9 Initial NÓMADE Evaluation.
 // Multi-step application wizard. All original fields preserved — only chunked
 // into 9 steps (Progressive Disclosure + Chunking + Goal Gradient).
@@ -85,6 +87,9 @@ function LeadForm({ d, isPreview = false }) {
   const [errors, setErrors] = useState({});
   const [files, setFiles] = useState([]);
   const [savedAt, setSavedAt] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const fileRef = useRef(null);
   const formRef = useRef(null);
   const panelRef = useRef(null);
@@ -144,10 +149,11 @@ function LeadForm({ d, isPreview = false }) {
 
   const onFiles = (e) => {
     const list = Array.from(e.target.files || []).slice(0, 8);
-    const mapped = list.map((f) => ({ name: f.name, url: URL.createObjectURL(f) }));
+    const mapped = list.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f }));
     setFiles((prev) => [...prev, ...mapped].slice(0, 8));
   };
   const removeFile = (i) => setFiles((prev) => prev.filter((_, x) => x !== i));
+
 
   // Required fields per step index
   const required = {
@@ -210,7 +216,7 @@ function LeadForm({ d, isPreview = false }) {
     if (s <= maxReached) { setErrors({}); goTo(s); }
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (isPreview) return;
     // validate every required step
     let firstBad = -1; let allErr = {};
@@ -227,10 +233,55 @@ function LeadForm({ d, isPreview = false }) {
       requestAnimationFrame(() => { if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" }); });
       return;
     }
-    setDone(true);
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
-    requestAnimationFrame(() => { if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" }); });
+
+    setLoading(true);
+    setSubmitError("");
+
+    try {
+      const uploadedUrls = [];
+      const { createClient } = await import('../../lib/supabase/client.js');
+      const supabase = createClient();
+      
+      const folderId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+      for (let i = 0; i < files.length; i++) {
+        const fileItem = files[i];
+        if (fileItem.file) {
+          const fileExt = fileItem.name.split('.').pop();
+          const fileName = `${Date.now()}-${i}.${fileExt}`;
+          const filePath = `${folderId}/${fileName}`;
+          
+          const { error: uploadError } = await supabase.storage
+            .from('postulaciones')
+            .upload(filePath, fileItem.file);
+            
+          if (uploadError) {
+            console.error('Error al subir imagen:', uploadError);
+          } else {
+            const { data: { publicUrl } } = supabase.storage
+              .from('postulaciones')
+              .getPublicUrl(filePath);
+            uploadedUrls.push(publicUrl);
+          }
+        }
+      }
+
+      await PostulacionesRepository.create({
+        ...vals,
+        fotos: uploadedUrls
+      });
+
+      setDone(true);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
+      requestAnimationFrame(() => { if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" }); });
+    } catch (err) {
+      console.error(err);
+      setSubmitError("Ocurrió un error al enviar tu postulación. Por favor, intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const reset = () => {
     if (isPreview) return;
@@ -444,19 +495,29 @@ function LeadForm({ d, isPreview = false }) {
                 {renderStep()}
               </div>
 
+              {submitError && (
+                <div style={{ color: "#ef4444", fontSize: "14px", margin: "1rem 0", display: "flex", gap: "0.25rem", alignItems: "center" }}>
+                  <Icon name="alert-circle" />
+                  <span>{submitError}</span>
+                </div>
+              )}
+
               <div className="wizard-nav">
                 <div className="wizard-nav-left">
                   {step > 0 &&
-                    <button type="button" className="btn-text" onClick={back} disabled={isPreview}><Icon name="arrow-left" />Atrás</button>
+                    <button type="button" className="btn-text" onClick={back} disabled={isPreview || loading}><Icon name="arrow-left" />Atrás</button>
                   }
                 </div>
                 <div className="wizard-nav-right">
                   {savedAt && <span className="wizard-saved" aria-hidden="true"><Icon name="check" />Borrador guardado</span>}
                   {step < STEPS.length - 1 ?
-                    <Button variant="primary" icon="arrow-right" onClick={next} disabled={isPreview}>Continuar</Button> :
-                    <Button variant="primary" icon="arrow-right" onClick={submit} disabled={isPreview}>Enviar postulación</Button>}
+                    <Button variant="primary" icon="arrow-right" onClick={next} disabled={isPreview || loading}>Continuar</Button> :
+                    <Button variant="primary" icon={loading ? undefined : "arrow-right"} onClick={submit} disabled={isPreview || loading}>
+                      {loading ? "Enviando..." : "Enviar postulación"}
+                    </Button>}
                 </div>
               </div>
+
             </div>
           }
         </div>
