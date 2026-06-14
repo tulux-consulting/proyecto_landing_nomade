@@ -16,19 +16,70 @@ export default function PanelLayout({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Evitar redirección infinita si ya estamos en /panel/login
-    if (pathname === '/panel/login') {
-      setLoading(false);
-      return;
-    }
+    let subscription = null;
+    
+    const initAuth = async () => {
+      try {
+        const { createClient } = await import('../../lib/supabase/client.js');
+        const supabase = createClient();
+        
+        const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+          if (pathname === '/panel/login') {
+            if (session) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+              if (profile?.role === 'admin') {
+                router.replace('/panel');
+              }
+            }
+            setLoading(false);
+            return;
+          }
 
-    if (!panelIsAuthed()) {
-      router.replace('/panel/login');
-    } else {
-      setAuthed(true);
-      setLoading(false);
-    }
+          if (!session) {
+            setAuthed(false);
+            router.replace('/panel/login');
+            setLoading(false);
+            return;
+          }
+
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!profile || profile.role !== 'admin') {
+            setAuthed(false);
+            router.replace('/unauthorized');
+          } else {
+            setAuthed(true);
+          }
+          setLoading(false);
+        });
+
+        subscription = data.subscription;
+      } catch (e) {
+        console.error('Error inicializando auth listener:', e);
+        if (pathname !== '/panel/login') {
+          router.replace('/panel/login');
+        }
+        setLoading(false);
+      }
+    };
+
+    initAuth();
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, [router, pathname]);
+
 
   // Si está cargando o no está autenticado (y no es login), no renderizar nada
   if (loading) {
