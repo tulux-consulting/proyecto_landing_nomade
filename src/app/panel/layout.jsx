@@ -14,6 +14,8 @@ export default function PanelLayout({ children }) {
   const [navOpen, setNavOpen] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     let subscription = null;
@@ -23,13 +25,16 @@ export default function PanelLayout({ children }) {
         const { createClient } = await import('../../lib/supabase/client.js');
         const supabase = createClient();
         
-        const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+        // 1. Obtener sesión inicial
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const handleSession = async (currentSession) => {
           if (pathname === '/panel/login') {
-            if (session) {
+            if (currentSession) {
               const { data: profile } = await supabase
                 .from('profiles')
                 .select('role')
-                .eq('id', session.user.id)
+                .eq('id', currentSession.user.id)
                 .single();
               if (profile?.role === 'admin') {
                 router.replace('/panel');
@@ -39,31 +44,63 @@ export default function PanelLayout({ children }) {
             return;
           }
 
-          if (!session) {
+          if (!currentSession) {
             setAuthed(false);
             router.replace('/panel/login');
             setLoading(false);
             return;
           }
 
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', currentSession.user.id)
+              .single();
 
-          if (!profile || profile.role !== 'admin') {
+            if (!profile || profile.role !== 'admin') {
+              setAuthed(false);
+              router.replace('/unauthorized');
+            } else {
+              setAuthed(true);
+              setUser({
+                nombre: currentSession.user.email.split('@')[0],
+                email: currentSession.user.email,
+                permisos: ['dashboard', 'postulaciones', 'partners', 'huespedes', 'destinos', 'contenido', 'ajustes'],
+                rolNombre: 'Administrador'
+              });
+              
+              // Pre-cargar postulaciones
+              const { PostulacionesRepository } = await import('../../repositories/index');
+              await PostulacionesRepository.getAll().catch(console.error);
+            }
+          } catch (e) {
+            console.error('Error verificando rol de administrador:', e);
             setAuthed(false);
-            router.replace('/unauthorized');
-          } else {
-            setAuthed(true);
+            router.replace('/panel/login');
+          } finally {
+            setLoading(false);
           }
-          setLoading(false);
+        };
+
+        // Procesar la sesión actual de inmediato
+        await handleSession(session);
+
+        // 2. Escuchar cambios de autenticación posteriores
+        const { data } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+          if (event === 'SIGNED_OUT') {
+            setAuthed(false);
+            setUser(null);
+            router.replace('/panel/login');
+            setLoading(false);
+          } else if (event === 'SIGNED_IN') {
+            await handleSession(newSession);
+          }
         });
 
         subscription = data.subscription;
       } catch (e) {
-        console.error('Error inicializando auth listener:', e);
+        console.error('Error inicializando autenticación:', e);
         if (pathname !== '/panel/login') {
           router.replace('/panel/login');
         }
@@ -94,7 +131,8 @@ export default function PanelLayout({ children }) {
     return null;
   }
 
-  const user = BO.currentUser();
+  const activeUser = user || BO.currentUser();
+
   const go = (r) => {
     router.push(r);
     setNavOpen(false);
@@ -108,7 +146,8 @@ export default function PanelLayout({ children }) {
   return (
     <div className={"app" + (navOpen ? " nav-open" : "")}>
       <div className="side-scrim" onClick={closeNav}></div>
-      <Sidebar route={pathname} navOpen={navOpen} onNav={closeNav} user={user} onLogout={onLogout} />
+      <Sidebar route={pathname} navOpen={navOpen} onNav={closeNav} user={activeUser} onLogout={onLogout} />
+
       <div className="main">
         <MobileTop onBurger={() => setNavOpen(true)} />
         <main style={{ padding: '1.5rem', width: '100%', height: '100%' }}>

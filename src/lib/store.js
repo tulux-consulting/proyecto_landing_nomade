@@ -13,6 +13,8 @@ const BO = (function () {
   var PREFIX = "nomade_bo_";
   var SEED_FLAG = PREFIX + "seeded_v2";
   var subs = new Set();
+  var USE_SUPABASE = process.env.NEXT_PUBLIC_DATA_SOURCE === 'supabase';
+
 
   function emit() { subs.forEach(function (fn) { try { fn(); } catch (e) { } }); }
   function read(key, fallback) {
@@ -71,7 +73,16 @@ const BO = (function () {
   function seed() {
     if (typeof window === 'undefined') return;
     try {
-      if (localStorage.getItem(SEED_FLAG)) return;
+      if (USE_SUPABASE) {
+        localStorage.setItem(PREFIX + "postulaciones", JSON.stringify([]));
+      }
+      if (localStorage.getItem(SEED_FLAG)) {
+        if (USE_SUPABASE) {
+          localStorage.setItem(PREFIX + "postulaciones", JSON.stringify([]));
+        }
+        return;
+      }
+
 
       // — POSTULACIONES (terrenos) —
       var ESTADOS = ["Nuevo", "Pendiente de revisión", "Contactado", "En negociación", "Aprobado", "Rechazado"];
@@ -140,7 +151,11 @@ const BO = (function () {
           estado: r[7], archivado: false, comentarios: r[9], notas: []
         }, richPost(r, i));
       });
-      write("postulaciones", post);
+      if (!USE_SUPABASE) {
+        write("postulaciones", post);
+      } else {
+        write("postulaciones", []);
+      }
 
       // — PARTNERS (establecimientos) —
       var TIPOS = ["Camping", "Glamping", "Operador turístico", "Viñedo / Bodega", "Hospitalidad rural", "Propiedad recreativa", "Otro"];
@@ -349,6 +364,7 @@ const BO = (function () {
     all: all, get: get, insert: insert, update: update, remove: remove, addNote: addNote,
     getDoc: getDoc, setDoc: setDoc, uid: uid, rolePerms: rolePerms, withPerms: withPerms,
     currentUser: currentUser, setActiveUser: setActiveUser,
+    write: write,
     subscribe: function (fn) { subs.add(fn); return function () { subs.delete(fn); }; },
     seed: seed
   };
