@@ -212,7 +212,6 @@ create table if not exists public.partners (
   estado text not null default 'Nuevo' check (estado in ('Nuevo', 'Pendiente de revisión', 'Contactado', 'En negociación', 'Aprobado', 'Rechazado')),
   archivado boolean not null default false,
   descripcion text default '',
-  fotos text[] default '{}',
   notas jsonb default '[]'::jsonb,
   origen text default 'Formulario web'
 );
@@ -239,7 +238,7 @@ create policy "Visitantes públicos pueden insertar partners"
 revoke all on public.partners from anon;
 grant insert (
   nombre, tipo, fiscal, provincia, localidad, telefono, email, web, capacidad,
-  "anosOperando", estado, archivado, descripcion, fotos, notas, origen
+  "anosOperando", estado, archivado, descripcion, notas, origen
 ) on public.partners to anon;
 
 grant all on public.partners to authenticated;
@@ -298,5 +297,66 @@ grant all on public.guest_waitlist to authenticated;
 -- Indices
 create index if not exists guest_waitlist_email_idx on public.guest_waitlist(email);
 create index if not exists guest_waitlist_country_region_idx on public.guest_waitlist(country, region);
+
+
+-- ============================================================================
+-- DESTINATIONS (DESTINOS)
+-- ============================================================================
+
+-- destinos table
+create table if not exists public.destinos (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  slug text,
+  country text not null default 'Argentina',
+  region text,
+  city text,
+  short_description text,
+  description text,
+  status text not null default 'draft' check (status in ('draft', 'pending_review', 'published', 'unavailable', 'archived')),
+  reservation_url text,
+  cover_image_url text,
+  photos text[] default '{}',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  published_at timestamptz,
+  created_by uuid references auth.users(id) on delete set null,
+  updated_by uuid references auth.users(id) on delete set null,
+  source_type text check (source_type in ('postulacion', 'partner')),
+  source_id uuid,
+  
+  -- Campos para compatibilidad y mapeo
+  complejo text,
+  archivado boolean not null default false,
+  ubicacion text
+);
+
+-- RLS Configuration
+alter table public.destinos enable row level security;
+
+-- Policies
+drop policy if exists "Cualquier persona puede ver destinos" on public.destinos;
+drop policy if exists "Solo administradores pueden gestionar destinos" on public.destinos;
+
+-- Cualquier persona (incluso no autenticados) puede consultar destinos para la landing
+create policy "Cualquier persona puede ver destinos"
+  on public.destinos for select
+  to public
+  using (true);
+
+-- Solo administradores pueden insertar/actualizar/eliminar destinos
+create policy "Solo administradores pueden gestionar destinos"
+  on public.destinos for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- Permissions
+grant select on public.destinos to anon, authenticated;
+grant all on public.destinos to authenticated;
+
+-- Indices
+create index if not exists destinos_status_idx on public.destinos(status);
+create index if not exists destinos_archivado_idx on public.destinos(archivado);
 
 

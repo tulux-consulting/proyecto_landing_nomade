@@ -102,7 +102,6 @@ function PartnerModal({ open, onClose }) {
         estado: "Nuevo",
         archivado: false,
         descripcion: "",
-        fotos: [],
         notas: [],
         origen: "Formulario web"
       });
