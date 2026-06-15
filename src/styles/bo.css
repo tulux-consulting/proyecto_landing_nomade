@@ -1466,7 +1466,7 @@ table.tbl {
   max-height: 210px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-right: 5px
+  padding-right: 8px
 }
 
 .bar-scroll {
@@ -3258,7 +3258,7 @@ table.tbl {
 /* ============================================================
    NÓMADE — CMS Preview Overrides
    ============================================================ */
-.cms-preview .reveal-group > *,
+.cms-preview .reveal-group>*,
 .cms-preview .reveal,
 .cms-preview .whatis-item,
 .cms-preview .exp-pillar,
@@ -3368,4 +3368,4 @@ table.tbl {
 .cms-preview .form-app {
   grid-template-columns: 1fr !important;
   gap: 24px !important;
-}
+}

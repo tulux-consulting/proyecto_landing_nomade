@@ -5,13 +5,13 @@ import { Hero, WhatIs, Experience, Split } from '../landing/Sections1.jsx';
 import { Destinations, Model } from '../landing/Sections2.jsx';
 import { Landowners, Process } from '../landing/Sections3.jsx';
 import { Partners, FutureGuests, Footer } from '../landing/Sections4.jsx';
-import { Icon, useLucide, useStore, Btn, ModuleHead, FField, ImageManager } from './ui.jsx';
+import { Icon, useLucide, useStore, Btn, ModuleHead, FField, ImageManager, Spinner } from './ui.jsx';
 import dynamic from 'next/dynamic';
 import { NOMADE } from '../../data/content.js';
 
 const LeadForm = dynamic(() => import('../landing/LeadForm.jsx').then((m) => m.LeadForm), {
   ssr: false,
-  loading: () => <div style={{ padding: '20px', color: 'var(--stone)' }}>Cargando formulario...</div>
+  loading: () => <Spinner message="Cargando formulario..." size="sm" inline={true} />
 });
 
 // ============================================================
@@ -200,7 +200,7 @@ function Contenido({ onToast }) {
   }, []);
 
   if (!draft) {
-    return <div className="main-inner" style={{ color: 'var(--stone)', padding: '40px' }}>Cargando contenido...</div>;
+    return <Spinner message="Cargando contenido..." />;
   }
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedContent);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BO } from '../../lib/store.js';
-import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE } from './ui.jsx';
+import { DestinosRepository } from '../../repositories/index';
+import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE, Spinner } from './ui.jsx';
 
 // ============================================================
 // NÓMADE — Módulo Destinos (ABM).
@@ -67,9 +68,27 @@ function DestinoForm({ rec, onClose, onSave }) {
 function Destinos({ onToast }) {
   useStore();
   useLucide();
-  const all = BO.all("destinos");
+  const [all, setAll] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState(undefined); // undefined = closed, null = new, id = edit
   const [delId, setDelId] = useState(null);
+
+  const loadData = async () => {
+    try {
+      const data = await DestinosRepository.getAll();
+      setAll(data || []);
+    } catch (e) {
+      console.error('Error al cargar destinos:', e);
+      onToast('Error al conectar con el servidor.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const ctrl = useListController(all, { searchKeys: ["nombre", "complejo", "ubicacion"], perPage: 8, defaultSort: { key: "fecha", dir: "desc" } });
   const estadoFilter = ctrl.filters.estado || "__all";
   const archFilter = ctrl.filters.__archived || "active";
@@ -88,19 +107,39 @@ function Destinos({ onToast }) {
       : <span className="muted">—</span> }
   ];
 
-  const saveDest = (v) => {
-    if (editId) { BO.update("destinos", editId, v); onToast("Destino actualizado."); }
-    else { BO.insert("destinos", { ...v, archivado: false }); onToast("Destino creado."); }
+  const saveDest = async (v) => {
+    if (editId) {
+      await DestinosRepository.update(editId, v);
+      onToast("Destino actualizado.");
+    } else {
+      await DestinosRepository.create({ ...v, archivado: false });
+      onToast("Destino creado.");
+    }
     setEditId(undefined);
+    loadData();
   };
-  const rec = editId ? BO.get("destinos", editId) : null;
-  const delRec = delId ? BO.get("destinos", delId) : null;
-  const toggleArch = (r, e) => {
+
+  const rec = useMemo(() => editId ? all.find((r) => r.id === editId) : null, [editId, all]);
+  const delRec = useMemo(() => delId ? all.find((r) => r.id === delId) : null, [delId, all]);
+
+  const toggleArch = async (r, e) => {
     e.stopPropagation();
-    BO.update("destinos", r.id, { archivado: !r.archivado });
-    onToast(r.archivado ? "Destino restaurado." : "Destino archivado.");
+    const next = !r.archivado;
+    await DestinosRepository.update(r.id, { archivado: next });
+    onToast(next ? "Destino archivado." : "Destino restaurado.");
+    loadData();
   };
-  const doDelete = () => { BO.remove("destinos", delId); onToast("Destino eliminado definitivamente."); setDelId(null); };
+
+  const doDelete = async () => {
+    await DestinosRepository.delete(delId);
+    onToast("Destino eliminado definitivamente.");
+    setDelId(null);
+    loadData();
+  };
+
+  if (loading) {
+    return <Spinner message="Cargando destinos..." />;
+  }
 
   const cols = columns.concat([
     { key: "arch", label: "", width: "92px", align: "right", render: (r) => (

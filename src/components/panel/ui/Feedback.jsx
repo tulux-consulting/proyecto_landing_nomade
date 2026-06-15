@@ -29,3 +29,22 @@ export function ToastHost() {
   if (!msg) return null;
   return <div className="bo-toast" role="status" aria-live="polite"><Icon name="check" />{msg}</div>;
 }
+
+export function Spinner({ message, onDark = false, size = "md", inline = false }) {
+  const spinnerClass = `spinner ${onDark ? 'on-dark' : ''} spinner-${size}`;
+  if (inline) {
+    return (
+      <span className="spinner-inline">
+        <span className={spinnerClass} />
+        {message && <span className="spinner-message" style={{ color: 'inherit' }}>{message}</span>}
+      </span>
+    );
+  }
+  return (
+    <div className="spinner-container">
+      <span className={spinnerClass} />
+      {message && <p className="spinner-message" style={{ color: onDark ? 'var(--fg-on-dark-2)' : 'var(--fg3)' }}>{message}</p>}
+    </div>
+  );
+}
+

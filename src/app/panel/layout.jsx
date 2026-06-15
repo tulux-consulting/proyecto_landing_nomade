@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { panelIsAuthed, clearPanelSession } from '../../lib/auth.js';
 import { BO } from '../../lib/store.js';
-import { useStore, showToast, ToastHost } from '../../components/panel/ui.jsx';
+import { useStore, showToast, ToastHost, Spinner } from '../../components/panel/ui.jsx';
 import { Sidebar, MobileTop } from '../../components/panel/Shell.jsx';
+
 
 export default function PanelLayout({ children }) {
   useStore();
@@ -70,9 +71,13 @@ export default function PanelLayout({ children }) {
                 rolNombre: 'Administrador'
               });
               
-              // Pre-cargar postulaciones
-              const { PostulacionesRepository } = await import('../../repositories/index');
-              await PostulacionesRepository.getAll().catch(console.error);
+              // Pre-cargar postulaciones, partners y huéspedes
+              const { PostulacionesRepository, PartnersRepository, HuespedesRepository } = await import('../../repositories/index');
+              await Promise.all([
+                PostulacionesRepository.getAll().catch(console.error),
+                PartnersRepository.getAll().catch(console.error),
+                HuespedesRepository.getAll().catch(console.error)
+              ]);
             }
           } catch (e) {
             console.error('Error verificando rol de administrador:', e);
@@ -120,7 +125,11 @@ export default function PanelLayout({ children }) {
 
   // Si está cargando o no está autenticado (y no es login), no renderizar nada
   if (loading) {
-    return <div className="app-loading">Cargando panel...</div>;
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg)' }}>
+        <Spinner message="Cargando panel..." />
+      </div>
+    );
   }
 
   if (pathname === '/panel/login') {

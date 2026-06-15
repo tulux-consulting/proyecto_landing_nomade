@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BO } from '../../lib/store.js';
-import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE } from './ui.jsx';
+import { HuespedesRepository } from '../../repositories/index';
+import { Icon, useLucide, useStore, fmtDate, relDays, Badge, Tag, ModuleHead, Search, Select, DataTable, Pagination, Empty, DetailModal, DxCell, DxGrid, DxSection, Confirm, SearchableSelect, useListController, Spinner, showToast, BarChart } from './ui.jsx';
 
 // ============================================================
 // NÓMADE — Módulo Lista de huéspedes.
@@ -18,16 +19,35 @@ function countBy(rows, key, limit) {
 function Huespedes() {
   useStore();
   useLucide();
-  const all = BO.all("huespedes");
+  const [all, setAll] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
   const [tab, setTab] = useState("listado");
+  const [confirmDel, setConfirmDel] = useState(false);
+
+  const loadData = async () => {
+    try {
+      const data = await HuespedesRepository.getAll();
+      setAll(data || []);
+    } catch (e) {
+      console.error('Error al cargar huéspedes:', e);
+      showToast('Error al cargar la lista de huéspedes.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const ctrl = useListController(all, {
-    searchKeys: ["email", "pais", "provincia", "ciudad"],
+    searchKeys: ["email", "pais", "provincia", "ciudad", "estado"],
     perPage: 10, defaultSort: { key: "fecha", dir: "desc" }
   });
   const paisFilter = ctrl.filters.pais || "__all";
   const devFilter = ctrl.filters.dispositivo || "__all";
+  const estadoFilter = ctrl.filters.estado || "__all";
 
   const paises = useMemo(() => Array.from(new Set(all.map((r) => r.pais))).sort(), [all]);
   const thisMonth = all.filter((r) => new Date(r.fecha) > new Date(Date.now() - 30 * 86400000)).length;
@@ -43,11 +63,51 @@ function Huespedes() {
       <span className="cell-name"><span>{r.ciudad}, {r.provincia}</span><span className="td-sub">{r.pais}</span></span>
     ) },
     { key: "dispositivo", label: "Dispositivo", sortable: true, render: (r) => <Tag>{r.dispositivo}</Tag> },
+    { key: "estado", label: "Estado", sortable: true, render: (r) => <Badge status={r.estado || 'Nuevo'} /> },
     { key: "so", label: "Sistema", render: (r) => <span className="muted">{r.so} · {r.navegador}</span> },
     { key: "fecha", label: "Sumado", sortable: true, render: (r) => <span className="td-mono" title={fmtDate(r.fecha)}>{relDays(r.fecha)}</span> }
   ];
 
-  const rec = openId ? BO.get("huespedes", openId) : null;
+  const rec = useMemo(() => openId ? all.find((r) => r.id === openId) : null, [openId, all]);
+
+  const setEstado = async (e) => {
+    try {
+      await HuespedesRepository.update(openId, { estado: e });
+      showToast("Estado actualizado a “" + e + "”.");
+      loadData();
+    } catch (err) {
+      console.error(err);
+      showToast("Error al actualizar el estado.");
+    }
+  };
+
+  const updateNotes = async (t) => {
+    try {
+      await HuespedesRepository.update(openId, { admin_notes: t });
+      showToast("Observaciones guardadas.");
+      loadData();
+    } catch (err) {
+      console.error(err);
+      showToast("Error al guardar observaciones.");
+    }
+  };
+
+  const doDelete = async () => {
+    try {
+      await HuespedesRepository.delete(openId);
+      showToast("Huésped eliminado definitivamente.");
+      setConfirmDel(false);
+      setOpenId(null);
+      loadData();
+    } catch (err) {
+      console.error(err);
+      showToast("Error al eliminar el huésped.");
+    }
+  };
+
+  if (loading) {
+    return <Spinner message="Cargando lista de huéspedes..." />;
+  }
 
   return (
     <div className="main-inner">
@@ -67,6 +127,8 @@ function Huespedes() {
       <React.Fragment>
         <div className="toolbar">
           <Search value={ctrl.q} onChange={ctrl.setQ} placeholder="Buscar por email u origen…" />
+          <Select ariaLabel="Filtrar por estado" value={estadoFilter} onChange={(v) => ctrl.setFilter("estado", v)}
+            options={[{ value: "__all", label: "Todos los estados" }, "Nuevo", "Contactado", "Archivado"]} />
           <SearchableSelect ariaLabel="Filtrar por país" value={paisFilter} onChange={(v) => ctrl.setFilter("pais", v)}
             options={paises} allLabel="Todos los países" placeholder="Buscar país…" />
           <Select ariaLabel="Filtrar por dispositivo" value={devFilter} onChange={(v) => ctrl.setFilter("dispositivo", v)}
@@ -129,6 +191,18 @@ function Huespedes() {
             <span><Icon name="calendar" />Sumado {relDays(rec.fecha)}</span>
             <span><Icon name={rec.dispositivo === "Móvil" ? "smartphone" : rec.dispositivo === "Tablet" ? "tablet" : "monitor"} />{rec.dispositivo}</span>
           </React.Fragment>}>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span className="muted" style={{ fontSize: 13 }}>Estado:</span>
+              <Select ariaLabel="Cambiar estado" value={rec.estado || 'Nuevo'} onChange={setEstado}
+                options={["Nuevo", "Contactado", "Archivado"]} />
+            </div>
+            <button className="btn btn-text text-danger" onClick={() => setConfirmDel(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px' }}>
+              <Icon name="trash-2" />Eliminar de lista
+            </button>
+          </div>
+
           <div className="dx-cols">
             <DxSection title="Origen">
               <DxGrid>
@@ -146,10 +220,28 @@ function Huespedes() {
               </DxGrid>
             </DxSection>
           </div>
-          <p className="muted" style={{ fontSize: 12.5, lineHeight: 1.55, margin: 0 }}>
-            Los datos de origen y dispositivo se registran automáticamente al sumarse, siempre que el navegador lo permita.
-          </p>
+
+          <DxSection title="Observaciones administrativas" style={{ marginTop: 20 }}>
+            <textarea
+              className="form-control"
+              style={{ width: '100%', minHeight: 80, padding: 10, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--fg)', marginTop: 8 }}
+              placeholder="Escribí notas u observaciones sobre este huésped..."
+              defaultValue={rec.admin_notes || ''}
+              onBlur={(e) => {
+                if (e.target.value !== (rec.admin_notes || '')) {
+                  updateNotes(e.target.value);
+                }
+              }}
+            />
+            <p className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>
+              Las notas se guardan automáticamente al perder el foco (blur).
+            </p>
+          </DxSection>
         </DetailModal>
+      )}
+
+      {confirmDel && (
+        <Confirm title="Eliminar huésped" message="¿Estás seguro de que querés eliminar a este huésped de la lista? Esta acción no se puede deshacer." onConfirm={doDelete} onCancel={() => setConfirmDel(false)} />
       )}
     </div>
   );

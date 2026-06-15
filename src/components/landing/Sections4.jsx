@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icon, Eyebrow, Button, useLucide, scrollToId } from './primitives.jsx';
+import { HuespedesRepository } from '../../repositories/index';
 // NÓMADE — 10 NÓMADE Partners · 11 Future guests waitlist · 12 Footer
 
 function Partners(props) {
@@ -45,21 +46,103 @@ function Partners(props) {
   );
 }
 
+function getDeviceType() {
+  if (typeof window === 'undefined') return 'Escritorio';
+  const ua = navigator.userAgent.toLowerCase();
+  const width = window.innerWidth;
+  if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+    return 'Tablet';
+  }
+  if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpwOS)/i.test(ua) || width < 768) {
+    return 'Móvil';
+  }
+  return 'Escritorio';
+}
+
+function getOS() {
+  if (typeof window === 'undefined') return 'Otro';
+  const ua = navigator.userAgent;
+  if (/Windows/i.test(ua)) return 'Windows';
+  if (/Macintosh|Mac OS X/i.test(ua)) return 'macOS';
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+  if (/Android/i.test(ua)) return 'Android';
+  if (/Linux/i.test(ua)) return 'Linux';
+  return 'Otro';
+}
+
+function getBrowser() {
+  if (typeof window === 'undefined') return 'Otro';
+  const ua = navigator.userAgent;
+  if (/chrome|crios/i.test(ua) && !/edge|edg/i.test(ua) && !/opr/i.test(ua)) return 'Chrome';
+  if (/safari/i.test(ua) && !/chrome|crios/i.test(ua)) return 'Safari';
+  if (/firefox|fxios/i.test(ua)) return 'Firefox';
+  if (/edge|edg/i.test(ua)) return 'Edge';
+  if (/opr/i.test(ua)) return 'Opera';
+  return 'Otro';
+}
+
 function FutureGuests(props) {
   const d = props.d || props;
   useLucide();
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const submit = (e) => {
+
+  const submit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("Revisá el formato del email.");
       return;
     }
     setError("");
-    setDone(true);
+    setLoading(true);
+
+    let location = {
+      country: "Argentina",
+      region: "Buenos Aires",
+      city: "CABA"
+    };
+
+    try {
+      const res = await Promise.race([
+        fetch('https://ipapi.co/json/'),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2500))
+      ]);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.country_name) location.country = data.country_name;
+        if (data.region) location.region = data.region;
+        if (data.city) location.city = data.city;
+      }
+    } catch (e) {
+      console.warn("Failed to fetch location metadata, using defaults:", e);
+    }
+
+    try {
+      const deviceType = getDeviceType();
+      const os = getOS();
+      const browser = getBrowser();
+
+      await HuespedesRepository.create({
+        email: email.trim(),
+        pais: location.country,
+        provincia: location.region,
+        ciudad: location.city,
+        dispositivo: deviceType,
+        so: os,
+        navegador: browser
+      });
+      setDone(true);
+    } catch (err) {
+      console.error(err);
+      setError("Hubo un error al registrarte. Por favor intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <section className="section charcoal guests" id="huespedes">
       <div className="wrap-narrow guests-inner">
@@ -77,11 +160,15 @@ function FutureGuests(props) {
               <input
                 type="email"
                 value={email}
+                disabled={loading}
                 onChange={(e) => { setEmail(e.target.value); setError(""); }}
-                placeholder={d.placeholder}
+                placeholder={loading ? "Enviando..." : d.placeholder}
                 aria-label="Email" />
 
-              <Button variant="ivory" icon="arrow-right" type="submit">{d.cta}</Button>
+              <button className="btn btn-ivory" disabled={loading} type="submit">
+                {loading ? "Enviando..." : d.cta}
+                {!loading && <Icon name="arrow-right" />}
+              </button>
             </div>
             {error && <span className="guests-error">{error}</span>}
           </form>
