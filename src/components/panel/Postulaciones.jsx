@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { BO } from '../../lib/store.js';
 import { PostulacionesRepository } from '../../repositories/index';
 import { PostulacionModal } from './PostulacionModal.jsx';
-import { Icon, useLucide, fmtDate, relDays, Badge, TagRow, ModuleHead, Search, Select, DataTable, Pagination, Empty, Confirm, SearchableSelect } from './ui.jsx';
+import { Icon, useLucide, fmtDate, relDays, Badge, TagRow, ModuleHead, Search, Select, DataTable, Pagination, Empty, Confirm, SearchableSelect, Spinner } from './ui.jsx';
 
 function Postulaciones({ onToast }) {
   useLucide();
@@ -80,7 +80,7 @@ function Postulaciones({ onToast }) {
   };
 
   if (loading) {
-    return <div className="app-loading">Cargando postulaciones...</div>;
+    return <Spinner message="Cargando postulaciones..." />;
   }
 
   return (

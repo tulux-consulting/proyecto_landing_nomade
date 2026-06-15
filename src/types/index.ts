@@ -103,6 +103,8 @@ export interface Huesped {
   navegador: string;
   so: string;
   dispositivo: string;
+  estado?: string;
+  admin_notes?: string;
 }
 
 // ============================================================================

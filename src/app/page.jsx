@@ -11,10 +11,11 @@ import { Destinations, Model } from '../components/landing/Sections2.jsx';
 import { Landowners, Process } from '../components/landing/Sections3.jsx';
 import { Partners, FutureGuests, Footer } from '../components/landing/Sections4.jsx';
 import dynamic from 'next/dynamic';
+import { Spinner } from '../components/panel/ui/Feedback.jsx';
 
 const LeadForm = dynamic(() => import('../components/landing/LeadForm.jsx').then((m) => m.LeadForm), {
   ssr: false,
-  loading: () => <div className="form-loading" style={{ padding: '40px', textAlignment: 'center', color: 'var(--stone)' }}>Cargando evaluación...</div>
+  loading: () => <Spinner message="Cargando evaluación..." size="sm" />
 });
 
 const PartnerModal = dynamic(() => import('../components/landing/PartnerModal.jsx').then((m) => m.PartnerModal), {
@@ -35,8 +36,8 @@ export default function LandingPage() {
 
   if (!content) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1d1d1b', color: '#e0d9cf', fontFamily: 'sans-serif' }}>
-        Cargando NÓMADE...
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1d1d1b' }}>
+        <Spinner message="Cargando NÓMADE..." onDark={true} size="lg" />
       </div>
     );
   }

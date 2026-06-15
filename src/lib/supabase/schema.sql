@@ -1,8 +1,8 @@
--- ============================================================
--- NÓMADE — Esquema de Base de Datos y Políticas de Seguridad
--- ============================================================
+-- ============================================================================
+-- AUTHENTICATION & AUTHORIZATION (PROFILES & ROLES)
+-- ============================================================================
 
--- 1. Tabla de Perfiles (Manejada en la entrega anterior)
+-- profiles table
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text,
@@ -10,9 +10,10 @@ create table if not exists public.profiles (
   created_at timestamptz default now()
 );
 
+-- RLS Configuration
 alter table public.profiles enable row level security;
 
--- 2. Políticas RLS para profiles
+-- Policies
 drop policy if exists "Cualquier usuario autenticado puede leer perfiles" on public.profiles;
 drop policy if exists "Solo administradores pueden actualizar perfiles" on public.profiles;
 
@@ -31,7 +32,7 @@ create policy "Solo administradores pueden actualizar perfiles"
     )
   );
 
--- 3. Funciones auxiliares para obtener el rol y verificar administrador
+-- Helper Functions
 create or replace function public.get_my_role()
 returns text as $$
 declare
@@ -50,7 +51,11 @@ end;
 $$ language plpgsql security definer;
 
 
--- 4. Tabla de Postulaciones (applications)
+-- ============================================================================
+-- APPLICATIONS (SOLICITUDES / POSTULACIONES)
+-- ============================================================================
+
+-- postulaciones table
 create table if not exists public.postulaciones (
   id uuid default gen_random_uuid() primary key,
   fecha timestamptz default now(),
@@ -111,10 +116,10 @@ create table if not exists public.postulaciones (
   reviewed_by uuid references auth.users(id) on delete set null
 );
 
--- Habilitar RLS en postulaciones
+-- RLS Configuration
 alter table public.postulaciones enable row level security;
 
--- 5. Políticas RLS para la tabla de postulaciones
+-- Policies
 drop policy if exists "Administradores tienen control total" on public.postulaciones;
 drop policy if exists "Visitantes públicos pueden insertar postulaciones" on public.postulaciones;
 
@@ -129,8 +134,15 @@ create policy "Visitantes públicos pueden insertar postulaciones"
   to anon
   with check (true);
 
--- 6. Limitar privilegios de inserción para usuarios anónimos (Seguridad de columnas)
+-- Permissions
 revoke all on public.postulaciones from anon;
+grant insert (
+  nombre, apellido, email, phone, relacion, provincia, localidad, coords, distancia,
+  tamano, topografia, paisaje, aguas, vistas, entorno, acceso, estacionalidad, aeropuerto,
+  servicios, construcciones, titulo, uso_suelo, legal_notes, actividades, atractivos, demanda,
+  modelo, inversion, horizonte, comentarios, fotos
+) on public.postulaciones to anon;
+
 grant insert (
   nombre, apellido, email, telefono, relacion, provincia, localidad, coords, distancia,
   tamano, topografia, paisaje, aguas, vistas, entorno, acceso, estacionalidad, aeropuerto,
@@ -140,15 +152,13 @@ grant insert (
 
 grant all on public.postulaciones to authenticated;
 
-
--- 7. Configuración de Supabase Storage para Fotos de Postulaciones
+-- Storage Configuration & Policies for Postulaciones
 create extension if not exists pgcrypto;
 
 insert into storage.buckets (id, name, public)
 values ('postulaciones', 'postulaciones', true)
 on conflict (id) do nothing;
 
--- Políticas de RLS en Storage para el bucket de postulaciones
 drop policy if exists "Cualquier persona puede subir fotos" on storage.objects;
 drop policy if exists "Cualquier persona puede ver fotos" on storage.objects;
 drop policy if exists "Administradores pueden gestionar fotos" on storage.objects;
@@ -174,5 +184,119 @@ create policy "Administradores pueden gestionar fotos"
     )
   );
 
+
+-- ============================================================================
+-- PARTNERS
+-- ============================================================================
+
+-- partners table
+create table if not exists public.partners (
+  id uuid default gen_random_uuid() primary key,
+  fecha timestamptz default now(),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  
+  -- Datos del Establecimiento
+  nombre text not null,
+  tipo text not null,
+  fiscal text not null,
+  provincia text not null,
+  localidad text not null,
+  telefono text not null,
+  email text not null,
+  web text,
+  capacidad text,
+  "anosOperando" integer,
+  
+  -- Administración y Auditoría
+  estado text not null default 'Nuevo' check (estado in ('Nuevo', 'Pendiente de revisión', 'Contactado', 'En negociación', 'Aprobado', 'Rechazado')),
+  archivado boolean not null default false,
+  descripcion text default '',
+  fotos text[] default '{}',
+  notas jsonb default '[]'::jsonb,
+  origen text default 'Formulario web'
+);
+
+-- RLS Configuration
+alter table public.partners enable row level security;
+
+-- Policies
+drop policy if exists "Administradores tienen control total sobre partners" on public.partners;
+drop policy if exists "Visitantes públicos pueden insertar partners" on public.partners;
+
+create policy "Administradores tienen control total sobre partners"
+  on public.partners for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+create policy "Visitantes públicos pueden insertar partners"
+  on public.partners for insert
+  to anon
+  with check (true);
+
+-- Permissions
+revoke all on public.partners from anon;
+grant insert (
+  nombre, tipo, fiscal, provincia, localidad, telefono, email, web, capacidad,
+  "anosOperando", estado, archivado, descripcion, fotos, notas, origen
+) on public.partners to anon;
+
+grant all on public.partners to authenticated;
+
+-- Indices
+create index if not exists partners_estado_archivado_idx on public.partners(estado, archivado);
+create index if not exists partners_email_idx on public.partners(email);
+
+
+-- ============================================================================
+-- GUEST WAITLIST (LISTA DE HUÉSPEDES)
+-- ============================================================================
+
+-- guest_waitlist table
+create table if not exists public.guest_waitlist (
+  id uuid default gen_random_uuid() primary key,
+  email text not null,
+  country text not null default 'Argentina',
+  region text not null default 'Buenos Aires',
+  city text not null default 'CABA',
+  device_type text not null check (device_type in ('Móvil', 'Escritorio', 'Tablet')),
+  operating_system text not null,
+  browser text not null,
+  status text not null default 'Nuevo' check (status in ('Nuevo', 'Contactado', 'Archivado')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  admin_notes text default ''
+);
+
+-- RLS Configuration
+alter table public.guest_waitlist enable row level security;
+
+-- Policies
+drop policy if exists "Administradores tienen control total sobre guest_waitlist" on public.guest_waitlist;
+drop policy if exists "Visitantes públicos pueden insertar guest_waitlist" on public.guest_waitlist;
+
+create policy "Administradores tienen control total sobre guest_waitlist"
+  on public.guest_waitlist for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+create policy "Visitantes públicos pueden insertar guest_waitlist"
+  on public.guest_waitlist for insert
+  to anon
+  with check (true);
+
+-- Permissions
+revoke all on public.guest_waitlist from anon;
+grant insert (
+  email, country, region, city, device_type, operating_system, browser, status, admin_notes
+) on public.guest_waitlist to anon;
+
+grant all on public.guest_waitlist to authenticated;
+
+-- Indices
+create index if not exists guest_waitlist_email_idx on public.guest_waitlist(email);
+create index if not exists guest_waitlist_country_region_idx on public.guest_waitlist(country, region);
 
 

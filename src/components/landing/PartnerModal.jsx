@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NOMADE } from '../../data/content.js';
-import { BO } from '../../lib/store.js';
+import { PartnersRepository } from '../../repositories/index';
 // NÓMADE — Modal "Quiero ser Partner".
 // Formulario funcional: validaciones, errores, estado de carga y
 // confirmación. Al enviar, guarda el partner en el store del
@@ -79,7 +79,7 @@ function PartnerModal({ open, onClose }) {
     return e;
   };
 
-  const submit = (ev) => {
+  const submit = async (ev) => {
     ev.preventDefault();
     const e = validate();
     if (Object.keys(e).length) {
@@ -90,22 +90,29 @@ function PartnerModal({ open, onClose }) {
       return;
     }
     setLoading(true);
-    // Simulación de envío al backend. Persiste en el store del backoffice.
-    setTimeout(() => {
-      try {
-        if (BO) {
-          BO.insert("partners", {
-            nombre: v.nombre.trim(), tipo: v.tipo, fiscal: v.fiscal.trim(),
-            provincia: v.provincia, localidad: v.localidad.trim(),
-            telefono: v.telefono.trim(), email: v.email.trim(),
-            estado: "Nuevo", archivado: false, descripcion: "", notas: [],
-            origen: "Formulario web"
-          });
-        }
-      } catch (err) {/* ignore */ }
-      setLoading(false);
+    try {
+      await PartnersRepository.create({
+        nombre: v.nombre.trim(),
+        tipo: v.tipo,
+        fiscal: v.fiscal.trim(),
+        provincia: v.provincia,
+        localidad: v.localidad.trim(),
+        telefono: v.telefono.trim(),
+        email: v.email.trim(),
+        estado: "Nuevo",
+        archivado: false,
+        descripcion: "",
+        fotos: [],
+        notas: [],
+        origen: "Formulario web"
+      });
       setDone(true);
-    }, 900);
+    } catch (err) {
+      console.error("Error submitting partner form:", err);
+      setErrors({ submit: "Ocurrió un error al enviar. Intentá de nuevo." });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const F = PMField;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BO } from '../../lib/store.js';
-import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE } from './ui.jsx';
+import { PartnersRepository } from '../../repositories/index';
+import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE, Spinner } from './ui.jsx';
+
 
 // ============================================================
 // NÓMADE — Módulo Partners.
@@ -90,9 +92,26 @@ function PartnerModalDetail({ rec, onClose, onEstado, onNote, onArchive, onDelet
 function Partners({ onToast }) {
   useStore();
   useLucide();
-  const all = BO.all("partners");
+  const [all, setAll] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
   const [confirmDel, setConfirmDel] = useState(false);
+
+  const loadData = async () => {
+    try {
+      const data = await PartnersRepository.getAll();
+      setAll(data || []);
+    } catch (e) {
+      console.error('Error al cargar partners:', e);
+      onToast('Error al conectar con el servidor.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const ctrl = useListController(all, {
     searchKeys: ["nombre", "email", "provincia", "localidad", "tipo"],
@@ -115,19 +134,37 @@ function Partners({ onToast }) {
     { key: "fecha", label: "Recibido", sortable: true, render: (r) => <span className="td-mono" title={fmtDate(r.fecha)}>{relDays(r.fecha)}</span> }
   ];
 
-  const rec = openId ? BO.get("partners", openId) : null;
-  const setEstado = (e) => { BO.update("partners", openId, { estado: e }); onToast("Estado actualizado a “" + e + "”."); };
-  const addNote = (t) => { BO.addNote("partners", openId, t); };
-  const toggleArch = () => {
+  const rec = useMemo(() => openId ? all.find((r) => r.id === openId) : null, [openId, all]);
+  
+  const setEstado = async (e) => {
+    await PartnersRepository.update(openId, { estado: e });
+    onToast("Estado actualizado a “" + e + "”.");
+    loadData();
+  };
+  
+  const addNote = async (t) => {
+    await PartnersRepository.addNote(openId, t);
+    loadData();
+  };
+  
+  const toggleArch = async () => {
     const next = !rec.archivado;
-    BO.update("partners", openId, { archivado: next });
+    await PartnersRepository.update(openId, { archivado: next });
     onToast(next ? "Partner archivado." : "Partner restaurado.");
+    loadData();
   };
-  const doDelete = () => {
-    BO.remove("partners", openId);
+  
+  const doDelete = async () => {
+    await PartnersRepository.delete(openId);
     onToast("Partner eliminado definitivamente.");
-    setConfirmDel(false); setOpenId(null);
+    setConfirmDel(false);
+    setOpenId(null);
+    loadData();
   };
+
+  if (loading) {
+    return <Spinner message="Cargando partners..." />;
+  }
 
   return (
     <div className="main-inner">
