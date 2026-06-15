@@ -13,24 +13,51 @@ function DestinoForm({ rec, onClose, onSave }) {
   const blank = { nombre: "", complejo: "", ubicacion: "", estado: "No disponible", reserva: "", descripcion: "", fotos: [], imagen: "" };
   const [v, setV] = useState(rec ? { ...rec, fotos: (rec.fotos && rec.fotos.length ? rec.fotos.slice() : (rec.imagen ? [rec.imagen] : [])) } : blank);
   const [err, setErr] = useState({});
+  const [saving, setSaving] = useState(false);
   const set = (k) => (e) => { setV((s) => ({ ...s, [k]: e.target.value })); setErr((x) => ({ ...x, [k]: undefined })); };
   const habilitado = v.estado === "Disponible";
 
-  const save = () => {
+  const save = async () => {
     const e = {};
     if (!v.nombre.trim()) e.nombre = "Ingresá un nombre.";
     if (!v.ubicacion.trim()) e.ubicacion = "Ingresá la ubicación.";
     if (habilitado && !v.reserva.trim()) e.reserva = "Un destino habilitado necesita un link de reserva.";
     if (habilitado && (!v.fotos || v.fotos.length === 0)) e.fotos = "Agregá al menos una foto antes de habilitar.";
     if (Object.keys(e).length) { setErr(e); return; }
-    onSave({ ...v, imagen: (v.fotos && v.fotos[0]) || "" });
+    
+    setSaving(true);
+    try {
+      await onSave({ ...v, imagen: (v.fotos && v.fotos[0]) || "" });
+    } catch (error) {
+      console.error("Error al guardar destino:", error);
+      setSaving(false);
+    }
   };
 
   return (
     <Modal kicker={rec ? "Editar destino" : "Nuevo destino"} title={rec ? rec.nombre : "Crear un destino"} wide
       subtitle={rec ? "Actualizá la información de este destino de la red." : "Sumá una nueva experiencia de hospedaje a la red NÓMADE."}
       onClose={onClose}
-      footer={<React.Fragment><Btn variant="ghost" onClick={onClose}>Cancelar</Btn><Btn variant="primary" icon="check" onClick={save}>{rec ? "Guardar cambios" : "Crear destino"}</Btn></React.Fragment>}>
+      footer={
+        <React.Fragment>
+          <Btn variant="ghost" onClick={onClose} disabled={saving}>Cancelar</Btn>
+          <Btn 
+            variant="primary" 
+            icon={saving ? undefined : "check"} 
+            onClick={save} 
+            disabled={saving}
+          >
+            {saving ? (
+              <React.Fragment>
+                <span className="spinner spinner-sm on-dark" style={{ marginRight: 8, verticalAlign: "middle" }}></span>
+                {rec ? "Guardando..." : "Creando..."}
+              </React.Fragment>
+            ) : (
+              rec ? "Guardar cambios" : "Crear destino"
+            )}
+          </Btn>
+        </React.Fragment>
+      }>
 
       {/* publicación */}
       <div className="dest-publish">
@@ -38,27 +65,27 @@ function DestinoForm({ rec, onClose, onSave }) {
           <p className="dest-publish-h">{habilitado ? "Destino habilitado" : "Destino deshabilitado"}</p>
           <p className="dest-publish-p">{habilitado ? "Visible en la landing como destino disponible." : "Oculto para los visitantes hasta que lo habilites."}</p>
         </div>
-        <Toggle checked={habilitado} onChange={(e) => setV((s) => ({ ...s, estado: e.target.checked ? "Disponible" : "No disponible" }))} />
+        <Toggle checked={habilitado} onChange={(e) => setV((s) => ({ ...s, estado: e.target.checked ? "Disponible" : "No disponible" }))} disabled={saving} />
       </div>
 
       <div className="f-grid">
         <FField label="Nombre del destino" required error={err.nombre}>
-          <input value={v.nombre} onChange={set("nombre")} placeholder="Ej.: Bariloche" />
+          <input value={v.nombre} onChange={set("nombre")} placeholder="Ej.: Bariloche" disabled={saving} />
         </FField>
         <FField label="Nombre del complejo" hint="El nombre propio del lugar. Ej.: Complejo Arcoíris.">
-          <input value={v.complejo} onChange={set("complejo")} placeholder="Ej.: Complejo Arcoíris" />
+          <input value={v.complejo} onChange={set("complejo")} placeholder="Ej.: Complejo Arcoíris" disabled={saving} />
         </FField>
         <FField label="Ubicación" required error={err.ubicacion} full hint="Provincia y tipo de paisaje. Ej.: Río Negro · Lagos y bosque andino">
-          <input value={v.ubicacion} onChange={set("ubicacion")} placeholder="Provincia · paisaje" />
+          <input value={v.ubicacion} onChange={set("ubicacion")} placeholder="Provincia · paisaje" disabled={saving} />
         </FField>
         <FField label="Link del botón de reserva" error={err.reserva} full hint="A dónde lleva «Reservar» en la landing.">
-          <input value={v.reserva} onChange={set("reserva")} placeholder="https://…" />
+          <input value={v.reserva} onChange={set("reserva")} placeholder="https://…" disabled={saving} />
         </FField>
         <FField label="Fotografías" full error={err.fotos} hint="La primera imagen es la portada. Arrastrá para subir, pegá una URL o elegí de la galería.">
           <ImageManager fotos={v.fotos} onChange={(fotos) => { setV((s) => ({ ...s, fotos })); setErr((x) => ({ ...x, fotos: undefined })); }} />
         </FField>
         <FField label="Descripción" full hint="Texto que se muestra en la landing.">
-          <textarea value={v.descripcion} onChange={set("descripcion")} rows="4" placeholder="Describí la experiencia y el entorno del destino…" />
+          <textarea value={v.descripcion} onChange={set("descripcion")} rows="4" placeholder="Describí la experiencia y el entorno del destino…" disabled={saving} />
         </FField>
       </div>
     </Modal>
@@ -110,10 +137,10 @@ function Destinos({ onToast }) {
   const saveDest = async (v) => {
     if (editId) {
       await DestinosRepository.update(editId, v);
-      onToast("Destino actualizado.");
+      onToast("Destino actualizado correctamente.");
     } else {
       await DestinosRepository.create({ ...v, archivado: false });
-      onToast("Destino creado.");
+      onToast("Destino creado correctamente.");
     }
     setEditId(undefined);
     loadData();

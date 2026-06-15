@@ -179,7 +179,6 @@ const BO = (function () {
           web: (i % 3 === 0) ? "" : "https://" + r[0].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "") + ".com",
           capacidad: (4 + (i * 3) % 30) + " plazas", anosOperando: (i % 6),
           estado: r[4], archivado: false, descripcion: r[6],
-          fotos: [FOTOS_POOL[i % FOTOS_POOL.length], FOTOS_POOL[(i + 4) % FOTOS_POOL.length], FOTOS_POOL[(i + 7) % FOTOS_POOL.length]].slice(0, (i % 3 === 0 ? 1 : 3)),
           notas: []
         };
       });

@@ -1,6 +1,6 @@
 import { BO } from '../../lib/store.js';
 import { NOMADE } from '../../data/content.js';
-import { LandingContent } from '../../types/index';
+import { LandingContent } from './contenido.types';
 import { createClient } from '../../lib/supabase/client';
 
 const USE_SUPABASE = process.env.NEXT_PUBLIC_DATA_SOURCE === 'supabase';
