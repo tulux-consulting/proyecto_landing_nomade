@@ -1,5 +1,5 @@
 import { BO } from '../../lib/store.js';
-import { Huesped } from '../../types/index';
+import { Huesped } from './huesped.types';
 import { createClient } from '../../lib/supabase/client';
 
 const USE_SUPABASE = process.env.NEXT_PUBLIC_DATA_SOURCE === 'supabase';

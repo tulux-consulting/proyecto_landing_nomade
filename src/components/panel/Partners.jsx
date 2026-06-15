@@ -12,11 +12,9 @@ import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, Ta
 // ============================================================
 function PartnerModalDetail({ rec, onClose, onEstado, onNote, onArchive, onDelete }) {
   const [tab, setTab] = useState("resumen");
-  const fotos = rec.fotos || [];
 
   const tabs = [
     { key: "resumen", label: "Resumen", icon: "handshake" },
-    { key: "fotos", label: "Fotos", icon: "image", count: fotos.length || null },
     { key: "notas", label: "Notas", icon: "message-square", count: (rec.notas || []).length || null }
   ];
 
@@ -29,7 +27,7 @@ function PartnerModalDetail({ rec, onClose, onEstado, onNote, onArchive, onDelet
   );
 
   return (
-    <DetailModal kicker="Partner" title={rec.nombre} cover={fotos[0]} sub={sub}
+    <DetailModal kicker="Partner" title={rec.nombre} sub={sub}
       tabs={tabs} active={tab} onTab={setTab} onClose={onClose}
       footer={
         <div style={{ display: "flex", gap: 10 }}>
@@ -72,12 +70,6 @@ function PartnerModalDetail({ rec, onClose, onEstado, onNote, onArchive, onDelet
             </DxSection>
           )}
         </React.Fragment>
-      )}
-
-      {tab === "fotos" && (
-        <DxSection title="Fotografías del establecimiento">
-          <PhotoGallery fotos={fotos} empty="El partner no adjuntó imágenes." />
-        </DxSection>
       )}
 
       {tab === "notas" && (

@@ -36,12 +36,12 @@ export function FField({ label, required, error, full, hint, children }) {
   );
 }
 
-export function Toggle({ checked, onChange }) {
+export function Toggle({ checked, onChange, disabled, ...props }) {
   return (
-    <span style={{ position: "relative", display: "inline-block", width: 40, height: 23, flex: "none" }}>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ position: "absolute", opacity: 0, width: "100%", height: "100%", margin: 0, cursor: "pointer" }} />
-      <span style={{ position: "absolute", inset: 0, borderRadius: 999, background: checked ? "var(--forest)" : "var(--stone)", transition: "background .18s" }}></span>
-      <span style={{ position: "absolute", top: 3, left: checked ? 20 : 3, width: 17, height: 17, borderRadius: "50%", background: "var(--ivory)", transition: "left .18s", boxShadow: "var(--shadow-sm)" }}></span>
+    <span style={{ position: "relative", display: "inline-block", width: 40, height: 23, flex: "none", opacity: disabled ? 0.6 : 1 }}>
+      <input type="checkbox" checked={checked} onChange={onChange} disabled={disabled} style={{ position: "absolute", opacity: 0, width: "100%", height: "100%", margin: 0, cursor: disabled ? "not-allowed" : "pointer", zIndex: 2 }} {...props} />
+      <span style={{ position: "absolute", inset: 0, borderRadius: 999, background: checked ? "var(--forest)" : "var(--stone)", transition: "background .18s", pointerEvents: "none" }}></span>
+      <span style={{ position: "absolute", top: 3, left: checked ? 20 : 3, width: 17, height: 17, borderRadius: "50%", background: "var(--ivory)", transition: "left .18s", boxShadow: "var(--shadow-sm)", pointerEvents: "none" }}></span>
     </span>
   );
 }

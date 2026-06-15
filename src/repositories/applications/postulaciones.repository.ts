@@ -1,5 +1,5 @@
 import { BO } from '../../lib/store.js';
-import { Postulacion } from '../../types/index';
+import { Postulacion } from './application.types';
 import { createClient } from '../../lib/supabase/client';
 
 const USE_SUPABASE = process.env.NEXT_PUBLIC_DATA_SOURCE === 'supabase';
