@@ -7,6 +7,6 @@ export { Badge, StatusChanger, STATUS_CLASS, STATUS_HUE } from './ui/Badge.jsx';
 export { Search, Select, FField, Toggle, SearchableSelect } from './ui/Form.jsx';
 export { Btn } from './ui/Btn.jsx';
 export { DataTable, Pagination, useListController } from './ui/Table.jsx';
-export { Empty, showToast, ToastHost } from './ui/Feedback.jsx';
+export { Empty, showToast, ToastHost, Spinner } from './ui/Feedback.jsx';
 export { Drawer, Modal, Confirm, DetailModal } from './ui/Overlay.jsx';
 export { PhotoGallery, ImageManager } from './ui/Media.jsx';

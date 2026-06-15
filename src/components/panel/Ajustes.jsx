@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BO } from '../../lib/store.js';
-import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE } from './ui.jsx';
+import { Icon, useLucide, useStore, fmtDate, relDays, resolveImg, Badge, Tag, TagRow, ModuleHead, Search, Select, Btn, DataTable, Pagination, Empty, Drawer, DRow, DGroup, StatusChanger, Notes, Modal, FField, BarChart, showToast, ToastHost, DetailModal, DxCell, DxGrid, DxSection, PhotoGallery, ImageManager, Confirm, SearchableSelect, Toggle, useListController, STATUS_CLASS, STATUS_HUE, Spinner } from './ui.jsx';
 import { initials } from './Shell.jsx';
 
 // ============================================================
@@ -110,6 +110,7 @@ function RoleForm({ rec, onClose, onSave }) {
 function Ajustes({ onToast }) {
   useStore();
   useLucide();
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("usuarios");
   const users = BO.all("usuarios");
   const roles = BO.all("roles");
@@ -118,8 +119,17 @@ function Ajustes({ onToast }) {
   const [editRole, setEditRole] = useState(undefined);
   const [delRole, setDelRole] = useState(null);
 
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 250);
+    return () => clearTimeout(t);
+  }, []);
+
   const roleById = (id) => roles.find((r) => r.id === id);
   const usersInRole = (rid) => users.filter((u) => u.rolId === rid).length;
+
+  if (loading) {
+    return <Spinner message="Cargando ajustes..." />;
+  }
 
   // ---- usuarios ----
   const saveUser = (v) => {
