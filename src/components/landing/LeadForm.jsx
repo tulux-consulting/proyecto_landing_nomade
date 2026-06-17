@@ -148,11 +148,40 @@ function LeadForm({ d, isPreview = false }) {
   };
 
   const onFiles = (e) => {
-    const list = Array.from(e.target.files || []).slice(0, 8);
-    const mapped = list.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f }));
+    const arr = Array.from(e.target.files || []);
+    const validFiles = [];
+    const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+    let hasInvalidType = false;
+    let hasInvalidSize = false;
+
+    for (const f of arr) {
+      if (!f.type.startsWith("image/")) {
+        hasInvalidType = true;
+        continue;
+      }
+      if (f.size > MAX_SIZE) {
+        hasInvalidSize = true;
+        continue;
+      }
+      validFiles.push(f);
+    }
+
+    if (hasInvalidType || hasInvalidSize) {
+      const msgs = [];
+      if (hasInvalidType) msgs.push("Algunos archivos no tienen un formato de imagen válido.");
+      if (hasInvalidSize) msgs.push("Algunas imágenes superan el límite de 50MB.");
+      setErrors((er) => ({ ...er, fotos: msgs.join(" ") }));
+    } else {
+      setErrors((er) => ({ ...er, fotos: undefined }));
+    }
+
+    const mapped = validFiles.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f }));
     setFiles((prev) => [...prev, ...mapped].slice(0, 8));
   };
-  const removeFile = (i) => setFiles((prev) => prev.filter((_, x) => x !== i));
+  const removeFile = (i) => {
+    setFiles((prev) => prev.filter((_, x) => x !== i));
+    setErrors((er) => ({ ...er, fotos: undefined }));
+  };
 
 
   // Required fields per step index
@@ -429,7 +458,7 @@ function LeadForm({ d, isPreview = false }) {
             <textarea value={vals.comentarios} onChange={set("comentarios")} rows="4"
               placeholder="Paisaje, acceso, agua, vistas, historia del lugar… lo que quieras compartir." disabled={isPreview}></textarea>
           </Field>
-          <div className="field full">
+          <div className={"field full" + (errors.fotos ? " has-error" : "")}>
             <span className="field-label" id="fotos-label">Fotos y documentación <span className="field-opt">Opcional</span></span>
             <button type="button" className="uploader" onClick={() => !isPreview && fileRef.current && fileRef.current.click()} aria-labelledby="fotos-label" disabled={isPreview}>
               <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={onFiles} disabled={isPreview} />
@@ -437,15 +466,16 @@ function LeadForm({ d, isPreview = false }) {
               <span>Arrastrá o seleccioná fotos del terreno</span>
               <small>Hasta 8 imágenes · JPG o PNG</small>
             </button>
+            {errors.fotos && <span className="field-error" style={{ display: "block", marginTop: "6px" }} role="alert">{errors.fotos}</span>}
             {files.length > 0 &&
-              <div className="thumbs">
-                {files.map((f, i) =>
-                  <div className="thumb" key={i} style={{ backgroundImage: `url(${f.url})` }}>
-                    <button type="button" className="thumb-x" onClick={(e) => { e.stopPropagation(); removeFile(i); }} aria-label={"Quitar " + f.name} disabled={isPreview}><Icon name="x" /></button>
-                  </div>
-                )}
-              </div>
-            }
+               <div className="thumbs">
+                 {files.map((f, i) =>
+                   <div className="thumb" key={i} style={{ backgroundImage: `url(${f.url})` }}>
+                     <button type="button" className="thumb-x" onClick={(e) => { e.stopPropagation(); removeFile(i); }} aria-label={"Quitar " + f.name} disabled={isPreview}><Icon name="x" /></button>
+                   </div>
+                 )}
+               </div>
+             }
             <p className="field-hint">Las fotos no se guardan en el borrador; volvé a adjuntarlas si recargás la página.</p>
           </div>
         </React.Fragment>);

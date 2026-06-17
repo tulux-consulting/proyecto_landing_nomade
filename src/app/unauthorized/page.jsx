@@ -1,12 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { clearPanelSession } from '../../lib/auth.js';
 
 export default function UnauthorizedPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [reason, setReason] = useState('admin_required');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const r = params.get('reason');
+      if (r) setReason(r);
+    }
+  }, []);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -20,16 +29,24 @@ export default function UnauthorizedPage() {
     }
   };
 
+  const isInactive = reason === 'inactive';
+
   return (
     <main className="access">
       <section className="access-card" role="dialog" aria-labelledby="unauthorized-title" style={{ maxWidth: '480px' }}>
         <div className="access-mark">
           <img src="/assets/brand/isotipo-forest.svg" alt="NÓMADE" />
-          <p className="access-eyebrow" style={{ color: '#ea580c' }}>Acceso denegado</p>
+          <p className="access-eyebrow" style={{ color: '#ea580c' }}>
+            {isInactive ? "Cuenta suspendida" : "Acceso denegado"}
+          </p>
         </div>
-        <h1 id="unauthorized-title" style={{ fontSize: '2rem', margin: '1rem 0' }}>No autorizado</h1>
+        <h1 id="unauthorized-title" style={{ fontSize: '2rem', margin: '1rem 0' }}>
+          {isInactive ? "Usuario inactivo" : "No autorizado"}
+        </h1>
         <p className="access-sub" style={{ marginBottom: '2rem' }}>
-          Tu cuenta no tiene los permisos necesarios (rol de Administrador) para acceder a este panel.
+          {isInactive 
+            ? "Tu cuenta de usuario ha sido desactivada por el administrador. Por favor, ponete en contacto con el equipo de soporte si creés que esto es un error."
+            : "Tu cuenta no tiene los permisos necesarios (rol de Administrador) para acceder a esta sección."}
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>

@@ -1,14 +1,23 @@
 -- ============================================================================
--- AUTHENTICATION & AUTHORIZATION (PROFILES & ROLES)
+-- AUTHENTICATION & AUTHORIZATION
 -- ============================================================================
+
+create extension if not exists citext;
 
 -- profiles table
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  email text,
-  role text not null default 'user' check (role in ('admin', 'editor', 'user')),
-  created_at timestamptz default now()
+  full_name text not null,
+  username citext not null unique check (username ~ '^[a-zA-Z0-9._-]+$'),
+  email text not null,
+  role text not null default 'user' check (role in ('admin', 'user')),
+  is_active boolean not null default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
 );
+
+-- Indices
+create index if not exists profiles_username_idx on public.profiles (username);
 
 -- RLS Configuration
 alter table public.profiles enable row level security;
@@ -16,39 +25,44 @@ alter table public.profiles enable row level security;
 -- Policies
 drop policy if exists "Cualquier usuario autenticado puede leer perfiles" on public.profiles;
 drop policy if exists "Solo administradores pueden actualizar perfiles" on public.profiles;
+drop policy if exists "Solo administradores pueden gestionar perfiles" on public.profiles;
 
 create policy "Cualquier usuario autenticado puede leer perfiles"
   on public.profiles for select
   to authenticated
   using (true);
 
-create policy "Solo administradores pueden actualizar perfiles"
-  on public.profiles for update
+create policy "Solo administradores pueden gestionar perfiles"
+  on public.profiles for all
   to authenticated
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 -- Helper Functions
-create or replace function public.get_my_role()
-returns text as $$
-declare
-  user_role text;
-begin
-  select role into user_role from public.profiles where id = auth.uid();
-  return coalesce(user_role, 'user');
-end;
-$$ language plpgsql security definer;
-
 create or replace function public.is_admin()
 returns boolean as $$
 begin
-  return public.get_my_role() = 'admin';
+  return exists (
+    select 1 from public.profiles
+    where id = auth.uid() and is_active = true and role = 'admin'
+  );
 end;
 $$ language plpgsql security definer;
+
+-- Username to email resolution for login
+create or replace function public.get_email_by_username(p_username text)
+returns text
+security definer
+as $$
+declare
+  v_email text;
+begin
+  select email into v_email from public.profiles
+  where lower(username) = lower(p_username) and is_active = true;
+  return v_email;
+end;
+$$ language plpgsql;
+
+grant execute on function public.get_email_by_username(text) to anon, authenticated;
 
 
 -- ============================================================================
@@ -123,11 +137,11 @@ alter table public.postulaciones enable row level security;
 drop policy if exists "Administradores tienen control total" on public.postulaciones;
 drop policy if exists "Visitantes públicos pueden insertar postulaciones" on public.postulaciones;
 
-create policy "Administradores tienen control total"
+create policy "Usuarios autenticados tienen control total"
   on public.postulaciones for all
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (true)
+  with check (true);
 
 create policy "Visitantes públicos pueden insertar postulaciones"
   on public.postulaciones for insert
@@ -173,15 +187,11 @@ create policy "Cualquier persona puede ver fotos"
   to public
   using (bucket_id = 'postulaciones');
 
-create policy "Administradores pueden gestionar fotos"
+create policy "Usuarios autenticados pueden gestionar fotos"
   on storage.objects for all
   to authenticated
   using (
-    bucket_id = 'postulaciones' 
-    and exists (
-      select 1 from public.profiles 
-      where id = auth.uid() and role = 'admin'
-    )
+    bucket_id = 'postulaciones'
   );
 
 
@@ -223,11 +233,11 @@ alter table public.partners enable row level security;
 drop policy if exists "Administradores tienen control total sobre partners" on public.partners;
 drop policy if exists "Visitantes públicos pueden insertar partners" on public.partners;
 
-create policy "Administradores tienen control total sobre partners"
+create policy "Usuarios autenticados tienen control total sobre partners"
   on public.partners for all
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (true)
+  with check (true);
 
 create policy "Visitantes públicos pueden insertar partners"
   on public.partners for insert
@@ -275,11 +285,11 @@ alter table public.guest_waitlist enable row level security;
 drop policy if exists "Administradores tienen control total sobre guest_waitlist" on public.guest_waitlist;
 drop policy if exists "Visitantes públicos pueden insertar guest_waitlist" on public.guest_waitlist;
 
-create policy "Administradores tienen control total sobre guest_waitlist"
+create policy "Usuarios autenticados tienen control total sobre guest_waitlist"
   on public.guest_waitlist for all
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (true)
+  with check (true);
 
 create policy "Visitantes públicos pueden insertar guest_waitlist"
   on public.guest_waitlist for insert
@@ -345,11 +355,11 @@ create policy "Cualquier persona puede ver destinos"
   using (true);
 
 -- Solo administradores pueden insertar/actualizar/eliminar destinos
-create policy "Solo administradores pueden gestionar destinos"
+create policy "Usuarios autenticados pueden gestionar destinos"
   on public.destinos for all
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (true)
+  with check (true);
 
 -- Permissions
 grant select on public.destinos to anon, authenticated;
@@ -383,11 +393,11 @@ alter table public.contenido enable row level security;
 -- Policies
 drop policy if exists "Solo administradores pueden gestionar contenido" on public.contenido;
 
-create policy "Solo administradores pueden gestionar contenido"
+create policy "Usuarios autenticados pueden gestionar contenido"
   on public.contenido for all
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (true)
+  with check (true);
 
 -- Permissions
 grant all on public.contenido to authenticated;
