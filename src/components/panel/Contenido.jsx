@@ -139,7 +139,13 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
       return n + " " + lbl.toLowerCase();
     }
     const first = section.fields[0];
-    return data[first.k] ? String(data[first.k]).slice(0, 44) : section.desc;
+    if (!data[first.k]) return section.desc;
+    const str = String(data[first.k]);
+    const dotIndex = str.indexOf('.');
+    if (dotIndex !== -1) {
+      return str.slice(0, dotIndex + 1);
+    }
+    return str.slice(0, 44);
   };
 
   return (
@@ -193,7 +199,7 @@ function Contenido({ onToast }) {
   const previewRef = useRef(null);
 
   useEffect(() => {
-    ContenidoRepository.get().then((data) => {
+    ContenidoRepository.getDraft().then((data) => {
       setSavedContent(data);
       setDraft(data);
     });
@@ -231,9 +237,19 @@ function Contenido({ onToast }) {
     if (el) cont.scrollTo({ top: Math.max(0, el.offsetTop - 8), behavior: "smooth" });
   };
 
+  const saveDraft = async () => {
+    try {
+      const updated = await ContenidoRepository.updateDraft(draft);
+      setSavedContent(updated);
+      onToast("Borrador guardado correctamente.");
+    } catch (e) {
+      onToast("Error al guardar borrador.");
+    }
+  };
+
   const publish = async () => {
     try {
-      const updated = await ContenidoRepository.update(draft);
+      const updated = await ContenidoRepository.publish(draft);
       setSavedContent(updated);
       onToast("Contenido publicado en la landing.");
     } catch (e) {
@@ -255,10 +271,11 @@ function Contenido({ onToast }) {
         <div className="cms-editor">
           <div className="cms-actionbar">
             {dirty
-              ? <span className="cms-dirty"><Icon name="dot" />Cambios sin publicar</span>
-              : <span className="cms-saved"><Icon name="check-circle-2" />Todo publicado</span>}
+              ? <span className="cms-dirty"><Icon name="dot" />Cambios sin guardar</span>
+              : <span className="cms-saved"><Icon name="check-circle-2" />Todo guardado/publicado</span>}
             <div style={{ display: "flex", gap: 9 }}>
               <Btn variant="ghost" sm onClick={discard} title="Descartar cambios">Descartar</Btn>
+              <Btn variant="ghost" sm onClick={saveDraft} title="Guardar borrador sin publicar">Guardar Borrador</Btn>
               <Btn variant="primary" icon="upload-cloud" sm onClick={publish}>Publicar</Btn>
             </div>
           </div>

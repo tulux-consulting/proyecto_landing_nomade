@@ -360,3 +360,44 @@ create index if not exists destinos_status_idx on public.destinos(status);
 create index if not exists destinos_archivado_idx on public.destinos(archivado);
 
 
+-- ============================================================================
+-- CONTENT MANAGEMENT (CMS)
+-- ============================================================================
+
+-- Table definition
+create table if not exists public.contenido (
+  id text primary key check (id = 'landing'),
+  draft_content jsonb not null default '{}'::jsonb,
+  published_content jsonb not null default '{}'::jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  last_published_at timestamptz,
+  created_by uuid references auth.users(id) on delete set null,
+  updated_by uuid references auth.users(id) on delete set null,
+  published_by uuid references auth.users(id) on delete set null
+);
+
+-- RLS Configuration
+alter table public.contenido enable row level security;
+
+-- Policies
+drop policy if exists "Solo administradores pueden gestionar contenido" on public.contenido;
+
+create policy "Solo administradores pueden gestionar contenido"
+  on public.contenido for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- Permissions
+grant all on public.contenido to authenticated;
+
+-- Public read view or function
+create or replace function public.get_published_content()
+returns jsonb
+security definer
+as $$
+  select published_content from public.contenido where id = 'landing';
+$$ language sql;
+
+grant execute on function public.get_published_content() to anon, authenticated;
