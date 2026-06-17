@@ -18,6 +18,7 @@ export const UserRepository = {
         console.error('Error fetching users:', error);
         throw error;
       }
+      BO.write('usuarios', data || []);
       return data || [];
     } else {
       // Local storage fallback, mapping old format to new

@@ -99,12 +99,14 @@ export default function PanelLayout({ children }) {
               setAuthed(true);
               setUser(activeUser);
               
-              // Pre-cargar postulaciones, partners y huéspedes
-              const { PostulacionesRepository, PartnersRepository, HuespedesRepository } = await import('../../repositories/index');
+              // Pre-cargar todas las colecciones para sincronizar conteos
+              const { PostulacionesRepository, PartnersRepository, HuespedesRepository, UserRepository, DestinosRepository } = await import('../../repositories/index');
               await Promise.all([
                 PostulacionesRepository.getAll().catch(console.error),
                 PartnersRepository.getAll().catch(console.error),
-                HuespedesRepository.getAll().catch(console.error)
+                HuespedesRepository.getAll().catch(console.error),
+                UserRepository.getAll().catch(console.error),
+                DestinosRepository.getAll().catch(console.error)
               ]);
             }
           } catch (e) {
