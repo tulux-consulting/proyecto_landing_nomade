@@ -32,15 +32,23 @@ export default function PanelLayout({ children }) {
         const handleSession = async (currentSession) => {
           if (pathname === '/panel/login') {
             if (currentSession) {
-              const { data: profile } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', currentSession.user.id)
-                .single();
-              if (profile?.role === 'admin') {
-                router.replace('/panel');
+              const isResetting = typeof window !== 'undefined' && localStorage.getItem('nomade_bo_resetting_password') === 'true';
+              if (!isResetting) {
+                const { data: profile } = await supabase
+                  .from('profiles')
+                  .select('is_active')
+                  .eq('id', currentSession.user.id)
+                  .single();
+                if (profile?.is_active) {
+                  router.replace('/panel');
+                }
               }
             }
+            setLoading(false);
+            return;
+          }
+
+          if (pathname === '/panel/reset-password') {
             setLoading(false);
             return;
           }
@@ -53,23 +61,43 @@ export default function PanelLayout({ children }) {
           }
 
           try {
-            const { data: profile } = await supabase
+            const { data: profile, error: profileError } = await supabase
               .from('profiles')
-              .select('role')
+              .select('is_active, full_name, role')
               .eq('id', currentSession.user.id)
               .single();
 
-            if (!profile || profile.role !== 'admin') {
+            if (profileError) {
+              console.error('Error fetching profile from database:', profileError);
+            }
+
+            if (!profile || !profile.is_active) {
               setAuthed(false);
-              router.replace('/unauthorized');
+              router.replace('/unauthorized?reason=inactive');
             } else {
-              setAuthed(true);
-              setUser({
-                nombre: currentSession.user.email.split('@')[0],
+              const isAdmin = profile.role === 'admin';
+
+              // Centralized authorization guard: normal users cannot access Ajustes (/panel/ajustes)
+              if (pathname.startsWith('/panel/ajustes') && !isAdmin) {
+                setAuthed(false);
+                router.replace('/unauthorized?reason=admin_required');
+                setLoading(false);
+                return;
+              }
+
+              const activeUser = {
+                nombre: profile.full_name || currentSession.user.email.split('@')[0],
                 email: currentSession.user.email,
-                permisos: ['dashboard', 'postulaciones', 'partners', 'huespedes', 'destinos', 'contenido', 'ajustes'],
-                rolNombre: 'Administrador'
-              });
+                role: profile.role,
+                permisos: isAdmin
+                  ? ['dashboard', 'postulaciones', 'partners', 'huespedes', 'destinos', 'contenido', 'ajustes']
+                  : ['dashboard', 'postulaciones', 'partners', 'huespedes', 'destinos', 'contenido'],
+                rolNombre: isAdmin ? 'Administrador' : 'Usuario'
+              };
+              
+              localStorage.setItem('nomade_bo_sessionUser', JSON.stringify(activeUser));
+              setAuthed(true);
+              setUser(activeUser);
               
               // Pre-cargar postulaciones, partners y huéspedes
               const { PostulacionesRepository, PartnersRepository, HuespedesRepository } = await import('../../repositories/index');
@@ -96,6 +124,7 @@ export default function PanelLayout({ children }) {
           if (event === 'SIGNED_OUT') {
             setAuthed(false);
             setUser(null);
+            localStorage.removeItem('nomade_bo_sessionUser');
             router.replace('/panel/login');
             setLoading(false);
           } else if (event === 'SIGNED_IN') {
@@ -132,7 +161,7 @@ export default function PanelLayout({ children }) {
     );
   }
 
-  if (pathname === '/panel/login') {
+  if (pathname === '/panel/login' || pathname === '/panel/reset-password') {
     return <>{children}</>;
   }
 
@@ -149,6 +178,7 @@ export default function PanelLayout({ children }) {
   const closeNav = () => setNavOpen(false);
   const onLogout = () => {
     clearPanelSession();
+    localStorage.removeItem('nomade_bo_sessionUser');
     router.replace('/panel/login');
   };
 

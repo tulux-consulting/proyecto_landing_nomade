@@ -60,7 +60,9 @@ function Postulaciones({ onToast }) {
   };
 
   const addNote = async (t) => {
-    await PostulacionesRepository.addNote(openId, t);
+    const user = BO.currentUser();
+    const author = user?.nombre || 'Usuario';
+    await PostulacionesRepository.addNote(openId, t, author);
     loadData();
   };
 

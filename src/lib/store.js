@@ -334,25 +334,25 @@ const BO = (function () {
     { key: "huespedes", label: "Lista de huéspedes", route: "/panel/huespedes", icon: "users", col: "huespedes", desc: "Personas interesadas en hospedarse y de dónde proviene el interés." },
     { key: "destinos", label: "Destinos", route: "/panel/destinos", icon: "map-pin", col: "destinos", desc: "Las experiencias de hospedaje de la red NÓMADE." },
     { key: "contenido", label: "Contenido del sitio", route: "/panel/contenido", icon: "layout-template", col: null, desc: "Administrá el contenido de la landing sin tocar código." },
-    { key: "ajustes", label: "Ajustes", route: "/panel/ajustes", icon: "settings", col: null, desc: "Usuarios y roles de acceso al panel." }
+    { key: "ajustes", label: "Ajustes", route: "/panel/ajustes", icon: "settings", col: null, desc: "Usuarios de acceso al panel." }
   ];
 
   // Active backoffice user (for permission gating; defaults to owner / admin).
   function rolePerms(u) {
-    if (!u) return [];
-    var rol = u.rolId ? get("roles", u.rolId) : null;
-    if (rol) return rol.modulos.slice();
-    return u.permisos ? u.permisos.slice() : MODULES.map(function (m) { return m.key; });
+    return MODULES.map(function (m) { return m.key; });
   }
   function withPerms(u) {
     if (!u) return u;
-    var rol = u.rolId ? get("roles", u.rolId) : null;
-    return Object.assign({}, u, { permisos: rolePerms(u), rolNombre: rol ? rol.nombre : (u.rol || "—") });
+    return Object.assign({}, u, { permisos: rolePerms(u), rolNombre: "Administrador" });
   }
   function currentUser() {
+    var sessionUser = read("sessionUser", null);
+    if (sessionUser) {
+      return sessionUser;
+    }
     var users = all("usuarios");
     var key = read("activeUser", null);
-    var u = (key && users.find(function (u) { return u.id === key; })) || users[0] || { nombre: "Administrador", permisos: MODULES.map(function (m) { return m.key; }), rolNombre: "Administrador" };
+    var u = (key && users.find(function (u) { return u.id === key; })) || users[0] || { nombre: "Administrador", email: "admin@nomade.com" };
     return withPerms(u);
   }
   function setActiveUser(id) { write("activeUser", id); }

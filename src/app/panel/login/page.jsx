@@ -3,7 +3,7 @@
 // NÓMADE — Acceso interno (Next.js route "/panel/login").
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { panelIsAuthed, panelLogin } from '../../../lib/auth.js';
+import { panelIsAuthed, panelLogin, panelResetPassword } from '../../../lib/auth.js';
 
 function EyeIcon({ off }) {
   return off ? (
@@ -25,6 +25,7 @@ export default function PanelLogin() {
   const [pass, setPass] = useState("");
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
+  const [resetSuccess, setResetSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -42,14 +43,24 @@ export default function PanelLogin() {
       return;
     }
     
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Por favor, ingresá un correo electrónico válido.");
-      return;
+    const isEmail = email.includes('@');
+    if (isEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setError("Por favor, ingresá un correo electrónico válido.");
+        return;
+      }
+    } else {
+      const usernameRegex = /^[a-zA-Z0-9._-]+$/;
+      if (!usernameRegex.test(email)) {
+        setError("El usuario ingresado contiene caracteres inválidos o espacios.");
+        return;
+      }
     }
 
     setLoading(true);
     setError("");
+    setResetSuccess("");
     
     try {
       const ok = await panelLogin(email, pass);
@@ -62,6 +73,28 @@ export default function PanelLogin() {
     } catch (err) {
       setError("Ocurrió un error inesperado al intentar iniciar sesión.");
       console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email.trim()) {
+      setError("Ingresá tu usuario o email para solicitar la recuperación.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    setResetSuccess("");
+    try {
+      const res = await panelResetPassword(email);
+      if (res.success) {
+        setResetSuccess(`Se ha enviado un correo de recuperación a ${res.email}.`);
+      } else {
+        setError(res.error || "No se pudo enviar el correo de recuperación.");
+      }
+    } catch (err) {
+      setError("Error al procesar la solicitud.");
     } finally {
       setLoading(false);
     }
@@ -85,10 +118,17 @@ export default function PanelLogin() {
             </p>
           )}
 
+          {resetSuccess && (
+            <p className="access-success" style={{ color: '#10b981', display: 'flex', gap: 6, alignItems: 'center', fontSize: 13.5, background: 'rgba(16, 185, 129, 0.1)', padding: '10px 12px', borderRadius: 6, margin: '0 0 16px' }} role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}><circle cx="12" cy="12" r="9" /><path d="m9 12 2 2 4-4" /></svg>
+              <span>{resetSuccess}</span>
+            </p>
+          )}
+
           <div className="access-field">
-            <label htmlFor="email">Correo electrónico</label>
+            <label htmlFor="email">Usuario o Email</label>
             <div className="access-input-wrap">
-              <input id="email" name="email" type="email" placeholder="Tu email" autoComplete="email"
+              <input id="email" name="email" type="text" placeholder="Tu usuario o email" autoComplete="username"
                 autoCapitalize="none" spellCheck="false" required disabled={loading}
                 value={email} onChange={(e) => { setEmail(e.target.value); setError(""); }} />
             </div>
@@ -105,6 +145,13 @@ export default function PanelLogin() {
                 <EyeIcon off={show} />
               </button>
             </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -8, marginBottom: 12 }}>
+            <button type="button" className="btn-text" style={{ fontSize: 12.5, textDecoration: 'underline', cursor: 'pointer', background: 'none', border: 'none', color: 'var(--fg3)', padding: 0 }}
+              onClick={handleResetPassword} disabled={loading}>
+              ¿Olvidaste tu contraseña?
+            </button>
           </div>
 
           <button type="submit" className="access-btn" disabled={loading}>

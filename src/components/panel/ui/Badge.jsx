@@ -3,13 +3,15 @@ import React from 'react';
 export const STATUS_CLASS = {
   "Nuevo": "badge-nuevo", "Pendiente de revisión": "badge-pendiente", "Contactado": "badge-contactado",
   "En negociación": "badge-negociacion", "Aprobado": "badge-aprobado", "Rechazado": "badge-rechazado",
-  "Disponible": "badge-disponible", "No disponible": "badge-nodisponible"
+  "Disponible": "badge-disponible", "No disponible": "badge-nodisponible",
+  "Administrador": "badge-nuevo", "Usuario": "badge-nodisponible"
 };
 
 export const STATUS_HUE = {
   "Nuevo": "#4f8aa6", "Pendiente de revisión": "#9a7b1c", "Contactado": "#3a64a0",
   "En negociación": "#97653a", "Aprobado": "#37794f", "Rechazado": "#a84b41",
-  "Disponible": "#37794f", "No disponible": "#9c958a"
+  "Disponible": "#37794f", "No disponible": "#9c958a",
+  "Administrador": "#4f8aa6", "Usuario": "#9c958a"
 };
 
 export function Badge({ status }) {
