@@ -33,10 +33,10 @@ function Dashboard({ user, onGo }) {
       return { value: all.length, unit: "destinos", note: disp + " disponibles" };
     }
     if (m.key === "contenido") {
-      return { value: 7, unit: "secciones editables" };
+      return { value: 11, unit: "secciones editables" };
     }
     if (m.key === "ajustes") {
-      const u = BO.all("usuarios").filter((x) => x.activo).length;
+      const u = BO.all("usuarios").filter((x) => x.is_active !== false && x.activo !== false).length;
       return { value: u, unit: u === 1 ? "usuario activo" : "usuarios activos" };
     }
     return { value: 0, unit: "" };
