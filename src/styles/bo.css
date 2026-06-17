@@ -1697,7 +1697,9 @@ table.tbl {
   color: var(--accent-deep);
   display: flex;
   align-items: center;
-  gap: 7px
+  gap: 7px;
+  min-width: 200px;
+  flex-shrink: 0
 }
 
 .cms-actionbar .cms-dirty svg {
@@ -1711,7 +1713,9 @@ table.tbl {
   color: var(--positive, #3f8a5b);
   display: flex;
   align-items: center;
-  gap: 7px
+  gap: 7px;
+  min-width: 200px;
+  flex-shrink: 0
 }
 
 .cms-actionbar .cms-saved svg {

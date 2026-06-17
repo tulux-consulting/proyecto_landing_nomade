@@ -29,7 +29,7 @@ export default function LandingPage() {
   useLucide();
 
   useEffect(() => {
-    ContenidoRepository.get().then((data) => {
+    ContenidoRepository.getPublished().then((data) => {
       setContent(data);
     });
   }, []);
