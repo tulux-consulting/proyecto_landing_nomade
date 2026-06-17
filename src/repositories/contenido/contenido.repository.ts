@@ -115,18 +115,23 @@ function getInitialContent(): LandingContent {
 }
 
 export const ContenidoRepository = {
-  async get(): Promise<LandingContent> {
+  async getDraft(): Promise<LandingContent> {
+    const defaults = getInitialContent();
     let doc: any = null;
+
     if (USE_SUPABASE) {
-      const { data, error } = await getSupabase().from('contenido').select('documento').eq('id', 'landing').single();
+      const { data, error } = await getSupabase()
+        .from('contenido')
+        .select('draft_content')
+        .eq('id', 'landing')
+        .maybeSingle();
       if (!error && data) {
-        doc = data.documento;
+        doc = data.draft_content;
       }
     } else {
-      doc = BO.getDoc('contenido', null);
+      doc = BO.getDoc('contenido_draft', null);
     }
 
-    const defaults = getInitialContent();
     if (!doc) return defaults;
 
     // Deep merge to ensure all keys exist
@@ -145,13 +150,96 @@ export const ContenidoRepository = {
     };
   },
 
-  async update(documento: LandingContent): Promise<LandingContent> {
+  async getPublished(): Promise<LandingContent> {
+    const defaults = getInitialContent();
+    let doc: any = null;
+
     if (USE_SUPABASE) {
-      const { data, error } = await getSupabase().from('contenido').upsert({ id: 'landing', documento }).select().single();
-      if (error) throw error;
-      return data.documento as LandingContent;
+      // Usar RPC get_published_content para acceso público seguro
+      const { data, error } = await getSupabase().rpc('get_published_content');
+      if (!error && data) {
+        doc = data;
+      }
+    } else {
+      doc = BO.getDoc('contenido_published', null);
     }
-    BO.setDoc('contenido', documento);
+
+    if (!doc) return defaults;
+
+    // Deep merge to ensure all keys exist
+    return {
+      hero: { ...defaults.hero, ...doc.hero },
+      whatis: { ...defaults.whatis, ...doc.whatis },
+      experience: { ...defaults.experience, ...doc.experience },
+      split: { ...defaults.split, ...doc.split },
+      destinations: { ...defaults.destinations, ...doc.destinations },
+      model: { ...defaults.model, ...doc.model },
+      landowners: { ...defaults.landowners, ...doc.landowners },
+      process: { ...defaults.process, ...doc.process },
+      partners: { ...defaults.partners, ...doc.partners },
+      guests: { ...defaults.guests, ...doc.guests },
+      footer: { ...defaults.footer, ...doc.footer }
+    };
+  },
+
+  async updateDraft(documento: LandingContent): Promise<LandingContent> {
+    if (USE_SUPABASE) {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id || null;
+
+      // Intentamos upsert para la tabla de registro único
+      const { data, error } = await supabase
+        .from('contenido')
+        .upsert({
+          id: 'landing',
+          draft_content: documento,
+          updated_at: new Date().toISOString(),
+          updated_by: userId
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data.draft_content as LandingContent;
+    }
+    BO.setDoc('contenido_draft', documento);
     return documento;
+  },
+
+  async publish(documento: LandingContent): Promise<LandingContent> {
+    if (USE_SUPABASE) {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id || null;
+      const now = new Date().toISOString();
+
+      const { data, error } = await supabase
+        .from('contenido')
+        .upsert({
+          id: 'landing',
+          draft_content: documento,
+          published_content: documento,
+          updated_at: now,
+          last_published_at: now,
+          updated_by: userId,
+          published_by: userId
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data.published_content as LandingContent;
+    }
+    BO.setDoc('contenido_draft', documento);
+    BO.setDoc('contenido_published', documento);
+    return documento;
+  },
+
+  // Mantener compatibilidad por si otros módulos lo requieren
+  async get(): Promise<LandingContent> {
+    return this.getDraft();
+  },
+
+  async update(documento: LandingContent): Promise<LandingContent> {
+    return this.publish(documento);
   }
 };
