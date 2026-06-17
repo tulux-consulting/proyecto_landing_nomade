@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from './Icon.jsx';
 import { resolveImg } from './Helpers.jsx';
+import { showToast } from './Feedback.jsx';
 
 export function PhotoGallery({ fotos, empty }) {
   const [open, setOpen] = useState(-1);
@@ -50,11 +51,35 @@ export function ImageManager({ fotos, onChange, max, hideCover }) {
   const add = (v) => { if (v && list.length < limit && list.indexOf(v) < 0) onChange(list.concat([v])); };
   const removeAt = (i) => onChange(list.filter((_, x) => x !== i));
   const handleFiles = (files) => {
-    const arr = Array.from(files || []).filter((f) => f.type.startsWith("image/"));
+    const arr = Array.from(files || []);
+    const validFiles = [];
+    const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+    let hasInvalidType = false;
+    let hasInvalidSize = false;
+
+    for (const f of arr) {
+      if (!f.type.startsWith("image/")) {
+        hasInvalidType = true;
+        continue;
+      }
+      if (f.size > MAX_SIZE) {
+        hasInvalidSize = true;
+        continue;
+      }
+      validFiles.push(f);
+    }
+
+    if (hasInvalidType) {
+      showToast("Error: Formato de archivo no admitido (debe ser imagen).");
+    }
+    if (hasInvalidSize) {
+      showToast("Error: La imagen excede el límite de 50MB.");
+    }
+
     let next = list.slice();
-    let pending = arr.length;
+    let pending = validFiles.length;
     if (!pending) return;
-    arr.forEach((f) => {
+    validFiles.forEach((f) => {
       const r = new FileReader();
       r.onload = () => { next = next.concat([r.result]).slice(0, limit); pending--; if (pending === 0) onChange(next); };
       r.readAsDataURL(f);

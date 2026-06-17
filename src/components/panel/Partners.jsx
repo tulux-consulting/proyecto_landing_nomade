@@ -135,7 +135,9 @@ function Partners({ onToast }) {
   };
   
   const addNote = async (t) => {
-    await PartnersRepository.addNote(openId, t);
+    const user = BO.currentUser();
+    const author = user?.nombre || 'Usuario';
+    await PartnersRepository.addNote(openId, t, author);
     loadData();
   };
   
