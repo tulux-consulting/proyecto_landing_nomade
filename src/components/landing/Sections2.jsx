@@ -119,7 +119,7 @@ function DestinoModal({ destino, onClose }) {
   );
 }
 
-function DestinosExplorer({ destinos, onOpen }) {
+function DestinosExplorer({ destinos, onOpen, isPreview }) {
   const [zone, setZone] = useState("");
   const [sort, setSort] = useState("region");
   const [edges, setEdges] = useState({ start: true, end: false });
@@ -195,7 +195,7 @@ function DestinosExplorer({ destinos, onOpen }) {
 
       <div className="dexp-track" ref={trackRef} onScroll={updateEdges}>
         {shown.map((d) => (
-          <button className="dcard" key={d.id} onClick={() => onOpen(d)} aria-haspopup="dialog" aria-label={"Ver destino " + d.name}>
+          <button className="dcard" key={d.id} onClick={() => !isPreview && onOpen(d)} style={isPreview ? { cursor: "default" } : {}} aria-haspopup={isPreview ? undefined : "dialog"} aria-label={isPreview ? d.name : "Ver destino " + d.name}>
             <span className="dcard-img" style={{ backgroundImage: `url(${d.photos[0] || ''})`, backgroundColor: "#3a4a3d" }} aria-hidden="true"></span>
             <span className="dcard-scrim" aria-hidden="true"></span>
             <span className="dcard-body">
@@ -215,6 +215,7 @@ function DestinosExplorer({ destinos, onOpen }) {
 
 function Destinations(props) {
   const d = props.d || props;
+  const isPreview = props.isPreview || false;
   const [openDestino, setOpenDestino] = useState(null);
   const [destinosList, setDestinosList] = useState([]);
 
@@ -312,7 +313,7 @@ function Destinations(props) {
             {d.mapLead && <p className="map-lead">{d.mapLead}</p>}
           </div>
           {destinosList.length > 0 && (
-            <DestinosExplorer destinos={destinosList} onOpen={setOpenDestino} />
+            <DestinosExplorer destinos={destinosList} onOpen={setOpenDestino} isPreview={isPreview} />
           )}
           {d.disclaimer && <p className="map-disclaimer-below">{d.disclaimer}</p>}
         </div>

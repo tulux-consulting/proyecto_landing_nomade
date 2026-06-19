@@ -318,7 +318,7 @@ function Contenido({ onToast }) {
             <WhatIs d={draft.whatis} />
             <Experience d={draft.experience} />
             <Split d={draft.split} />
-            <Destinations d={draft.destinations} />
+            <Destinations d={draft.destinations} isPreview={true} />
             <Model d={draft.model} />
             <Landowners d={draft.landowners} />
             <Process d={draft.process} />
