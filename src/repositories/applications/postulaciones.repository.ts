@@ -158,12 +158,22 @@ export const PostulacionesRepository = {
   async create(payload: Partial<Postulacion>): Promise<Postulacion> {
     if (USE_SUPABASE) {
       const dbPayload = mapToDb(payload);
-      const { data, error } = await getSupabase().from('postulaciones').insert([dbPayload]).select().single();
-      if (error) throw error;
-      const created = mapFromDb(data);
-      const current = BO.all('postulaciones');
-      BO.write('postulaciones', [created, ...current]);
-      return created;
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const { data, error } = await supabase.from('postulaciones').insert([dbPayload]).select().single();
+        if (error) throw error;
+        const created = mapFromDb(data);
+        const current = BO.all('postulaciones');
+        BO.write('postulaciones', [created, ...current]);
+        return created;
+      } else {
+        const { error } = await supabase.from('postulaciones').insert([dbPayload]);
+        if (error) throw error;
+        // Return a representation with a temp ID for non-authenticated inserts
+        return { ...payload, id: 'temp-' + Date.now(), fecha: new Date().toISOString() } as Postulacion;
+      }
     }
     return BO.insert('postulaciones', payload) as Postulacion;
   },
