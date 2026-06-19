@@ -55,21 +55,21 @@ const CMS_SCHEMA = [
       { k: "h", label: "Título", type: "text" },
       { k: "p", label: "Descripción", type: "textarea" },
       { k: "cta", label: "Texto del botón", type: "text" },
-      { k: "target", label: "ID Destino (ej: propietarios, destinos)", type: "text" },
-      { k: "imagen", label: "Imagen de fondo (ID o URL)", type: "text" }
+      { k: "target", label: "ID Destino", hint: "Ej: propietarios, destinos", type: "text" },
+      { k: "imagen", label: "Imagen de fondo", type: "image" }
     ] } },
   { key: "destinations", label: "Destinos", icon: "map-pin", desc: "Tipos de paisajes y regiones en exploración.",
-    images: [{ k: "terrain", label: "Imagen del mapa", hint: "Mapa de fondo." }],
     fields: [
       { k: "eyebrow", label: "Eyebrow", type: "text" },
       { k: "h2", label: "Título", type: "text" },
       { k: "lead", label: "Descripción", type: "textarea" },
-      { k: "mapEyebrow", label: "Eyebrow del Mapa", type: "text" },
-      { k: "mapH", label: "Título del Mapa", type: "text" },
-      { k: "mapLead", label: "Descripción del Mapa", type: "textarea" },
-      { k: "disclaimer", label: "Leyenda del Mapa", type: "text" },
-      { k: "note", label: "Aclaración de Destinos", type: "text" }
-    ] },
+      { k: "note", label: "Aclaración de Destinos", type: "text" },
+      { k: "mapEyebrow", label: "Eyebrow del Carousel", type: "text" },
+      { k: "mapH", label: "Título del Carousel", type: "text" },
+      { k: "mapLead", label: "Descripción del Carousel", type: "textarea" },
+      { k: "disclaimer", label: "Leyenda del Carousel", type: "text" }
+    ],
+    repeat: { k: "types", label: "Paisaje", plural: "paisajes", item: [{ k: "cap", label: "Nombre del Paisaje", type: "text" }, { k: "img", label: "Imagen", type: "image" }] } },
   { key: "model", label: "El Modelo", icon: "share-2", desc: "Ecuación de valor.",
     fields: [
       { k: "eyebrow", label: "Eyebrow", type: "text" },
@@ -117,8 +117,17 @@ const CMS_SCHEMA = [
 ];
 
 function CMSField({ field, value, onChange }) {
+  if (field.type === "image") {
+    return (
+      <FField label={field.label} full hint={field.hint}>
+        <div className="cms-img-single">
+          <ImageManager fotos={value ? [value] : []} max={1} hideCover onChange={(arr) => onChange(arr[0] || "")} />
+        </div>
+      </FField>
+    );
+  }
   return (
-    <FField label={field.label} full={field.type === "textarea"}>
+    <FField label={field.label} full={field.type === "textarea"} hint={field.hint}>
       {field.type === "textarea"
         ? <textarea value={value || ""} onChange={(e) => onChange(e.target.value)} rows="3" />
         : <input value={value || ""} onChange={(e) => onChange(e.target.value)} />}
@@ -148,6 +157,8 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
     return str.slice(0, 44);
   };
 
+  const isSecondSubSec = (k) => ["mapEyebrow", "mapH", "mapLead", "disclaimer"].includes(k);
+
   return (
     <div className={"cms-section" + (open ? " open" : "")}>
       <div className="cms-section-head" onClick={onToggle}>
@@ -166,7 +177,9 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
           ))}
           {section.fields.length > 0 && (
             <div className="f-grid">
-              {section.fields.map((f) => <CMSField key={f.k} field={f} value={data[f.k]} onChange={(v) => setField(f.k, v)} />)}
+              {section.fields.filter(f => !isSecondSubSec(f.k)).map((f) => 
+                <CMSField key={f.k} field={f} value={data[f.k]} onChange={(v) => setField(f.k, v)} />
+              )}
             </div>
           )}
           {section.repeat && (
@@ -182,6 +195,16 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
               <Btn variant="ghost" icon="plus" sm onClick={() => addItem(section.repeat.k, Object.fromEntries(section.repeat.item.map((f) => [f.k, ""])))}>
                 Añadir {section.repeat.label.toLowerCase()}
               </Btn>
+            </div>
+          )}
+          {section.fields.length > 0 && section.fields.some(f => isSecondSubSec(f.k)) && (
+            <div className="cms-second-section-divider" style={{ borderTop: "1px solid var(--line)", margin: "24px 0 16px" }} />
+          )}
+          {section.fields.length > 0 && section.fields.some(f => isSecondSubSec(f.k)) && (
+            <div className="f-grid">
+              {section.fields.filter(f => isSecondSubSec(f.k)).map((f) => 
+                <CMSField key={f.k} field={f} value={data[f.k]} onChange={(v) => setField(f.k, v)} />
+              )}
             </div>
           )}
         </div>
