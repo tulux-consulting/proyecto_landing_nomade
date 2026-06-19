@@ -13,6 +13,9 @@ export const metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: '/favicon.svg',
+  },
   openGraph: {
     title: 'NÓMADE — Red de hospitalidad y bienestar',
     description: 'Cada destino es único. La experiencia NÓMADE no.',
@@ -44,6 +47,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body>
         <Suspense fallback={null}>

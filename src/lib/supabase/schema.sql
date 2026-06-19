@@ -151,13 +151,6 @@ create policy "Visitantes públicos pueden insertar postulaciones"
 -- Permissions
 revoke all on public.postulaciones from anon;
 grant insert (
-  nombre, apellido, email, phone, relacion, provincia, localidad, coords, distancia,
-  tamano, topografia, paisaje, aguas, vistas, entorno, acceso, estacionalidad, aeropuerto,
-  servicios, construcciones, titulo, uso_suelo, legal_notes, actividades, atractivos, demanda,
-  modelo, inversion, horizonte, comentarios, fotos
-) on public.postulaciones to anon;
-
-grant insert (
   nombre, apellido, email, telefono, relacion, provincia, localidad, coords, distancia,
   tamano, topografia, paisaje, aguas, vistas, entorno, acceso, estacionalidad, aeropuerto,
   servicios, construcciones, titulo, uso_suelo, legal_notas, actividades, atractivos, demanda,

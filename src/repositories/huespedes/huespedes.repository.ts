@@ -55,17 +55,29 @@ export const HuespedesRepository = {
       if (dbPayload.status === undefined) dbPayload.status = 'Nuevo';
       if (dbPayload.admin_notes === undefined) dbPayload.admin_notes = '';
       
-      const { data, error } = await getSupabase()
-        .from('guest_waitlist')
-        .insert([dbPayload])
-        .select()
-        .single();
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (error) throw error;
-      const created = mapToApp(data);
-      const current = BO.all('huespedes');
-      BO.write('huespedes', [created, ...current]);
-      return created;
+      if (session) {
+        const { data, error } = await supabase
+          .from('guest_waitlist')
+          .insert([dbPayload])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        const created = mapToApp(data);
+        const current = BO.all('huespedes');
+        BO.write('huespedes', [created, ...current]);
+        return created;
+      } else {
+        const { error } = await supabase
+          .from('guest_waitlist')
+          .insert([dbPayload]);
+        
+        if (error) throw error;
+        return { ...payload, id: 'temp-' + Date.now(), fecha: new Date().toISOString() } as Huesped;
+      }
     }
     return BO.insert('huespedes', payload) as Huesped;
   },
