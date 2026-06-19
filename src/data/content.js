@@ -43,7 +43,7 @@ export const NOMADE = {
 
   // 4.5 — AUDIENCE SELF-IDENTIFICATION (split). Comes after the vision is sold.
   split: {
-    eyebrow: "Dos formas de sumarte",
+    eyebrow: "Tres formas de sumarte",
     h2: "¿Cómo querés explorar NÓMADE?",
     lead: "Ya sabés qué es y qué experiencia crea. Elegí el camino que te representa.",
     left: {
@@ -54,12 +54,20 @@ export const NOMADE = {
       cta: "Quiero ser parte",
       target: "propietarios"
     },
+    middle: {
+      kicker: "PARTNER",
+      img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1100&q=80&auto=format&fit=crop",
+      h: "Ya opero un establecimiento",
+      p: "Tenés un camping, glamping, viñedo u hospedaje en marcha y querés sumar la marca, los estándares y la red de huéspedes de NÓMADE.",
+      cta: "Quiero ser Partner",
+      target: "socios"
+    },
     right: {
       kicker: "Experiencia",
       img: LIMG("/assets/photos/guest-doorway.jpg", "guestDoorway"),
       h: "Quiero descubrir NÓMADE",
       p: "Soñás con escaparte a un destino cuidado, en plena naturaleza. Conocé la experiencia y enterate primero cuando abramos nuevas ubicaciones.",
-      cta: "Quiero descubrir la experiencia",
+      cta: "Descubrir la experiencia",
       target: "destinos"
     }
   },
@@ -273,7 +281,8 @@ export const NOMADE = {
       { icon: "compass", h: "Operadores turísticos" },
       { icon: "grape", h: "Viñedos y bodegas" },
       { icon: "trees", h: "Hospitalidad rural" },
-      { icon: "mountain", h: "Propiedades recreativas" }
+      { icon: "mountain", h: "Propiedades recreativas" },
+      { icon: "fuel", h: "Estaciones de servicio" }
     ],
     value: [
       { h: "Una marca que viaja", p: "Sumás el respaldo y la consistencia de NÓMADE a lo que ya construiste." },

@@ -60,6 +60,20 @@ export const DestinosRepository = {
     return BO.all('destinos') as Destino[];
   },
 
+  async getPublished(): Promise<Destino[]> {
+    if (USE_SUPABASE) {
+      const { data, error } = await getSupabase()
+        .from('destinos')
+        .select('*')
+        .eq('status', 'published')
+        .eq('archivado', false)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(mapFromDb);
+    }
+    return (BO.all('destinos') as Destino[]).filter(d => d.estado === 'Disponible' && !d.archivado);
+  },
+
   async getById(id: string): Promise<Destino | null> {
     if (USE_SUPABASE) {
       const { data, error } = await getSupabase().from('destinos').select('*').eq('id', id).single();

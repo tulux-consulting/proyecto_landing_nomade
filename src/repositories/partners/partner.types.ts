@@ -11,6 +11,7 @@ export interface Partner {
   telefono: string;
   email: string;
   web?: string;
+  razon_social?: string;
   capacidad?: string;
   anosOperando?: number;
   estado: string;

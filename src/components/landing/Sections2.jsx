@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Eyebrow, useLucide } from './primitives.jsx';
-import { ARGENTINA } from '../../lib/argentina.js';
 import { resolveImg } from '../panel/ui/Helpers.jsx';
+import { DestinosRepository } from '../../repositories/index.ts';
+
 // NÓMADE — 5 Destinations worth discovering (potential) · 6 How we create destinations (model)
 
-function DestinoModal({ name, region, onClose }) {
+function DestinoModal({ destino, onClose }) {
   useLucide();
   const [idx, setIdx] = useState(0);
   const [zoom, setZoom] = useState(false);
   const [origin, setOrigin] = useState({ x: 50, y: 50 });
-  const photos = region ? region.photos : [];
+  const photos = destino ? destino.photos : [];
   const n = photos.length;
 
   // reset carousel + zoom whenever the destination changes
-  useEffect(() => {setIdx(0);setZoom(false);}, [name]);
+  useEffect(() => { setIdx(0); setZoom(false); }, [destino]);
 
   useEffect(() => {
-    if (!region) return;
+    if (!destino) return;
     const onKey = (e) => {
-      if (e.key === "Escape") {if (zoom) {setZoom(false);} else {onClose();}} else
-      if (e.key === "ArrowRight") {setZoom(false);setIdx((i) => (i + 1) % n);} else
-      if (e.key === "ArrowLeft") {setZoom(false);setIdx((i) => (i - 1 + n) % n);}
+      if (e.key === "Escape") { if (zoom) { setZoom(false); } else { onClose(); } } else
+      if (e.key === "ArrowRight") { setZoom(false); setIdx((i) => (i + 1) % n); } else
+      if (e.key === "ArrowLeft") { setZoom(false); setIdx((i) => (i - 1 + n) % n); }
     };
     document.addEventListener("keydown", onKey);
     const prevHtml = document.documentElement.style.overflow;
@@ -32,11 +33,11 @@ function DestinoModal({ name, region, onClose }) {
       document.documentElement.style.overflow = prevHtml;
       document.body.style.overflow = prevBody;
     };
-  }, [region, onClose, zoom, n]);
+  }, [destino, onClose, zoom, n]);
 
-  if (!region) return null;
+  if (!destino) return null;
 
-  const go = (dir) => {setZoom(false);setIdx((i) => (i + dir + n) % n);};
+  const go = (dir) => { setZoom(false); setIdx((i) => (i + dir + n) % n); };
   const onMove = (e) => {
     if (!zoom) return;
     const r = e.currentTarget.getBoundingClientRect();
@@ -44,7 +45,7 @@ function DestinoModal({ name, region, onClose }) {
   };
 
   return (
-    <div className="destino-modal" role="dialog" aria-modal="true" aria-label={name} onClick={onClose}>
+    <div className="destino-modal" role="dialog" aria-modal="true" aria-label={destino.name} onClick={onClose}>
       <div className="destino-dialog" onClick={(e) => e.stopPropagation()}>
         <button className="destino-close" onClick={onClose} aria-label="Cerrar"><Icon name="x" /></button>
 
@@ -59,71 +60,223 @@ function DestinoModal({ name, region, onClose }) {
             aria-label={zoom ? "Alejar imagen" : "Acercar imagen"}>
 
             {photos.map((src, i) =>
-            <div
-              key={i}
-              className={"destino-slide" + (i === idx ? " on" : "")}
-              role="img"
-              aria-label={name + " — imagen " + (i + 1) + " de " + n}
-              style={{
-                backgroundImage: `url(${src})`,
-                backgroundColor: "#3a4a3d",
-                transform: i === idx && zoom ? "scale(2.1)" : "scale(1)",
-                transformOrigin: `${origin.x}% ${origin.y}%`
-              }}>
-            </div>
+              <div
+                key={i}
+                className={"destino-slide" + (i === idx ? " on" : "")}
+                role="img"
+                aria-label={destino.name + " — imagen " + (i + 1) + " de " + n}
+                style={{
+                  backgroundImage: `url(${src})`,
+                  backgroundColor: "#3a4a3d",
+                  transform: i === idx && zoom ? "scale(2.1)" : "scale(1)",
+                  transformOrigin: `${origin.x}% ${origin.y}%`
+                }}>
+              </div>
             )}
             <span className="destino-zoom-hint" aria-hidden="true">
               <Icon name={zoom ? "zoom-out" : "zoom-in"} />{zoom ? "Mové el cursor para explorar" : "Tocá para acercar"}
             </span>
             {n > 1 &&
-            <React.Fragment>
-              <button className="destino-arrow prev" onClick={(e) => {e.stopPropagation();go(-1);}} aria-label="Imagen anterior"><Icon name="chevron-left" /></button>
-              <button className="destino-arrow next" onClick={(e) => {e.stopPropagation();go(1);}} aria-label="Imagen siguiente"><Icon name="chevron-right" /></button>
-              <span className="destino-counter" aria-hidden="true">{idx + 1} / {n}</span>
-            </React.Fragment>
+              <React.Fragment>
+                <button className="destino-arrow prev" onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label="Imagen anterior"><Icon name="chevron-left" /></button>
+                <button className="destino-arrow next" onClick={(e) => { e.stopPropagation(); go(1); }} aria-label="Imagen siguiente"><Icon name="chevron-right" /></button>
+                <span className="destino-counter" aria-hidden="true">{idx + 1} / {n}</span>
+              </React.Fragment>
             }
           </div>
 
           {n > 1 &&
-          <div className="destino-thumbs" role="tablist" aria-label="Galería de imágenes">
-            {photos.map((src, i) =>
-            <button
-              key={i}
-              className={"destino-thumb" + (i === idx ? " on" : "")}
-              role="tab"
-              aria-selected={i === idx}
-              aria-label={"Ver imagen " + (i + 1)}
-              style={{ backgroundImage: `url(${src})`, backgroundColor: "#3a4a3d" }}
-              onClick={() => {setZoom(false);setIdx(i);}}>
-            </button>
-            )}
-          </div>
+            <div className="destino-thumbs" role="tablist" aria-label="Galería de imágenes">
+              {photos.map((src, i) =>
+                <button
+                  key={i}
+                  className={"destino-thumb" + (i === idx ? " on" : "")}
+                  role="tab"
+                  aria-selected={i === idx}
+                  aria-label={"Ver imagen " + (i + 1)}
+                  style={{ backgroundImage: `url(${src})`, backgroundColor: "#3a4a3d" }}
+                  onClick={() => { setZoom(false); setIdx(i); }}>
+                </button>
+              )}
+            </div>
           }
         </div>
 
         <div className="destino-body">
           <span className="destino-tag">En exploración</span>
-          <h3 className="destino-name">{name}</h3>
-          <p className="destino-geo">{region.geo}</p>
-          <p className="destino-desc">{region.desc}</p>
-          <div className="destino-actions">
-            <a className="destino-cta" href={region.book} target="_blank" rel="noopener noreferrer">Ir a reservar<Icon name="arrow-up-right" /></a>
-            <span className="destino-meta">Reservá a través de nuestros partners de alojamiento.</span>
+          <h3 className="destino-name">{destino.name}</h3>
+          <p className="destino-geo">{destino.geo}</p>
+          <p className="destino-desc">{destino.desc}</p>
+          {destino.book && (
+            <div className="destino-actions">
+              <a className="destino-cta" href={destino.book} target="_blank" rel="noopener noreferrer">Ir a reservar<Icon name="arrow-up-right" /></a>
+              <span className="destino-meta">Reservá a través de nuestros partners de alojamiento.</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DestinosExplorer({ destinos, onOpen }) {
+  const [zone, setZone] = useState("");
+  const [sort, setSort] = useState("region");
+  const [edges, setEdges] = useState({ start: true, end: false });
+  const trackRef = useRef(null);
+
+  const zoneOf = (d) => d.geo.split("·")[0].trim();
+  const zones = Array.from(new Set(destinos.map(zoneOf))).sort((a, b) => a.localeCompare(b, "es"));
+
+  const shown = destinos
+    .filter((d) => !zone || zoneOf(d) === zone)
+    .sort((a, b) => {
+      if (sort === "nombre") {
+        return a.name.localeCompare(b.name, "es");
+      }
+      return zoneOf(a).localeCompare(zoneOf(b), "es") || a.name.localeCompare(b.name, "es");
+    });
+
+  const updateEdges = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setEdges({ start: el.scrollLeft <= 2, end: el.scrollLeft >= max - 2 });
+  };
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: 0 });
+    requestAnimationFrame(updateEdges);
+  }, [zone, sort]);
+
+  const scrollBy = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector(".dcard");
+    const amt = card ? card.offsetWidth + 18 : 340;
+    el.scrollBy({ left: dir * amt, behavior: "smooth" });
+  };
+
+  return (
+    <div className="dexp">
+      <div className="dexp-controls">
+        <div className="dexp-selects">
+          <label className="dexp-select">
+            <span className="dexp-select-label">Región</span>
+            <span className="dexp-select-field">
+              <select value={zone} onChange={(e) => setZone(e.target.value)} aria-label="Filtrar por región">
+                <option value="">Todas las regiones</option>
+                {zones.map((z) => <option key={z} value={z}>{z}</option>)}
+              </select>
+              <Icon name="chevron-down" />
+            </span>
+          </label>
+          <label className="dexp-select">
+            <span className="dexp-select-label">Ordenar</span>
+            <span className="dexp-select-field">
+              <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Ordenar destinos">
+                <option value="region">Por región</option>
+                <option value="nombre">Nombre (A–Z)</option>
+              </select>
+              <Icon name="chevron-down" />
+            </span>
+          </label>
+        </div>
+        <div className="dexp-nav">
+          <span className="dexp-count">{shown.length} {shown.length === 1 ? "destino" : "destinos"}</span>
+          <div className="dexp-arrows">
+            <button className="dexp-arrow" onClick={() => scrollBy(-1)} disabled={edges.start} aria-label="Anterior"><Icon name="chevron-left" /></button>
+            <button className="dexp-arrow" onClick={() => scrollBy(1)} disabled={edges.end} aria-label="Siguiente"><Icon name="chevron-right" /></button>
           </div>
         </div>
       </div>
-    </div>);
 
+      <div className="dexp-track" ref={trackRef} onScroll={updateEdges}>
+        {shown.map((d) => (
+          <button className="dcard" key={d.id} onClick={() => onOpen(d)} aria-haspopup="dialog" aria-label={"Ver destino " + d.name}>
+            <span className="dcard-img" style={{ backgroundImage: `url(${d.photos[0] || ''})`, backgroundColor: "#3a4a3d" }} aria-hidden="true"></span>
+            <span className="dcard-scrim" aria-hidden="true"></span>
+            <span className="dcard-body">
+              <span className="dcard-tag">En exploración</span>
+              <span className="dcard-name">{d.name}</span>
+              <span className="dcard-geo">{d.geo}</span>
+              {d.book && (
+                <span className="dcard-go">Ver destino<Icon name="arrow-up-right" /></span>
+              )}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function Destinations(props) {
   const d = props.d || props;
-  const A = ARGENTINA;
-  const [active, setActive] = useState(null);
-  const [open, setOpen] = useState(null);
+  const [openDestino, setOpenDestino] = useState(null);
+  const [destinosList, setDestinosList] = useState([]);
 
   const types = d.types || [];
-  const terrainImg = resolveImg(d.terrain);
+
+  useEffect(() => {
+    let active = true;
+    DestinosRepository.getPublished().then(data => {
+      if (active) {
+        if (data && data.length > 0) {
+          const mapped = data.map(destino => {
+            const photos = [];
+            if (destino.imagen) {
+              photos.push(resolveImg(destino.imagen));
+            }
+            if (Array.isArray(destino.fotos)) {
+              destino.fotos.forEach(f => {
+                if (f) {
+                  const resolved = resolveImg(f);
+                  if (!photos.includes(resolved)) {
+                    photos.push(resolved);
+                  }
+                }
+              });
+            }
+            return {
+              id: destino.id,
+              name: destino.nombre,
+              geo: destino.ubicacion,
+              desc: destino.descripcion,
+              photos: photos,
+              book: destino.reserva || ''
+            };
+          });
+          setDestinosList(mapped);
+        } else {
+          setDestinosList(mapFallback(d.regions));
+        }
+      }
+    }).catch(err => {
+      console.error("Error loading active destinations:", err);
+      if (active) {
+        setDestinosList(mapFallback(d.regions));
+      }
+    });
+    return () => { active = false; };
+  }, [d.regions]);
+
+  const mapFallback = (regions) => {
+    if (!regions) return [];
+    return Object.keys(regions).map(name => {
+      const r = regions[name];
+      return {
+        id: name,
+        name: name,
+        geo: r.geo || '',
+        desc: r.desc || '',
+        photos: (r.photos || []).map(p => resolveImg(p)),
+        book: r.book || ''
+      };
+    });
+  };
 
   return (
     <section className="section sand has-band" id="destinos">
@@ -149,7 +302,6 @@ function Destinations(props) {
         {d.note && <p className="types-note"><Icon name="info" />{d.note}</p>}
       </div>
 
-      {/* Regions in exploration — map */}
       <div className="destinos-map">
         <div className="wrap">
           <div className="map-intro">
@@ -157,67 +309,13 @@ function Destinations(props) {
             <h3 className="map-h">{d.mapH}</h3>
             {d.mapLead && <p className="map-lead">{d.mapLead}</p>}
           </div>
-          <div className="map-grid">
-            <div className="map-side">
-              <div className="region-list">
-                {A.pins.map((p, i) => {
-                  const reg = d.regions?.[p.name];
-                  if (!reg) return null;
-                  const thumbImg = resolveImg(reg.photos?.[0]);
-                  return (
-                    <button
-                      className={"region" + (active === p.name ? " active" : "")}
-                      key={p.name}
-                      onMouseEnter={() => setActive(p.name)}
-                      onMouseLeave={() => setActive(null)}
-                      onFocus={() => setActive(p.name)}
-                      onBlur={() => setActive(null)}
-                      onClick={() => setOpen(p.name)}
-                      aria-haspopup="dialog">
-
-                      <span className="region-thumb" aria-hidden="true" style={{ backgroundImage: thumbImg ? `url(${thumbImg})` : undefined }}></span>
-                      <span className="region-text">
-                        <span className="rname">{p.name}</span>
-                        <span className="rgeo">{reg.geo}</span>
-                      </span>
-                      <span className="region-go" aria-hidden="true"><Icon name="arrow-up-right" /></span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="map-figure">
-              <div className="map-canvas">
-                <div className="map-terrain" style={{ backgroundImage: terrainImg ? `url(${terrainImg})` : undefined }}></div>
-                <svg className="map-svg" viewBox={A.viewBox} preserveAspectRatio="xMidYMid meet">
-                  <path className="map-path" d={A.path} />
-                  {A.pins.map((p) => {
-                    const on = active === p.name;
-                    return (
-                      <g key={p.name} className={"map-pin" + (on ? " on" : "")}
-                        onMouseEnter={() => setActive(p.name)} onMouseLeave={() => setActive(null)}
-                        onClick={() => setOpen(p.name)}>
-                        <circle className="map-ping" cx={p.x} cy={p.y} r="5" />
-                        <circle className="map-halo" cx={p.x} cy={p.y} r="10" />
-                        <circle className="map-dot" cx={p.x} cy={p.y} r="3.4" />
-                      </g>
-                    );
-                  })}
-                </svg>
-                {A.pins.map((p) =>
-                  <span
-                    key={p.name}
-                    className={"map-label" + (active === p.name ? " on" : "") + (p.xp > 50 ? " flip" : "")}
-                    style={{ left: p.xp + "%", top: p.yp + "%" }}>
-                    {p.name}</span>
-                )}
-              </div>
-              {d.disclaimer && <p className="map-disclaimer-below">{d.disclaimer}</p>}
-            </div>
-          </div>
+          {destinosList.length > 0 && (
+            <DestinosExplorer destinos={destinosList} onOpen={setOpenDestino} />
+          )}
+          {d.disclaimer && <p className="map-disclaimer-below">{d.disclaimer}</p>}
         </div>
       </div>
-      <DestinoModal name={open} region={open ? d.regions?.[open] : null} onClose={() => setOpen(null)} />
+      <DestinoModal destino={openDestino} onClose={() => setOpenDestino(null)} />
     </section>
   );
 }

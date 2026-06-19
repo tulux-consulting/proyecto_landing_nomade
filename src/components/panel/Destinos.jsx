@@ -17,17 +17,31 @@ function DestinoForm({ rec, onClose, onSave }) {
   const set = (k) => (e) => { setV((s) => ({ ...s, [k]: e.target.value })); setErr((x) => ({ ...x, [k]: undefined })); };
   const habilitado = v.estado === "Disponible";
 
+  const getUbicacionParts = (str) => {
+    if (!str) return { provincia: "", paisaje: "" };
+    const parts = str.split("·");
+    return {
+      provincia: parts[0] ? parts[0].trim() : "",
+      paisaje: parts[1] ? parts[1].trim() : ""
+    };
+  };
+
+  const initialParts = getUbicacionParts(v.ubicacion);
+  const [provincia, setProvincia] = useState(initialParts.provincia);
+  const [paisaje, setPaisaje] = useState(initialParts.paisaje);
+
   const save = async () => {
     const e = {};
     if (!v.nombre.trim()) e.nombre = "Ingresá un nombre.";
-    if (!v.ubicacion.trim()) e.ubicacion = "Ingresá la ubicación.";
-    if (habilitado && !v.reserva.trim()) e.reserva = "Un destino habilitado necesita un link de reserva.";
+    if (!provincia.trim()) e.provincia = "Ingresá la provincia o región.";
+    if (!paisaje.trim()) e.paisaje = "Ingresá el tipo de paisaje o entorno.";
     if (habilitado && (!v.fotos || v.fotos.length === 0)) e.fotos = "Agregá al menos una foto antes de habilitar.";
     if (Object.keys(e).length) { setErr(e); return; }
     
     setSaving(true);
     try {
-      await onSave({ ...v, imagen: (v.fotos && v.fotos[0]) || "" });
+      const combinedUbicacion = provincia.trim() + " · " + paisaje.trim();
+      await onSave({ ...v, ubicacion: combinedUbicacion, imagen: (v.fotos && v.fotos[0]) || "" });
     } catch (error) {
       console.error("Error al guardar destino:", error);
       setSaving(false);
@@ -75,8 +89,11 @@ function DestinoForm({ rec, onClose, onSave }) {
         <FField label="Nombre del complejo" hint="El nombre propio del lugar. Ej.: Complejo Arcoíris.">
           <input value={v.complejo} onChange={set("complejo")} placeholder="Ej.: Complejo Arcoíris" disabled={saving} />
         </FField>
-        <FField label="Ubicación" required error={err.ubicacion} full hint="Provincia y tipo de paisaje. Ej.: Río Negro · Lagos y bosque andino">
-          <input value={v.ubicacion} onChange={set("ubicacion")} placeholder="Provincia · paisaje" disabled={saving} />
+        <FField label="Provincia / Región" required error={err.provincia} hint="Ej.: Buenos Aires o Río Negro">
+          <input value={provincia} onChange={(e) => { setProvincia(e.target.value); setErr(x => ({ ...x, provincia: undefined })); }} placeholder="Ej.: Buenos Aires" disabled={saving} />
+        </FField>
+        <FField label="Tipo de paisaje / Entorno" required error={err.paisaje} hint="Ej.: Dique o Lagos y bosque andino">
+          <input value={paisaje} onChange={(e) => { setPaisaje(e.target.value); setErr(x => ({ ...x, paisaje: undefined })); }} placeholder="Ej.: Dique" disabled={saving} />
         </FField>
         <FField label="Link del botón de reserva" error={err.reserva} full hint="A dónde lleva «Reservar» en la landing.">
           <input value={v.reserva} onChange={set("reserva")} placeholder="https://…" disabled={saving} />

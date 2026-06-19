@@ -8,7 +8,7 @@ import { PartnersRepository } from '../../repositories/index';
 
 const PARTNER_TIPOS = [
   "Camping", "Glamping", "Operador turístico", "Viñedo / Bodega",
-  "Hospitalidad rural", "Propiedad recreativa", "Otro"
+  "Hospitalidad rural", "Propiedad recreativa", "Estación de servicio", "Otro"
 ];
 
 // Inline SVGs (no lucide DOM-mutation inside this conditionally-rendered modal).
@@ -31,7 +31,7 @@ function PMField({ id, label, error, full, children }) {
 }
 
 function PartnerModal({ open, onClose }) {
-  const blank = { nombre: "", tipo: "", fiscal: "", provincia: "", localidad: "", telefono: "", email: "" };
+  const blank = { nombre: "", razon_social: "", tipo: "", fiscal: "", provincia: "", localidad: "", telefono: "", email: "" };
   const [v, setV] = useState(blank);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -93,6 +93,7 @@ function PartnerModal({ open, onClose }) {
     try {
       await PartnersRepository.create({
         nombre: v.nombre.trim(),
+        razon_social: v.razon_social ? v.razon_social.trim() : "",
         tipo: v.tipo,
         fiscal: v.fiscal.trim(),
         provincia: v.provincia,
@@ -139,6 +140,9 @@ function PartnerModal({ open, onClose }) {
               <div className="pm-grid">
                 <F id="nombre" label="Nombre del establecimiento" error={errors.nombre} full>
                   <input ref={firstRef} id="pm-nombre" value={v.nombre} onChange={set("nombre")} placeholder="Ej.: Refugio del Lago" />
+                </F>
+                <F id="razon_social" label="Razón social (Opcional)" error={errors.razon_social} full>
+                  <input id="pm-razon_social" value={v.razon_social} onChange={set("razon_social")} placeholder="Nombre legal de la empresa o titular" />
                 </F>
                 <F id="tipo" label="Tipo de establecimiento" error={errors.tipo}>
                   <div className="select-wrap">
