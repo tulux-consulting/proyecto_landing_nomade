@@ -302,6 +302,8 @@ function Destinations(props) {
         {d.note && <p className="types-note"><Icon name="info" />{d.note}</p>}
       </div>
 
+      <hr className="destinos-separator" style={{ border: "none", borderTop: "1px solid var(--line)", opacity: 0.25, margin: "0" }} />
+
       <div className="destinos-map">
         <div className="wrap">
           <div className="map-intro">
