@@ -28,12 +28,21 @@ export const PartnersRepository = {
 
   async create(payload: Partial<Partner>): Promise<Partner> {
     if (USE_SUPABASE) {
-      const { data, error } = await getSupabase().from('partners').insert([payload]).select().single();
-      if (error) throw error;
-      const created = data as Partner;
-      const current = BO.all('partners');
-      BO.write('partners', [created, ...current]);
-      return created;
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const { data, error } = await supabase.from('partners').insert([payload]).select().single();
+        if (error) throw error;
+        const created = data as Partner;
+        const current = BO.all('partners');
+        BO.write('partners', [created, ...current]);
+        return created;
+      } else {
+        const { error } = await supabase.from('partners').insert([payload]);
+        if (error) throw error;
+        return { ...payload, id: 'temp-' + Date.now(), fecha: new Date().toISOString() } as Partner;
+      }
     }
     return BO.insert('partners', payload) as Partner;
   },
