@@ -1773,6 +1773,10 @@ table.tbl {
   scroll-behavior: smooth
 }
 
+.cms-preview > * {
+  pointer-events: none !important;
+}
+
 .cms-preview::-webkit-scrollbar {
   width: 8px
 }
