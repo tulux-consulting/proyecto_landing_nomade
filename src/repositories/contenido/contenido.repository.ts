@@ -45,6 +45,14 @@ function getInitialContent(): LandingContent {
           target: N.split.left?.target || ""
         },
         {
+          kicker: N.split.middle?.kicker || "",
+          imagen: N.split.middle?.img || "",
+          h: N.split.middle?.h || "",
+          p: N.split.middle?.p || "",
+          cta: N.split.middle?.cta || "",
+          target: N.split.middle?.target || ""
+        },
+        {
           kicker: N.split.right?.kicker || "",
           imagen: N.split.right?.img || "",
           h: N.split.right?.h || "",

@@ -114,12 +114,12 @@ function Experience(props) {
 
 function Split(props) {
   const d = props.d || props;
-  const panels = d.options || [d.left, d.right].filter(Boolean);
+  const panels = d.options || [d.left, d.middle, d.right].filter(Boolean);
   
   const Panel = ({ index, p }) => {
     if (!p) return null;
     const imgUrl = resolveImg(p.imagen || p.img);
-    const side = index % 2 === 0 ? "left" : "right";
+    const side = index % 2 === 0 ? "side-left" : "side-right";
     return (
       <button
         className={"split-panel " + side}

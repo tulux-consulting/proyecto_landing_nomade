@@ -201,6 +201,7 @@ create table if not exists public.partners (
   
   -- Datos del Establecimiento
   nombre text not null,
+  razon_social text,
   tipo text not null,
   fiscal text not null,
   provincia text not null,
@@ -240,7 +241,7 @@ create policy "Visitantes públicos pueden insertar partners"
 -- Permissions
 revoke all on public.partners from anon;
 grant insert (
-  nombre, tipo, fiscal, provincia, localidad, telefono, email, web, capacidad,
+  nombre, razon_social, tipo, fiscal, provincia, localidad, telefono, email, web, capacidad,
   "anosOperando", estado, archivado, descripcion, notas, origen
 ) on public.partners to anon;
 

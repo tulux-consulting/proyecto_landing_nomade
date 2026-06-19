@@ -248,215 +248,289 @@
   line-height: 1.5
 }
 
-/* ---------- 5. Destinations map ---------- */
-.map-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: center;
-  margin-top: clamp(2.5rem, 5vw, 3.5rem)
+/* ---------- 5. Destinations carousel ---------- */
+.dexp {
+  margin-top: clamp(1.75rem, 3.5vw, 2.75rem)
 }
 
-.map-disclaimer {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--gold-soft);
-  border: 1px solid var(--line-on-dark);
-  border-radius: var(--radius-lg);
-  padding: 12px 16px;
-  max-width: 46ch
+.dexp-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem)
 }
 
-.map-disclaimer svg {
-  width: 15px;
-  height: 15px;
-  stroke-width: 1.5;
-  flex: none;
-  margin-top: 2px
+.dexp-selects {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap
 }
 
-.region-list {
+.dexp-select {
   display: flex;
   flex-direction: column;
-  margin-top: 26px
+  gap: 7px
 }
 
-.region {
+.dexp-select-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold-soft)
+}
+
+.dexp-select-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center
+}
+
+.dexp-select-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ivory);
+  background: rgba(246, 243, 238, .05);
+  border: 1px solid var(--line-on-dark);
+  border-radius: var(--radius-md);
+  padding: 12px 44px 12px 16px;
+  cursor: pointer;
+  min-width: 210px;
+  transition: border-color var(--dur-fast), background var(--dur-fast)
+}
+
+.dexp-select-field select:hover {
+  border-color: var(--gold-soft);
+  background: rgba(246, 243, 238, .08)
+}
+
+.dexp-select-field select:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px
+}
+
+.dexp-select-field select option {
+  color: #1d1d1b;
+  background: #fff
+}
+
+.dexp-select-field svg {
+  position: absolute;
+  right: 15px;
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7;
+  color: var(--gold-soft);
+  pointer-events: none
+}
+
+.dexp-nav {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  gap: 16px
+}
+
+.dexp-count {
+  font-size: 12.5px;
+  color: var(--fg-on-dark-2);
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap
+}
+
+.dexp-arrows {
+  display: flex;
+  gap: 10px;
+  flex: none
+}
+
+.dexp-arrow:disabled {
+  opacity: .3;
+  cursor: default
+}
+
+.dexp-arrow:disabled:hover {
+  background: transparent;
+  border-color: var(--line-on-dark)
+}
+
+.dexp-arrow {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line-on-dark);
+  background: transparent;
+  color: var(--ivory);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast) var(--ease-soft)
+}
+
+.dexp-arrow:hover {
+  background: rgba(182, 155, 114, .14);
+  border-color: var(--gold-soft)
+}
+
+.dexp-arrow:active {
+  transform: scale(.93)
+}
+
+.dexp-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.7
+}
+
+.dexp-track {
+  display: flex;
   gap: 18px;
-  padding: 15px 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  padding: 4px 2px 16px;
+  -webkit-overflow-scrolling: touch
+}
+
+.dexp-track::-webkit-scrollbar {
+  height: 7px
+}
+
+.dexp-track::-webkit-scrollbar-thumb {
+  background: var(--line-on-dark);
+  border-radius: var(--radius-pill)
+}
+
+.dexp-track {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-on-dark) transparent
+}
+
+.dcard {
+  scroll-snap-align: start;
+  flex: 0 0 clamp(270px, 29vw, 330px);
+  position: relative;
+  aspect-ratio: 3/4;
   border: none;
-  border-top: 1px solid var(--line-on-dark);
-  background: none;
+  padding: 0;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
   cursor: pointer;
   text-align: left;
-  width: 100%;
-  font-family: var(--sans);
-  border-radius: 8px;
-  transition: background var(--dur-fast) var(--ease-soft), padding var(--dur-fast)
+  background: #3a4a3d;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur-base) var(--ease-soft), box-shadow var(--dur-base) var(--ease-soft)
 }
 
-.region:last-child {
-  border-bottom: 1px solid var(--line-on-dark)
+.dcard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg)
 }
 
-.region:hover,
-.region.active {
-  background: rgba(182, 155, 114, .1)
+.dcard:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px
 }
 
-.region .rnum {
-  font-size: 12px;
-  color: var(--gold-soft);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: .1em;
-  flex: none;
-  width: 24px
-}
-
-.region .rname {
-  font-family: var(--serif-display);
-  font-size: 21px;
-  color: var(--ivory);
-  font-weight: 500
-}
-
-.region .rgeo {
-  font-size: 13px;
-  color: var(--fg-on-dark-2);
-  margin-left: auto;
-  text-align: right
-}
-
-.map-canvas {
-  position: relative;
-  aspect-ratio: 282/580;
-  width: 100%;
-  max-width: clamp(320px, 34vw, 400px);
-  margin-inline: auto
-}
-
-.map-terrain {
+.dcard-img {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
-  opacity: .16;
-  mix-blend-mode: luminosity;
-  -webkit-mask: radial-gradient(60% 50% at 50% 42%, #000, transparent);
-  mask: radial-gradient(60% 50% at 50% 42%, #000, transparent)
-}
-
-.map-svg {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: visible
-}
-
-.map-path {
-  fill: rgba(47, 62, 52, .55);
-  stroke: var(--gold-soft);
-  stroke-width: .8;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 8px 30px rgba(0, 0, 0, .4))
-}
-
-.map-dot {
-  fill: var(--gold);
-  opacity: .6;
-  transition: r var(--dur-base) var(--ease-out), opacity var(--dur-base)
-}
-
-.map-halo {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1.4;
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: opacity var(--dur-base) var(--ease-out)
-}
-
-.map-ping {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1;
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center
-}
-
-.map-pin.on .map-ping {
-  opacity: .5
+  transition: transform 1.4s var(--ease-soft)
 }
 
 @media(prefers-reduced-motion:no-preference) {
-  .map-pin.on .map-ping {
-    animation: mping 2.8s var(--ease-soft) infinite
+  .dcard:hover .dcard-img {
+    transform: scale(1.06)
   }
 }
 
-@keyframes mping {
-  0% {
-    transform: scale(.6);
-    opacity: .6
-  }
-
-  70%,
-  100% {
-    transform: scale(2.6);
-    opacity: 0
-  }
-}
-
-.map-pin {
-  cursor: pointer
-}
-
-.map-pin.on .map-dot {
-  r: 5;
-  opacity: 1
-}
-
-.map-pin.on .map-halo {
-  opacity: .85
-}
-
-/* Region labels: hidden by default, revealed only for the active pin (declutter) */
-.map-label {
+.dcard-scrim {
   position: absolute;
-  z-index: 2;
-  transform: translate(12px, -50%);
-  font-size: 12px;
-  letter-spacing: .02em;
-  color: var(--ivory);
-  white-space: nowrap;
-  pointer-events: none;
+  inset: 0;
+  background: linear-gradient(to top, rgba(29, 29, 27, .92), rgba(29, 29, 27, .48) 54%, rgba(29, 29, 27, .16))
+}
+
+.dcard-body {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: clamp(1.25rem, 2vw, 1.75rem)
+}
+
+.dcard-tag {
+  align-self: flex-start;
+  font-size: 10.5px;
   font-weight: 600;
-  background: rgba(20, 22, 19, .66);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(182, 155, 114, .42);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #ecd6a4;
+  background: rgba(20, 22, 19, .42);
+  border: 1px solid rgba(236, 214, 164, .4);
   border-radius: var(--radius-pill);
-  padding: 4px 12px;
-  opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease-soft);
-  box-shadow: 0 7px 20px rgba(0, 0, 0, .4)
+  padding: 5px 11px;
+  margin-bottom: 6px
 }
 
-.map-label.on {
-  opacity: 1
+.dcard-name {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+  line-height: 1.08;
+  letter-spacing: -.01em;
+  color: var(--ivory)
 }
 
-/* Eastern/southern labels flip left so they never clip the frame */
-.map-label.flip {
-  transform: translate(-100%, -50%);
-  margin-left: -12px
+.dcard-geo {
+  font-size: 12.5px;
+  color: var(--fg-on-dark-2);
+  letter-spacing: .01em
+}
+
+.dcard-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ivory)
+}
+
+.dcard-go svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.6;
+  transition: transform var(--dur-fast) var(--ease-soft)
+}
+
+.dcard:hover .dcard-go {
+  gap: 11px
+}
+
+.dcard:hover .dcard-go svg {
+  transform: translate(2px, -2px)
+}
+
+@media(max-width:560px) {
+  .dexp-controls {
+    align-items: flex-start;
+    flex-direction: column
+  }
+
+  .dcard {
+    flex-basis: 78vw
+  }
 }
 
 /* ---------- 8. Strategic partners ---------- */
@@ -2001,6 +2075,7 @@ textarea:focus-visible {
   padding: 13px 22px;
   border-radius: var(--radius-md);
   align-self: flex-start;
+  white-space: nowrap;
   transition: gap var(--dur-fast) var(--ease-soft), background var(--dur-fast)
 }
 
