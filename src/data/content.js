@@ -120,7 +120,7 @@ export const NOMADE = {
     mapEyebrow: "Regiones en exploración",
     mapH: "Dónde estamos mirando.",
     mapLead: "Empezamos por unas pocas regiones. La red crecerá despacio, en un número acotado de destinos.",
-    disclaimer: "Regiones de interés para futuras aperturas · en exploración.",
+    disclaimer: "Regiones de interés para futuras aperturas. En exploración.",
     terrain: IMG("1426604966848-d7adac402bff", 1400),
     regions: {
       "Bariloche": {
