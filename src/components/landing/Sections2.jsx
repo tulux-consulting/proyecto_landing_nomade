@@ -20,8 +20,8 @@ function DestinoModal({ destino, onClose }) {
     if (!destino) return;
     const onKey = (e) => {
       if (e.key === "Escape") { if (zoom) { setZoom(false); } else { onClose(); } } else
-      if (e.key === "ArrowRight") { setZoom(false); setIdx((i) => (i + 1) % n); } else
-      if (e.key === "ArrowLeft") { setZoom(false); setIdx((i) => (i - 1 + n) % n); }
+        if (e.key === "ArrowRight") { setZoom(false); setIdx((i) => (i + 1) % n); } else
+          if (e.key === "ArrowLeft") { setZoom(false); setIdx((i) => (i - 1 + n) % n); }
     };
     document.addEventListener("keydown", onKey);
     const prevHtml = document.documentElement.style.overflow;
@@ -202,9 +202,8 @@ function DestinosExplorer({ destinos, onOpen, isPreview }) {
               <span className="dcard-tag">En exploración</span>
               <span className="dcard-name">{d.name}</span>
               <span className="dcard-geo">{d.geo}</span>
-              {d.book && (
-                <span className="dcard-go">Ver destino<Icon name="arrow-up-right" /></span>
-              )}
+              <span className="dcard-go">Ver destino<Icon name="arrow-up-right" /></span>
+
             </span>
           </button>
         ))}
@@ -218,6 +217,7 @@ function Destinations(props) {
   const isPreview = props.isPreview || false;
   const [openDestino, setOpenDestino] = useState(null);
   const [destinosList, setDestinosList] = useState([]);
+  const [hasActiveDestinos, setHasActiveDestinos] = useState(false);
 
   const types = d.types || [];
 
@@ -226,6 +226,7 @@ function Destinations(props) {
     DestinosRepository.getPublished().then(data => {
       if (active) {
         if (data && data.length > 0) {
+          setHasActiveDestinos(true);
           const mapped = data.map(destino => {
             const photos = [];
             if (destino.imagen) {
@@ -252,12 +253,14 @@ function Destinations(props) {
           });
           setDestinosList(mapped);
         } else {
+          setHasActiveDestinos(false);
           setDestinosList(mapFallback(d.regions));
         }
       }
     }).catch(err => {
       console.error("Error loading active destinations:", err);
       if (active) {
+        setHasActiveDestinos(false);
         setDestinosList(mapFallback(d.regions));
       }
     });
@@ -315,7 +318,12 @@ function Destinations(props) {
           {destinosList.length > 0 && (
             <DestinosExplorer destinos={destinosList} onOpen={setOpenDestino} isPreview={isPreview} />
           )}
-          {d.disclaimer && <p className="map-disclaimer-below">{d.disclaimer}</p>}
+          {!hasActiveDestinos && d.disclaimer && (
+            <p className="map-disclaimer-below">
+              <Icon name="info" />
+              {d.disclaimer}
+            </p>
+          )}
         </div>
       </div>
       <DestinoModal destino={openDestino} onClose={() => setOpenDestino(null)} />
