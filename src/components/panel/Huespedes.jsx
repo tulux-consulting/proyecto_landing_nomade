@@ -241,7 +241,7 @@ function Huespedes() {
       )}
 
       {confirmDel && (
-        <Confirm title="Eliminar huésped" message="¿Estás seguro de que querés eliminar a este huésped de la lista? Esta acción no se puede deshacer." onConfirm={doDelete} onCancel={() => setConfirmDel(false)} />
+        <Confirm title="Eliminar huésped" message="¿Estás seguro de que querés eliminar a este huésped de la lista? Esta acción no se puede deshacer." onConfirm={doDelete} onClose={() => setConfirmDel(false)} />
       )}
     </div>
   );
