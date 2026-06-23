@@ -209,8 +209,7 @@ function Footer(props) {
           </div>
         </div>
         <div className="foot-bottom">
-          <span>{copyright}<br />Diseñado y desarrollado por <a href="#" target="_blank" style={{ color: "#e0d9cf", textDecoration: "underline" }}>Tulux</a>.</span>
-          <span className="foot-note">Proyecto en formación · imágenes conceptuales</span>
+          <span>{copyright}<br />Diseñado y desarrollado por <a href="https://tulux.vercel.app/" target="_blank" style={{ color: "#e0d9cf", textDecoration: "underline" }}>Tulux</a>.</span>
         </div>
       </div>
     </footer>);
