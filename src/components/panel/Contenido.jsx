@@ -296,7 +296,7 @@ function Contenido({ onToast }) {
             {dirty
               ? <span className="cms-dirty"><Icon name="dot" />Cambios sin guardar</span>
               : <span className="cms-saved"><Icon name="check-circle-2" />Todo guardado/publicado</span>}
-            <div style={{ display: "flex", gap: 9 }}>
+            <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
               <Btn variant="ghost" sm onClick={discard} title="Descartar cambios">Descartar</Btn>
               <Btn variant="ghost" sm onClick={saveDraft} title="Guardar borrador sin publicar">Guardar Borrador</Btn>
               <Btn variant="primary" icon="upload-cloud" sm onClick={publish}>Publicar</Btn>

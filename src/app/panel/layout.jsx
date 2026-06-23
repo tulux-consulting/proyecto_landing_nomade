@@ -22,6 +22,66 @@ export default function PanelLayout({ children }) {
     let subscription = null;
     
     const initAuth = async () => {
+      if (process.env.NEXT_PUBLIC_DATA_SOURCE === 'memory') {
+        try {
+          const isAuthed = localStorage.getItem('nomade_mock_auth') === 'true';
+          const sessionUserStr = localStorage.getItem('nomade_bo_sessionUser');
+          const sessionUser = sessionUserStr ? JSON.parse(sessionUserStr) : null;
+
+          if (pathname === '/panel/login' || pathname === '/panel/reset-password') {
+            if (isAuthed && sessionUser) {
+              router.replace('/panel');
+            }
+            setLoading(false);
+            return;
+          }
+
+          if (!isAuthed || !sessionUser) {
+            setAuthed(false);
+            router.replace('/panel/login');
+            setLoading(false);
+            return;
+          }
+
+          if (!sessionUser.is_active) {
+            setAuthed(false);
+            router.replace('/unauthorized?reason=inactive');
+            setLoading(false);
+            return;
+          }
+
+          const isAdmin = sessionUser.role === 'admin';
+          if (pathname.startsWith('/panel/ajustes') && !isAdmin) {
+            setAuthed(false);
+            router.replace('/unauthorized?reason=admin_required');
+            setLoading(false);
+            return;
+          }
+
+          setAuthed(true);
+          setUser(sessionUser);
+
+          // Pre-cargar todas las colecciones para sincronizar conteos
+          const { PostulacionesRepository, PartnersRepository, HuespedesRepository, UserRepository, DestinosRepository } = await import('../../repositories/index');
+          await Promise.all([
+            PostulacionesRepository.getAll().catch(console.error),
+            PartnersRepository.getAll().catch(console.error),
+            HuespedesRepository.getAll().catch(console.error),
+            UserRepository.getAll().catch(console.error),
+            DestinosRepository.getAll().catch(console.error)
+          ]);
+        } catch (e) {
+          console.error('Error inicializando autenticación en memoria:', e);
+          setAuthed(false);
+          if (pathname !== '/panel/login') {
+            router.replace('/panel/login');
+          }
+        } finally {
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
         const { createClient } = await import('../../lib/supabase/client.js');
         const supabase = createClient();
