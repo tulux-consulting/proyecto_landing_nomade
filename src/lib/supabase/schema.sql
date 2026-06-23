@@ -22,6 +22,17 @@ create index if not exists profiles_username_idx on public.profiles (username);
 -- RLS Configuration
 alter table public.profiles enable row level security;
 
+-- Helper Functions
+create or replace function public.is_admin()
+returns boolean as $$
+begin
+  return exists (
+    select 1 from public.profiles
+    where id = auth.uid() and is_active = true and role = 'admin'
+  );
+end;
+$$ language plpgsql security definer;
+
 -- Policies
 drop policy if exists "Cualquier usuario autenticado puede leer perfiles" on public.profiles;
 drop policy if exists "Solo administradores pueden actualizar perfiles" on public.profiles;
@@ -36,17 +47,6 @@ create policy "Solo administradores pueden gestionar perfiles"
   on public.profiles for all
   to authenticated
   using (public.is_admin());
-
--- Helper Functions
-create or replace function public.is_admin()
-returns boolean as $$
-begin
-  return exists (
-    select 1 from public.profiles
-    where id = auth.uid() and is_active = true and role = 'admin'
-  );
-end;
-$$ language plpgsql security definer;
 
 -- Username to email resolution for login
 create or replace function public.get_email_by_username(p_username text)
