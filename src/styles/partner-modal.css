@@ -8,11 +8,19 @@
   opacity:1;animation:pm-fade var(--dur-base) var(--ease-out)}
 @keyframes pm-fade{from{opacity:0}}
 .pm-modal{background:var(--ivory-warm);border-radius:var(--radius-xl);box-shadow:var(--shadow-xl);
-  width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;margin:auto;
+  width:min(640px,100%);max-height:92vh;display:flex;flex-direction:column;margin:auto;overflow:hidden;
   transform:translateY(0) scale(1);opacity:1;animation:pm-rise var(--dur-slow) var(--ease-out)}
 @keyframes pm-rise{from{transform:translateY(14px) scale(.99);opacity:0}}
 
-.pm-head{position:relative;padding:30px clamp(1.5rem,4vw,2.5rem) 20px;border-bottom:1px solid var(--line)}
+.pm-modal form {
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  overflow: hidden;
+  height: 100%;
+}
+
+.pm-head{position:relative;padding:30px clamp(1.5rem,4vw,2.5rem) 20px;border-bottom:1px solid var(--line);flex-shrink:0}
 .pm-eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-deep);
   margin:0 0 10px;display:flex;align-items:center;gap:9px}
 .pm-eyebrow::before{content:"";width:20px;height:1px;background:currentColor;opacity:.6}
@@ -26,10 +34,10 @@
 .pm-close:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .pm-close svg{width:19px;height:19px;stroke-width:1.7}
 
-.pm-body{padding:24px clamp(1.5rem,4vw,2.5rem);overflow-y:auto}
+.pm-body{padding:24px clamp(1.5rem,4vw,2.5rem);overflow-y:auto;flex-grow:1;flex-shrink:1;min-height:0}
 .pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px}
 .pm-grid .field.full{grid-column:1/-1}
-.pm-foot{border-top:1px solid var(--line);padding:18px clamp(1.5rem,4vw,2.5rem);
+.pm-foot{border-top:1px solid var(--line);padding:18px clamp(1.5rem,4vw,2.5rem);flex-shrink:0;
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .pm-foot .pm-legal{font-size:12px;line-height:1.5;color:var(--fg3);max-width:34ch;margin:0}
 .pm-foot .btn{min-width:170px;justify-content:center}
