@@ -3250,6 +3250,24 @@ table.tbl {
     max-height: 520px
   }
 
+  .cms-actionbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cms-actionbar .cms-dirty,
+  .cms-actionbar .cms-saved {
+    min-width: 0;
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .cms-actionbar > div {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
   .toolbar .ssel,
   .toolbar .selectwrap,
   .toolbar .selectwrap select {
