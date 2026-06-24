@@ -68,8 +68,6 @@ grant execute on function public.get_email_by_username(text) to anon, authentica
 grant all on public.profiles to authenticated, service_role;
 
 
-
-
 -- ============================================================================
 -- APPLICATIONS (SOLICITUDES / POSTULACIONES)
 -- ============================================================================
