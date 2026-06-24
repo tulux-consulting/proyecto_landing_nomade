@@ -1689,7 +1689,7 @@ table.tbl {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 12px 16px;
-  margin-bottom: 2px
+  margin-bottom: 2px;
 }
 
 .cms-actionbar .cms-dirty {
@@ -1698,7 +1698,7 @@ table.tbl {
   display: flex;
   align-items: center;
   gap: 7px;
-  min-width: 200px;
+  min-width: 140px;
   flex-shrink: 0
 }
 
@@ -1714,7 +1714,7 @@ table.tbl {
   display: flex;
   align-items: center;
   gap: 7px;
-  min-width: 200px;
+  min-width: 140px;
   flex-shrink: 0
 }
 
@@ -1722,6 +1722,12 @@ table.tbl {
   width: 14px;
   height: 14px;
   stroke-width: 1.8
+}
+
+.cms-actionbar-buttons {
+  display: flex;
+  gap: 9px;
+  flex-wrap: nowrap;
 }
 
 .cms-img-single .imgmgr-grid {
@@ -1773,7 +1779,7 @@ table.tbl {
   scroll-behavior: smooth
 }
 
-.cms-preview > * {
+.cms-preview>* {
   pointer-events: none !important;
 }
 
@@ -3251,7 +3257,7 @@ table.tbl {
   }
 
   .cms-actionbar {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 12px;
   }
 
@@ -3259,13 +3265,12 @@ table.tbl {
   .cms-actionbar .cms-saved {
     min-width: 0;
     width: auto;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
   }
 
-  .cms-actionbar > div {
-    flex: 1 1 auto;
+  .cms-actionbar-buttons {
+    flex: 0 0 auto;
     justify-content: flex-end;
-    flex-wrap: wrap;
   }
 
   .toolbar .ssel,

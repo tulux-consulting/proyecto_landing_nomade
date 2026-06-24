@@ -47,7 +47,7 @@ export default function LandingPage() {
   const cta = (label) => {
     setToast(
       label === "Contacto" ?
-        "Escribinos a benomade.arg@protonmail.com — te respondemos pronto." :
+        "Escribinos a sernomade@protonmail.com — te respondemos pronto." :
         `“${label}” — gracias por tu interés. Te contactaremos pronto.`
     );
     clearTimeout(window.__t);
