@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Icon } from './Icon.jsx';
 
 export function DataTable({ columns, rows, onRow, sort, onSort, rowClass }) {
+  const emptyCount = Math.max(0, 5 - rows.length);
   return (
     <div className="tbl-wrap">
       <table className="tbl">
@@ -22,6 +23,15 @@ export function DataTable({ columns, rows, onRow, sort, onSort, rowClass }) {
           {rows.map((r) => (
             <tr key={r.id} onClick={() => onRow && onRow(r)} className={rowClass ? rowClass(r) : ""}>
               {columns.map((c) => <td key={c.key} className={c.align === "right" ? "right" : ""}>{c.render(r)}</td>)}
+            </tr>
+          ))}
+          {Array.from({ length: emptyCount }).map((_, idx) => (
+            <tr key={`empty-${idx}`} className="empty-row" style={{ cursor: "default", pointerEvents: "none" }}>
+              {columns.map((c) => (
+                <td key={c.key} className={c.align === "right" ? "right" : ""}>
+                  <span style={{ visibility: "hidden" }}>&nbsp;</span>
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

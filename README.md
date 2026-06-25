@@ -47,8 +47,14 @@ El sistema resuelve dos necesidades críticas del negocio:
 - **Lista de Huéspedes y Métricas**: Listado de espera interactivo junto con un panel analítico detallado con gráficos de barra segmentados por procedencia geográfica y dispositivo de acceso.
 - **Destinos (ABM)**: Módulo de alta, edición y baja (archivo/eliminación) de destinos en la red. Cuenta con un gestor interactivo de orden de fotografías y un interruptor de visibilidad pública inmediata.
 - **Contenido del Sitio (CMS)**: Gestor de contenidos visual y de textos organizados en acordeones. Cuenta con sincronización automática de scroll y un simulador en tiempo real de la landing page.
-- **Ajustes**: Panel de administración de cuentas de usuario del personal del backoffice (exclusivo del Administrador).
+- **Ajustes**: Panel de administración de cuentas de usuario del personal del backoffice (exclusivo del Administrador). Contiene paginado y control de idioma preferido.
 - **Mi Cuenta**: Modal transversal para el cambio seguro de contraseñas de acceso.
+
+### 3. Internacionalización y Localización (i18n)
+- **Soporte Bilingüe**: Traducciones completas en español e inglés para la Landing Page pública y toda la interfaz del Backoffice administrativo.
+- **Preferencia Persistente**: Detección automática del idioma del navegador y guardado de la selección del usuario mediante cookies y `localStorage`.
+- **Sincronización en la Nube**: Al cambiar la preferencia en el Backoffice, el idioma del perfil del usuario se sincroniza en la base de datos (tabla `profiles`) de Supabase para mantenerse entre diferentes dispositivos.
+- **Selector de Idioma**: Dropdown interactivo y accesible (`LangSwitcher`) en el menú de navegación principal y control directo en el panel interno.
 
 ---
 
@@ -249,6 +255,7 @@ La aplicación se encuentra lista para ser desplegada en plataformas compatibles
 - **Separación de Capas**: Desacoplamiento de Supabase y LocalStorage mediante abstracciones de repositorio, facilitando la migración del motor de base de datos sin alterar los componentes visuales.
 - **SOLID / Clean Code**: Componentes enfocados, nombres semánticos, reusabilidad de componentes UI y validaciones estrictas en formularios de edición.
 - **Seguridad Robusta**: Control de roles y validación de usuarios tanto en frontend (Router Guards) como en backend (Reglas RLS a nivel de base de datos).
+- **UX y Estabilidad de Layout**: Paginado consistente a 5 elementos por vista en todas las tablas del panel y relleno mediante filas vacías invisibles (`.empty-row`) con altura fija de `70px` para prevenir saltos de tamaño abruptos en la pantalla al navegar. Bloqueo de scroll dinámico bajo capas superpuestas en móviles para una experiencia fluida.
 
 ---
 

@@ -1,23 +1,12 @@
 /* NÓMADE — public landing page content.
    NÓMADE is a HOSPITALITY BRAND. The product is the experience.
    Land is the mechanism used to expand the network; tiny houses / modular
-   units are implementation details, never the value proposition.
-
-   Three audiences, one linear narrative:
-     · Landowners (primary)        → the opportunity + the application
-     · Partners / operators (2nd)  → the business proposition
-     · Future guests (tertiary)    → the waitlist
-
-   No inventory, bookings, prices or reviews — the network is in formation.
-   Imagery: Unsplash CDN placeholders (nature, golden hour). Swap for licensed photos. */
+   units are implementation details, never the value proposition. */
 const IMG = (id, w) => (typeof window !== 'undefined' && window.__resources && window.__resources[id])
   || `https://images.unsplash.com/photo-${id}?w=${w || 1600}&q=80&auto=format&fit=crop`;
-// Local (real) photography. Resolves to an inlined blob in the standalone build,
-// otherwise to the project-relative path. data-resource-id must match `id`.
 const LIMG = (path, id) => (typeof window !== 'undefined' && window.__resources && window.__resources[id]) || path;
 
-export const NOMADE = {
-
+export const NOMADE_ES = {
   nav: {
     links: [
       ["Qué es NÓMADE", "que-es"],
@@ -28,8 +17,6 @@ export const NOMADE = {
     ],
     cta: "Postular ubicación"
   },
-
-  // 1 — HERO
   hero: {
     img: IMG("1469474968028-56623f02e42e", 2200),
     eyebrow: "Una red de hospitalidad",
@@ -40,8 +27,6 @@ export const NOMADE = {
     lead: "Estamos construyendo una red de experiencias de alojamiento y bienestar en ubicaciones cuidadosamente seleccionadas.",
     cta: "Descubrir NÓMADE"
   },
-
-  // 4.5 — AUDIENCE SELF-IDENTIFICATION (split). Comes after the vision is sold.
   split: {
     eyebrow: "Tres formas de sumarte",
     h2: "¿Cómo querés explorar NÓMADE?",
@@ -71,8 +56,6 @@ export const NOMADE = {
       target: "destinos"
     }
   },
-
-  // 3 — WHAT IS NÓMADE
   whatis: {
     eyebrow: "Qué es NÓMADE",
     h2: "Una marca de hospitalidad, no un lugar.",
@@ -84,8 +67,6 @@ export const NOMADE = {
       { icon: "waypoints", h: "Una red que crece", p: "Una visión de largo plazo: una red de destinos que se expande, despacio y con criterio." }
     ]
   },
-
-  // 4 — THE NÓMADE EXPERIENCE (guest value)
   experience: {
     eyebrow: "La experiencia NÓMADE",
     h2: "Pensado para quien lo vive.",
@@ -101,8 +82,6 @@ export const NOMADE = {
     ],
     statement: ["La ubicación cambia.", "La experiencia NÓMADE no."]
   },
-
-  // 5 — DESTINATIONS WORTH DISCOVERING (potential, not "nature")
   destinations: {
     eyebrow: "Destinos que vale la pena descubrir",
     h2: "Buscamos potencial, no postales.",
@@ -116,7 +95,6 @@ export const NOMADE = {
       { img: IMG("1454496522488-7a8e488e8606", 1200), cap: "Entornos rurales y culturales" }
     ],
     note: "Imágenes conceptuales que ilustran el tipo de potencial que buscamos. NÓMADE aún no cuenta con destinos operativos.",
-    // map block
     mapEyebrow: "Regiones en exploración",
     mapH: "Dónde estamos mirando.",
     mapLead: "Empezamos por unas pocas regiones. La red crecerá despacio, en un número acotado de destinos.",
@@ -125,7 +103,7 @@ export const NOMADE = {
     regions: {
       "Bariloche": {
         geo: "Río Negro · Lagos y bosque andino",
-        desc: "A orillas de un lago glaciar y rodeada de bosque andino, una tiny house de diseño donde el silencio y la montaña son los protagonistas. Madera cálida, grandes ventanales y la Patagonia a un paso de la puerta.",
+        desc: "A orillas de un lago glaciar y rodeada de bosque andino, una casa de diseño donde el silencio y la montaña son los protagonistas. Madera cálida, grandes ventanales y la Patagonia a un paso de la puerta.",
         photos: [IMG("1501785888041-af3ef285b470", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
         book: "https://www.airbnb.com/s/Bariloche--Argentina/homes"
       },
@@ -140,35 +118,9 @@ export const NOMADE = {
         desc: "Entre viñedos y la silueta de los Andes, una casa pequeña pensada para el descanso lento. Atardeceres de vino, cielos enormes y el confort silencioso de NÓMADE.",
         photos: [IMG("1500382017468-9049fed747ef", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
         book: "https://www.airbnb.com/s/Mendoza--Argentina/homes"
-      },
-      "Villa General Belgrano": {
-        geo: "Córdoba · Sierras y arroyos",
-        desc: "En las sierras de Córdoba, junto a un arroyo de agua clara, un espacio sereno entre árboles. El sonido del agua, senderos cercanos y la calidez de un diseño hecho para habitar la naturaleza.",
-        photos: [IMG("1426604966848-d7adac402bff", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/guest-doorway.jpg", "guestDoorway")],
-        book: "https://www.airbnb.com/s/Villa-General-Belgrano--Argentina/homes"
-      },
-      "Tandil": {
-        geo: "Buenos Aires · Sierras y campo",
-        desc: "Sobre las sierras bonaerenses, entre campo abierto y piedra, un retiro luminoso lejos del ruido. Mañanas de niebla, caminatas y el lujo simple de no tener apuro.",
-        photos: [IMG("1454496522488-7a8e488e8606", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
-        book: "https://www.airbnb.com/s/Tandil--Argentina/homes"
-      },
-      "Misiones": {
-        geo: "Litoral · Selva y agua",
-        desc: "En el corazón de la selva, entre agua y vegetación intensa, un refugio que respira verde. Cantos de aves, luz filtrada y una hospitalidad que celebra lo salvaje.",
-        photos: [IMG("1470071459604-3b5ec3a7fe05", 1600), LIMG("/assets/photos/guest-doorway.jpg", "guestDoorway"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
-        book: "https://www.airbnb.com/s/Misiones--Argentina/homes"
-      },
-      "Ushuaia": {
-        geo: "Tierra del Fuego · El fin del mundo",
-        desc: "En el fin del mundo, entre montañas nevadas y el canal Beagle, una tiny house para los viajeros del último confín. Naturaleza extrema, abrigo absoluto y una vista que no se olvida.",
-        photos: [IMG("1469474968028-56623f02e42e", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
-        book: "https://www.airbnb.com/s/Ushuaia--Argentina/homes"
       }
     }
   },
-
-  // 6 — HOW WE CREATE NEW DESTINATIONS (the model)
   model: {
     eyebrow: "El modelo",
     h2: "Cómo nace un destino NÓMADE.",
@@ -180,8 +132,6 @@ export const NOMADE = {
     ],
     result: { h: "Un nuevo destino", p: "Una experiencia memorable, sumada a la red NÓMADE." }
   },
-
-  // 7 — DO YOU OWN A LOCATION WITH POTENTIAL? (landowner opportunity)
   landowners: {
     eyebrow: "Para propietarios",
     h2: "¿Tenés un lugar con potencial?",
@@ -212,8 +162,6 @@ export const NOMADE = {
     ],
     cta: "Postular mi terreno"
   },
-
-  // 8 — SELECTION PROCESS (trust timeline)
   process: {
     eyebrow: "El proceso de selección",
     h2: "De la postulación a la red.",
@@ -226,8 +174,6 @@ export const NOMADE = {
       { n: "05", icon: "waypoints", h: "Integración a la red", p: "El destino abre y se suma a la red NÓMADE." }
     ]
   },
-
-  // 9 — INITIAL NÓMADE EVALUATION (the application form)
   form: {
     eyebrow: "Evaluación inicial NÓMADE",
     h2: "Postulá tu terreno.",
@@ -270,8 +216,6 @@ export const NOMADE = {
     inversion: ["Sí", "Parcial", "No", "A evaluar"],
     horizontes: ["Cuanto antes", "Dentro de 1 año", "1 – 3 años", "Sin definir"]
   },
-
-  // 10 — NÓMADE PARTNERS (operators)
   partners: {
     eyebrow: "NÓMADE Partners",
     h2: "¿Ya operás un establecimiento turístico?",
@@ -291,8 +235,6 @@ export const NOMADE = {
     ],
     cta: "Quiero ser Partner"
   },
-
-  // 11 — FUTURE GUESTS (waitlist)
   guests: {
     eyebrow: "Para futuros huéspedes",
     h2: "Estamos construyendo los próximos destinos NÓMADE.",
@@ -302,4 +244,249 @@ export const NOMADE = {
     success: "Listo. Te avisaremos cuando abramos los primeros destinos.",
     note: "Sin spam. Sólo novedades sobre nuevas aperturas."
   }
+};
+
+export const NOMADE_EN = {
+  nav: {
+    links: [
+      ["What is NÓMADE", "que-es"],
+      ["Experience", "experiencia"],
+      ["Destinations", "destinos"],
+      ["Partners", "socios"],
+      ["Contact", "contacto"]
+    ],
+    cta: "Submit location"
+  },
+  hero: {
+    img: IMG("1469474968028-56623f02e42e", 2200),
+    eyebrow: "A hospitality network",
+    h1a: "Extraordinary experiences.",
+    h1b: "Consistent standards.",
+    sub1: "Each destination is unique.",
+    sub2: "The NÓMADE experience is not.",
+    lead: "We are building a network of lodging and wellness experiences in carefully selected locations.",
+    cta: "Discover NÓMADE"
+  },
+  split: {
+    eyebrow: "Three ways to join",
+    h2: "How do you want to explore NÓMADE?",
+    lead: "You already know what it is and what experience it creates. Choose the path that represents you.",
+    left: {
+      kicker: "Potential",
+      img: IMG("1426604966848-d7adac402bff", 1400),
+      h: "I have a location with potential",
+      p: "You own a place with character and want to convert it into a destination, in partnership with NÓMADE — without building or managing anything.",
+      cta: "I want to be part",
+      target: "propietarios"
+    },
+    middle: {
+      kicker: "PARTNER",
+      img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1100&q=80&auto=format&fit=crop",
+      h: "I already operate an establishment",
+      p: "You have a camping, glamping, vineyard, or lodging underway and want to add the NÓMADE brand, standards, and guest network.",
+      cta: "I want to be Partner",
+      target: "socios"
+    },
+    right: {
+      kicker: "Experience",
+      img: LIMG("/assets/photos/guest-doorway.jpg", "guestDoorway"),
+      h: "I want to discover NÓMADE",
+      p: "You dream of escaping to a cared-for destination, in the middle of nature. Get to know the experience and find out first when we open new locations.",
+      cta: "Discover the experience",
+      target: "destinos"
+    }
+  },
+  whatis: {
+    eyebrow: "What is NÓMADE",
+    h2: "A hospitality brand, not a place.",
+    lead: "NÓMADE is a network of hospitality and wellness destinations. We choose exceptional locations and turn them into memorable experiences, faithful to the same standard.",
+    points: [
+      { icon: "compass", h: "Hospitality first", p: "We do not sell lodging. We create curated experiences, from start to finish." },
+      { icon: "map", h: "Curated destinations", p: "Each location is hand-picked for its character, surroundings, and potential." },
+      { icon: "badge-check", h: "A consistent experience", p: "Wherever you are, the NÓMADE promise feels just as good." },
+      { icon: "waypoints", h: "A growing network", p: "A long-term vision: a network of destinations that expands, slowly and with criteria." }
+    ]
+  },
+  experience: {
+    eyebrow: "The NÓMADE Experience",
+    h2: "Thought for those who live it.",
+    lead: "Everything we do exists for one thing: how you feel when you are there. Six principles that travel with you to each destination.",
+    img: LIMG("/assets/photos/interior-golden.jpg", "interiorGolden"),
+    pillars: [
+      { icon: "drafting-compass", h: "Design", p: "Serene spaces that elevate the place instead of competing with it." },
+      { icon: "flower-2", h: "Wellness", p: "Time to slow down. Rest, nature, and silence as a starting point." },
+      { icon: "shield", h: "Privacy", p: "Your own places, far from the noise. The feeling of having the landscape to yourself." },
+      { icon: "hand-heart", h: "Hospitality", p: "Attentive and discreet service, capable of anticipating what you need." },
+      { icon: "map", h: "Local identity", p: "Each destination tastes of its land: its culture, its people, its flavors." },
+      { icon: "badge-check", h: "Consistency", p: "The location changes. The level of the experience, never." }
+    ],
+    statement: ["The location changes.", "The NÓMADE experience does not."]
+  },
+  destinations: {
+    eyebrow: "Destinations worth discovering",
+    h2: "We look for potential, not postcards.",
+    lead: "A NÓMADE destination can be born in many landscapes. What they have in Holiday is not the type of terrain, but its potential to become an unforgettable experience.",
+    types: [
+      { img: IMG("1469474968028-56623f02e42e", 1200), cap: "Mountains" },
+      { img: IMG("1500382017468-9049fed747ef", 1200), cap: "Vineyards" },
+      { img: IMG("1470071459604-3b5ec3a7fe05", 1200), cap: "Forests" },
+      { img: IMG("1501785888041-af3ef285b470", 1200), cap: "Lakes" },
+      { img: IMG("1426604966848-d7adac402bff", 1200), cap: "Countryside & ranches" },
+      { img: IMG("1454496522488-7a8e488e8606", 1200), cap: "Rural and cultural settings" }
+    ],
+    note: "Conceptual images that illustrate the type of potential we look for. NÓMADE does not yet have operating destinations.",
+    mapEyebrow: "Regions in exploration",
+    mapH: "Where we are looking.",
+    mapLead: "We start with a few regions. The network will grow slowly, in a limited number of destinations.",
+    disclaimer: "Regions of interest for future openings. Under exploration.",
+    terrain: IMG("1426604966848-d7adac402bff", 1400),
+    regions: {
+      "Bariloche": {
+        geo: "Río Negro · Lakes and Andean forest",
+        desc: "On the shores of a glacial lake and surrounded by Andean forest, a designer tiny house where silence and the mountain are the protagonists. Warm wood, large windows, and Patagonia a step from the door.",
+        photos: [IMG("1501785888041-af3ef285b470", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
+        book: "https://www.airbnb.com/s/Bariloche--Argentina/homes"
+      },
+      "El Bolsón": {
+        geo: "Río Negro · Mountain valley",
+        desc: "In a valley between rivers and orchards, an intimate refuge to disconnect from the world. Wake up with the scent of forest and the mountain range framing each window.",
+        photos: [IMG("1470071459604-3b5ec3a7fe05", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/guest-doorway.jpg", "guestDoorway")],
+        book: "https://www.airbnb.com/s/El-Bolson--Argentina/homes"
+      },
+      "Mendoza": {
+        geo: "Cuyo · Vineyards and Andes",
+        desc: "Between vineyards and the silhouette of the Andes, a small house designed for slow rest. Wine sunsets, huge skies, and the silent comfort of NÓMADE.",
+        photos: [IMG("1500382017468-9049fed747ef", 1600), LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"), LIMG("/assets/photos/interior-golden.jpg", "interiorGolden")],
+        book: "https://www.airbnb.com/s/Mendoza--Argentina/homes"
+      }
+    }
+  },
+  model: {
+    eyebrow: "The model",
+    h2: "How a NÓMADE destination is born.",
+    lead: "The formula is simple. A place with potential, our hospitality brand, and a shared standard. The result is a new destination within the network.",
+    parts: [
+      { icon: "mountain", h: "Landowners", p: "Provide a location with experiential potential." },
+      { icon: "compass", h: "NÓMADE", p: "Provides the vision, design, and hospitality operation." },
+      { icon: "badge-check", h: "Standards", p: "Consistent design and hospitality throughout the network." }
+    ],
+    result: { h: "A new destination", p: "A memorable experience, added to the NÓMADE network." }
+  },
+  landowners: {
+    eyebrow: "For landowners",
+    h2: "Do you have a place with potential?",
+    lead: "If your land has something that makes it special, it could become a NÓMADE destination. You provide the place; we provide the vision, design, operation, and network — without you having to build or manage anything.",
+    img: LIMG("/assets/photos/cabins-exterior.jpg", "cabinsExterior"),
+    qualifies: {
+      h: "What we look for",
+      items: [
+        "An environment with character: mountain, forest, lake, vineyard, hill, coast, or field.",
+        "Reasonable access during a good part of the year.",
+        "Views, water, vegetation, or attractions that make the place unique.",
+        "Willingness to build something long-term, in partnership."
+      ]
+    },
+    disqualifies: {
+      h: "What is not for us",
+      items: [
+        "Urban subdivisions or purely residential land.",
+        "Places without any natural, cultural, or scenic appeal.",
+        "Projects seeking a quick land sale.",
+        "Large-scale mass resort operations."
+      ]
+    },
+    benefits: [
+      { icon: "trending-up", h: "Value that lasts", p: "A well-made destination creates value that grows with the years." },
+      { icon: "badge-check", h: "No management on your part", p: "NÓMADE designs, develops, and operates. You manage nothing." },
+      { icon: "heart-handshake", h: "A partnership, not a sale", p: "You remain the owner. We grow together, with a clear and long-term model." }
+    ],
+    cta: "Submit my land"
+  },
+  process: {
+    eyebrow: "The selection process",
+    h2: "From application to the network.",
+    lead: "A clear path without rush. Each place is evaluated individually; not all move forward, and that is fine.",
+    steps: [
+      { n: "01", icon: "send", h: "Application", p: "You share your land and what makes it unique through the form." },
+      { n: "02", icon: "search", h: "Evaluation", p: "We analyze the landscape, access, and vocation of the place." },
+      { n: "03", icon: "clipboard-check", h: "Feasibility", p: "We study technical, legal, and hospitality viability." },
+      { n: "04", icon: "drafting-compass", h: "Development", p: "We design the proposal and shape the experience." },
+      { n: "05", icon: "waypoints", h: "Integration to network", p: "The destination opens and joins the NÓMADE network." }
+    ]
+  },
+  form: {
+    eyebrow: "Initial NÓMADE Evaluation",
+    h2: "Submit your land.",
+    lead: "This is not a contact form: it is the first step of an evaluation process. The more complete, the better we can assess your land's potential.",
+    disclaimer: "Submitting your land does not imply exclusivity, transfer of ownership, legal commitment, or future partnership obligations. All evaluations are preliminary and exploratory.",
+    sections: [
+      "Owner information",
+      "Location",
+      "Land characteristics",
+      "Surrounding & accessibility",
+      "Infrastructure",
+      "Legal & regulatory situation",
+      "Tourism potential",
+      "Participation model",
+      "Photos & documentation"
+    ],
+    provincias: [
+      "Buenos Aires", "Ciudad de Buenos Aires", "Catamarca", "Chaco", "Chubut",
+      "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy", "La Pampa",
+      "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta",
+      "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero",
+      "Tierra del Fuego", "Tucumán"
+    ],
+    relaciones: ["Owner", "Co-owner", "Representative / proxy", "In partnership"],
+    sizes: [
+      "Less than 1 ha", "1 – 5 ha", "5 – 20 ha", "20 – 100 ha", "More than 100 ha"
+    ],
+    topografias: ["Flat", "Hilly", "Mountainous", "Mixed"],
+    paisajes: ["Mountain", "Forest", "Lake", "River or stream", "Hills", "Vineyard", "Coast", "Field", "Desert"],
+    aguas: ["Lake", "River or stream", "Sea or coast", "Spring water", "None"],
+    accesos: ["Asphalt", "Gravel", "Dirt road", "Mixed"],
+    estacionalidad: ["All year round", "Only peak season", "Weather dependent"],
+    servicios: ["Electricity", "Water", "Gas", "Internet / signal", "Sewers", "Internal roads"],
+    construcciones: ["Yes, habitable", "Yes, to renovate", "No"],
+    titulo: ["Perfect title deed", "In process", "Possession", "Other"],
+    usoSuelo: ["Approved for tourism", "To be checked", "Not approved", "Don't know"],
+    actividades: ["Hiking", "Fishing", "Horseback riding", "Water sports", "Wine & gastronomy", "Local culture", "Wildlife watching", "Cycling"],
+    demanda: ["High", "Medium", "Low / emerging"],
+    modelos: ["Land contribution in partnership", "Long-term lease", "Sale", "Open to evaluation"],
+    inversion: ["Yes", "Partial", "No", "To be evaluated"],
+    horizontes: ["As soon as possible", "Within 1 year", "1 – 3 years", "Undefined"]
+  },
+  partners: {
+    eyebrow: "NÓMADE Partners",
+    h2: "Do you already operate a tourism establishment?",
+    lead: "If you already have a project underway, you can join the network without starting from scratch. We bring our brand, standards, and guest network to establishments that share our vision of hospitality.",
+    audiences: [
+      { icon: "tent", h: "Campings & glampings" },
+      { icon: "compass", h: "Tour operators" },
+      { icon: "grape", h: "Vineyards & wineries" },
+      { icon: "trees", h: "Rural hospitality" },
+      { icon: "mountain", h: "Recreational properties" },
+      { icon: "fuel", h: "Service stations" }
+    ],
+    value: [
+      { h: "A brand that travels", p: "You add the backing and consistency of NÓMADE to what you have already built." },
+      { h: "Access to the network", p: "You reach a community of guests looking for experiences like yours." },
+      { h: "Shared standards", p: "Aligned design, service, and hospitality, without losing your identity." }
+    ],
+    cta: "Join as a Partner"
+  },
+  guests: {
+    eyebrow: "For future guests",
+    h2: "We are building the next NÓMADE destinations.",
+    lead: "Be one of the first people to find out when we open new locations.",
+    placeholder: "Your email",
+    cta: "Notify me",
+    success: "Done. We'll let you know when we open the first destinations.",
+    note: "No spam. Only updates about new openings."
+  }
+};
+
+export const NOMADE = {
+  es: NOMADE_ES,
+  en: NOMADE_EN
 };

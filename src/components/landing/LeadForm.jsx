@@ -1,16 +1,189 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Button, Eyebrow, useLucide } from './primitives.jsx';
 import { PostulacionesRepository } from '../../repositories/index';
-
-// NÓMADE — 9 Initial NÓMADE Evaluation.
-// Multi-step application wizard. All original fields preserved — only chunked
-// into 9 steps (Progressive Disclosure + Chunking + Goal Gradient).
-// Per-step validation, keyboard + SR accessible, localStorage autosave.
-// No backend — demo submit with a reassuring success state (Peak-End).
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
+import { NOMADE } from '../../data/content.js';
 
 const STORAGE_KEY = "nomade-application-v1";
 
+const FORM_MESSAGES = {
+  es: {
+    optional: "Opcional",
+    validation: {
+      nombre: "Ingresá tu nombre.",
+      apellido: "Ingresá tu apellido.",
+      email: "Ingresá tu email.",
+      telefono: "Ingresá un teléfono.",
+      provincia: "Elegí una provincia.",
+      localidad: "Ingresá la localidad.",
+      tamano: "Indicá el tamaño aproximado.",
+      modelo: "Elegí un modelo de participación.",
+      invalidEmail: "Revisá el formato del email.",
+      invalidPhone: "Revisá el número.",
+      invalidFileType: "Algunos archivos no tienen un formato de imagen válido.",
+      invalidFileSize: "Algunas imágenes superan el límite de 50MB.",
+      formErrors: "Revisá los campos obligatorios."
+    },
+    uploader: {
+      title: "Fotos y documentación",
+      action: "Arrastrá o seleccioná fotos del terreno",
+      specs: "Hasta 8 imágenes · JPG o PNG",
+      hint: "Las fotos no se guardan en el borrador; volvé a adjuntarlas si recargás la página."
+    },
+    success: {
+      thanks: "Gracias, {nombre}.",
+      received: "recibimos tu postulación",
+      desc: "Recibimos la información de tu terreno en {localidad}{provincia}. Nuestro equipo la revisará y, si avanza, te contactará para conversar sobre su potencial.",
+      button: "Cargar otra postulación"
+    },
+    nav: {
+      step: "Paso {step} de {total}",
+      back: "Atrás",
+      draftSaved: "Borrador guardado",
+      continue: "Continuar",
+      submitting: "Enviando...",
+      submit: "Enviar postulación"
+    },
+    fields: {
+      nombre: "Nombre",
+      nombrePlaceholder: "Tu nombre",
+      apellido: "Apellido",
+      apellidoPlaceholder: "Tu apellido",
+      email: "Email",
+      emailPlaceholder: "nombre@correo.com",
+      telefono: "Teléfono",
+      telefonoPlaceholder: "+54 9 ...",
+      relacion: "Tu relación con el terreno",
+      provincia: "Provincia",
+      provinciaPlaceholder: "Elegí una provincia",
+      localidad: "Localidad o paraje",
+      localidadPlaceholder: "Ciudad, pueblo o paraje",
+      coords: "Link de mapa o coordenadas",
+      coordsPlaceholder: "Google Maps o lat, long",
+      distancia: "Distancia a la ciudad más cercana",
+      distanciaPlaceholder: "Ej.: 40 km · 30 min",
+      tamano: "Tamaño del terreno",
+      topografia: "Topografía",
+      paisaje: "Tipo de paisaje",
+      multipleHint: "Podés elegir más de uno",
+      multipleHintF: "Podés elegir más de una",
+      aguas: "Cuerpos de agua",
+      vistas: "Vistas predominantes",
+      vistasPlaceholder: "Ej.: cordillera, lago, valle",
+      entorno: "Vegetación",
+      entornoPlaceholder: "Ej.: bosque nativo, monte, pastizal",
+      acceso: "Tipo de acceso",
+      estacionalidad: "Disponibilidad de acceso",
+      aeropuerto: "Aeropuerto o ciudad de referencia",
+      aeropuertoPlaceholder: "Ej.: Aeropuerto de Bariloche, 50 km",
+      servicios: "Servicios disponibles",
+      construcciones: "Construcciones existentes",
+      titulo: "Título de propiedad",
+      usoSuelo: "Uso de suelo",
+      legalNotas: "Restricciones ambientales u observaciones legales",
+      legalNotasPlaceholder: "Áreas protegidas, gravámenes, etc.",
+      actividades: "Actividades posibles en la zona",
+      atractivos: "Atractivos cercanos",
+      atractivosPlaceholder: "Parques, bodegas, pueblos, hitos",
+      demanda: "Demanda turística de la zona",
+      modelo: "Modelo de participación de interés",
+      inversion: "Disponibilidad de inversión",
+      horizonte: "Horizonte temporal",
+      comentarios: "Comentarios",
+      comentariosPlaceholder: "Paisaje, acceso, agua, vistas, historia del lugar… lo que quieras compartir."
+    }
+  },
+  en: {
+    optional: "Optional",
+    validation: {
+      nombre: "Please enter your first name.",
+      apellido: "Please enter your last name.",
+      email: "Please enter your email.",
+      telefono: "Please enter a phone number.",
+      provincia: "Please choose a province.",
+      localidad: "Please enter the city/locality.",
+      tamano: "Please indicate the approximate size.",
+      modelo: "Please choose a participation model.",
+      invalidEmail: "Please check the email format.",
+      invalidPhone: "Please check the phone number.",
+      invalidFileType: "Some files do not have a valid image format.",
+      invalidFileSize: "Some images exceed the 50MB limit.",
+      formErrors: "Please review the required fields."
+    },
+    uploader: {
+      title: "Photos and documentation",
+      action: "Drag or select photos of the land",
+      specs: "Up to 8 images · JPG or PNG",
+      hint: "Photos are not saved in the draft; please re-attach them if you reload the page."
+    },
+    success: {
+      thanks: "Thank you, {nombre}.",
+      received: "we received your application",
+      desc: "We received the information of your land in {localidad}{provincia}. Our team will review it and, if it proceeds, will contact you to discuss its potential.",
+      button: "Submit another application"
+    },
+    nav: {
+      step: "Step {step} of {total}",
+      back: "Back",
+      draftSaved: "Draft saved",
+      continue: "Continue",
+      submitting: "Sending...",
+      submit: "Submit application"
+    },
+    fields: {
+      nombre: "First name",
+      nombrePlaceholder: "Your first name",
+      apellido: "Last name",
+      apellidoPlaceholder: "Your last name",
+      email: "Email",
+      emailPlaceholder: "name@example.com",
+      telefono: "Phone number",
+      telefonoPlaceholder: "+1 ...",
+      relacion: "Your relationship with the land",
+      provincia: "Province / Region",
+      provinciaPlaceholder: "Choose a region",
+      localidad: "Locality or city",
+      localidadPlaceholder: "City, town, or area",
+      coords: "Map link or coordinates",
+      coordsPlaceholder: "Google Maps or lat, long",
+      distancia: "Distance to nearest city",
+      distanciaPlaceholder: "e.g. 40 km · 30 min",
+      tamano: "Land size",
+      topografia: "Topography",
+      paisaje: "Landscape type",
+      multipleHint: "You can choose more than one",
+      multipleHintF: "You can choose more than one",
+      aguas: "Water bodies",
+      vistas: "Predominant views",
+      vistasPlaceholder: "e.g. mountain range, lake, valley",
+      entorno: "Vegetation",
+      entornoPlaceholder: "e.g. native forest, hills, pasture",
+      acceso: "Access type",
+      estacionalidad: "Access availability",
+      aeropuerto: "Nearest airport or reference city",
+      aeropuertoPlaceholder: "e.g. Bariloche Airport, 50 km",
+      servicios: "Available services",
+      construcciones: "Existing buildings",
+      titulo: "Property title",
+      usoSuelo: "Land use",
+      legalNotas: "Environmental restrictions or legal remarks",
+      legalNotasPlaceholder: "Protected areas, encumbrances, etc.",
+      actividades: "Possible activities in the area",
+      atractivos: "Nearby attractions",
+      atractivosPlaceholder: "Parks, wineries, towns, landmarks",
+      demanda: "Tourist demand in the area",
+      modelo: "Participation model of interest",
+      inversion: "Investment availability",
+      horizonte: "Time horizon",
+      comentarios: "Comments",
+      comentariosPlaceholder: "Landscape, access, water, views, history of the place... whatever you want to share."
+    }
+  }
+};
+
 function Field({ id, label, hint, error, children, full, optional, raw }) {
+  const { locale } = useI18n();
+  const optLabel = FORM_MESSAGES[locale].optional;
   const hintId = hint ? id + "-hint" : undefined;
   const errId = error ? id + "-err" : undefined;
   const describedBy = [hintId, errId].filter(Boolean).join(" ") || undefined;
@@ -26,7 +199,7 @@ function Field({ id, label, hint, error, children, full, optional, raw }) {
     <div className={"field" + (full ? " full" : "") + (error ? " has-error" : "")}>
       <label className="field-label" htmlFor={id}>
         {label}
-        {optional && <span className="field-opt">Opcional</span>}
+        {optional && <span className="field-opt">{optLabel}</span>}
       </label>
       {hint && <span className="field-hint" id={hintId}>{hint}</span>}
       {control}
@@ -62,6 +235,8 @@ function Chips({ options, value, onChange, multi, labelId, invalid, describedBy,
 
 // A labelled chip field (label + group), with explicit ids for SR + errors.
 function ChipField({ id, label, hint, error, optional, full, children }) {
+  const { locale } = useI18n();
+  const optLabel = FORM_MESSAGES[locale].optional;
   const labelId = id + "-label";
   const hintId = hint ? id + "-hint" : undefined;
   const errId = error ? id + "-err" : undefined;
@@ -69,7 +244,7 @@ function ChipField({ id, label, hint, error, optional, full, children }) {
     <div className={"field" + (full ? " full" : "") + (error ? " has-error" : "")}>
       <span className="field-label" id={labelId}>
         {label}
-        {optional && <span className="field-opt">Opcional</span>}
+        {optional && <span className="field-opt">{optLabel}</span>}
       </span>
       {hint && <span className="field-hint" id={hintId}>{hint}</span>}
       {React.cloneElement(children, { labelId, invalid: !!error, describedBy: [hintId, errId].filter(Boolean).join(" ") || undefined })}
@@ -79,6 +254,8 @@ function ChipField({ id, label, hint, error, optional, full, children }) {
 }
 
 function LeadForm({ d, isPreview = false }) {
+  const { locale } = useI18n();
+  const m = FORM_MESSAGES[locale];
   useLucide();
   const STEPS = d.sections; // 9 titles
   const [step, setStep] = useState(0);
@@ -168,8 +345,8 @@ function LeadForm({ d, isPreview = false }) {
 
     if (hasInvalidType || hasInvalidSize) {
       const msgs = [];
-      if (hasInvalidType) msgs.push("Algunos archivos no tienen un formato de imagen válido.");
-      if (hasInvalidSize) msgs.push("Algunas imágenes superan el límite de 50MB.");
+      if (hasInvalidType) msgs.push(m.validation.invalidFileType);
+      if (hasInvalidSize) msgs.push(m.validation.invalidFileSize);
       setErrors((er) => ({ ...er, fotos: msgs.join(" ") }));
     } else {
       setErrors((er) => ({ ...er, fotos: undefined }));
@@ -186,10 +363,10 @@ function LeadForm({ d, isPreview = false }) {
 
   // Required fields per step index
   const required = {
-    0: { nombre: "Ingresá tu nombre.", apellido: "Ingresá tu apellido.", email: "Ingresá tu email.", telefono: "Ingresá un teléfono." },
-    1: { provincia: "Elegí una provincia.", localidad: "Ingresá la localidad." },
-    2: { tamano: "Indicá el tamaño aproximado." },
-    7: { modelo: "Elegí un modelo de participación." }
+    0: { nombre: m.validation.nombre, apellido: m.validation.apellido, email: m.validation.email, telefono: m.validation.telefono },
+    1: { provincia: m.validation.provincia, localidad: m.validation.localidad },
+    2: { tamano: m.validation.tamano },
+    7: { modelo: m.validation.modelo }
   };
 
   const validateStep = (s) => {
@@ -199,8 +376,8 @@ function LeadForm({ d, isPreview = false }) {
       const v = vals[k];
       if (!v || typeof v === "string" && !v.trim()) e[k] = reqs[k];
     });
-    if (s === 0 && vals.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vals.email)) e.email = "Revisá el formato del email.";
-    if (s === 0 && vals.telefono && vals.telefono.replace(/[^\d]/g, "").length < 6) e.telefono = "Revisá el número.";
+    if (s === 0 && vals.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vals.email)) e.email = m.validation.invalidEmail;
+    if (s === 0 && vals.telefono && vals.telefono.replace(/[^\d]/g, "").length < 6) e.telefono = m.validation.invalidPhone;
     return e;
   };
 
@@ -221,7 +398,7 @@ function LeadForm({ d, isPreview = false }) {
   const goTo = (s) => {
     setStep(s);
     setMaxReached((m) => Math.max(m, s));
-    announce("Paso " + (s + 1) + " de " + STEPS.length + ": " + STEPS[s]);
+    announce(m.nav.step.replace("{step}", String(s + 1)).replace("{total}", String(STEPS.length)) + ": " + STEPS[s]);
     requestAnimationFrame(() => {
       if (formRef.current) window.scrollTo({ top: formRef.current.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
       if (panelRef.current) { panelRef.current.setAttribute("tabindex", "-1"); panelRef.current.focus({ preventScroll: true }); }
@@ -231,7 +408,7 @@ function LeadForm({ d, isPreview = false }) {
   const next = () => {
     if (isPreview) return;
     const e = validateStep(step);
-    if (Object.keys(e).length) { setErrors(e); focusFirstError(e); announce("Revisá los campos obligatorios."); return; }
+    if (Object.keys(e).length) { setErrors(e); focusFirstError(e); announce(m.validation.formErrors); return; }
     setErrors({});
     if (step < STEPS.length - 1) goTo(step + 1);
   };
@@ -270,7 +447,7 @@ function LeadForm({ d, isPreview = false }) {
       const uploadedUrls = [];
       const { createClient } = await import('../../lib/supabase/client.js');
       const supabase = createClient();
-      
+
       const folderId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
       for (let i = 0; i < files.length; i++) {
@@ -279,11 +456,11 @@ function LeadForm({ d, isPreview = false }) {
           const fileExt = fileItem.name.split('.').pop();
           const fileName = `${Date.now()}-${i}.${fileExt}`;
           const filePath = `${folderId}/${fileName}`;
-          
+
           const { error: uploadError } = await supabase.storage
             .from('postulaciones')
             .upload(filePath, fileItem.file);
-            
+
           if (uploadError) {
             console.error('Error al subir imagen:', uploadError);
           } else {
@@ -295,8 +472,46 @@ function LeadForm({ d, isPreview = false }) {
         }
       }
 
-      await PostulacionesRepository.create({
+      const translateToSpanish = (val, key) => {
+        if (!val) return val;
+        const esList = NOMADE.es.form[key];
+        const enList = NOMADE.en.form[key];
+        if (!esList || !enList) return val;
+
+        const mapSingle = (v) => {
+          const idx = enList.indexOf(v);
+          if (idx !== -1) return esList[idx];
+          return v;
+        };
+
+        if (Array.isArray(val)) {
+          return val.map(mapSingle);
+        }
+        return mapSingle(val);
+      };
+
+      const translatedVals = {
         ...vals,
+        relacion: translateToSpanish(vals.relacion, 'relaciones'),
+        tamano: translateToSpanish(vals.tamano, 'sizes'),
+        topografia: translateToSpanish(vals.topografia, 'topografias'),
+        paisaje: translateToSpanish(vals.paisaje, 'paisajes'),
+        aguas: translateToSpanish(vals.aguas, 'aguas'),
+        acceso: translateToSpanish(vals.acceso, 'accesos'),
+        estacionalidad: translateToSpanish(vals.estacionalidad, 'estacionalidad'),
+        servicios: translateToSpanish(vals.servicios, 'servicios'),
+        construcciones: translateToSpanish(vals.construcciones, 'construcciones'),
+        titulo: translateToSpanish(vals.titulo, 'titulo'),
+        usoSuelo: translateToSpanish(vals.usoSuelo, 'usoSuelo'),
+        actividades: translateToSpanish(vals.actividades, 'actividades'),
+        demanda: translateToSpanish(vals.demanda, 'demanda'),
+        modelo: translateToSpanish(vals.modelo, 'modelos'),
+        inversion: translateToSpanish(vals.inversion, 'inversion'),
+        horizonte: translateToSpanish(vals.horizonte, 'horizontes')
+      };
+
+      await PostulacionesRepository.create({
+        ...translatedVals,
         fotos: uploadedUrls
       });
 
@@ -325,158 +540,158 @@ function LeadForm({ d, isPreview = false }) {
     switch (step) {
       case 0: return (
         <div className="form-grid">
-          <Field id="nombre" label="Nombre" error={errors.nombre}>
-            <input value={vals.nombre} onChange={set("nombre")} placeholder="Tu nombre" autoComplete="given-name" disabled={isPreview} />
+          <Field id="nombre" label={m.fields.nombre} error={errors.nombre}>
+            <input value={vals.nombre} onChange={set("nombre")} placeholder={m.fields.nombrePlaceholder} autoComplete="given-name" disabled={isPreview} />
           </Field>
-          <Field id="apellido" label="Apellido" error={errors.apellido}>
-            <input value={vals.apellido} onChange={set("apellido")} placeholder="Tu apellido" autoComplete="family-name" disabled={isPreview} />
+          <Field id="apellido" label={m.fields.apellido} error={errors.apellido}>
+            <input value={vals.apellido} onChange={set("apellido")} placeholder={m.fields.apellidoPlaceholder} autoComplete="family-name" disabled={isPreview} />
           </Field>
-          <Field id="email" label="Email" error={errors.email}>
-            <input type="email" value={vals.email} onChange={set("email")} placeholder="nombre@correo.com" autoComplete="email" inputMode="email" disabled={isPreview} />
+          <Field id="email" label={m.fields.email} error={errors.email}>
+            <input type="email" value={vals.email} onChange={set("email")} placeholder={m.fields.emailPlaceholder} autoComplete="email" inputMode="email" disabled={isPreview} />
           </Field>
-          <Field id="telefono" label="Teléfono" error={errors.telefono}>
-            <input type="tel" value={vals.telefono} onChange={set("telefono")} placeholder="+54 9 ..." autoComplete="tel" inputMode="tel" disabled={isPreview} />
+          <Field id="telefono" label={m.fields.telefono} error={errors.telefono}>
+            <input type="tel" value={vals.telefono} onChange={set("telefono")} placeholder={m.fields.telefonoPlaceholder} autoComplete="tel" inputMode="tel" disabled={isPreview} />
           </Field>
-          <ChipField id="relacion" label="Tu relación con el terreno" full disabled={isPreview}>
+          <ChipField id="relacion" label={m.fields.relacion} full disabled={isPreview}>
             <Chips options={d.relaciones} value={vals.relacion} onChange={setVal("relacion")} />
           </ChipField>
         </div>);
 
       case 1: return (
         <div className="form-grid">
-          <Field id="provincia" label="Provincia" error={errors.provincia} raw>
+          <Field id="provincia" label={m.fields.provincia} error={errors.provincia} raw>
             <div className="select-wrap">
               <select id="provincia" value={vals.provincia} onChange={set("provincia")} disabled={isPreview}
                 aria-invalid={errors.provincia ? "true" : undefined}
                 aria-describedby={errors.provincia ? "provincia-err" : undefined}>
-                <option value="" disabled>Elegí una provincia</option>
+                <option value="" disabled>{m.fields.provinciaPlaceholder}</option>
                 {d.provincias.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
               <Icon name="chevron-down" />
             </div>
           </Field>
-          <Field id="localidad" label="Localidad o paraje" error={errors.localidad}>
-            <input value={vals.localidad} onChange={set("localidad")} placeholder="Ciudad, pueblo o paraje" disabled={isPreview} />
+          <Field id="localidad" label={m.fields.localidad} error={errors.localidad}>
+            <input value={vals.localidad} onChange={set("localidad")} placeholder={m.fields.localidadPlaceholder} disabled={isPreview} />
           </Field>
-          <Field id="coords" label="Link de mapa o coordenadas" optional>
-            <input value={vals.coords} onChange={set("coords")} placeholder="Google Maps o lat, long" disabled={isPreview} />
+          <Field id="coords" label={m.fields.coords} optional>
+            <input value={vals.coords} onChange={set("coords")} placeholder={m.fields.coordsPlaceholder} disabled={isPreview} />
           </Field>
-          <Field id="distancia" label="Distancia a la ciudad más cercana" optional>
-            <input value={vals.distancia} onChange={set("distancia")} placeholder="Ej.: 40 km · 30 min" disabled={isPreview} />
+          <Field id="distancia" label={m.fields.distancia} optional>
+            <input value={vals.distancia} onChange={set("distancia")} placeholder={m.fields.distanciaPlaceholder} disabled={isPreview} />
           </Field>
         </div>);
 
       case 2: return (
         <React.Fragment>
-          <ChipField id="tamano" label="Tamaño del terreno" error={errors.tamano} full disabled={isPreview}>
+          <ChipField id="tamano" label={m.fields.tamano} error={errors.tamano} full disabled={isPreview}>
             <Chips options={d.sizes} value={vals.tamano} onChange={setVal("tamano")} />
           </ChipField>
-          <ChipField id="topografia" label="Topografía" full disabled={isPreview}>
+          <ChipField id="topografia" label={m.fields.topografia} full disabled={isPreview}>
             <Chips options={d.topografias} value={vals.topografia} onChange={setVal("topografia")} />
           </ChipField>
-          <ChipField id="paisaje" label="Tipo de paisaje" hint="Podés elegir más de uno" full disabled={isPreview}>
+          <ChipField id="paisaje" label={m.fields.paisaje} hint={m.fields.multipleHint} full disabled={isPreview}>
             <Chips options={d.paisajes} value={vals.paisaje} onChange={setVal("paisaje")} multi hideCheck />
           </ChipField>
         </React.Fragment>);
 
       case 3: return (
         <React.Fragment>
-          <ChipField id="aguas" label="Cuerpos de agua" hint="Podés elegir más de uno" full disabled={isPreview}>
+          <ChipField id="aguas" label={m.fields.aguas} hint={m.fields.multipleHint} full disabled={isPreview}>
             <Chips options={d.aguas} value={vals.aguas} onChange={setVal("aguas")} multi hideCheck />
           </ChipField>
           <div className="form-grid">
-            <Field id="vistas" label="Vistas predominantes" optional>
-              <input value={vals.vistas} onChange={set("vistas")} placeholder="Ej.: cordillera, lago, valle" disabled={isPreview} />
+            <Field id="vistas" label={m.fields.vistas} optional>
+              <input value={vals.vistas} onChange={set("vistas")} placeholder={m.fields.vistasPlaceholder} disabled={isPreview} />
             </Field>
-            <Field id="entorno" label="Vegetación" optional>
-              <input value={vals.entorno} onChange={set("entorno")} placeholder="Ej.: bosque nativo, monte, pastizal" disabled={isPreview} />
+            <Field id="entorno" label={m.fields.entorno} optional>
+              <input value={vals.entorno} onChange={set("entorno")} placeholder={m.fields.entornoPlaceholder} disabled={isPreview} />
             </Field>
           </div>
-          <ChipField id="acceso" label="Tipo de acceso" full disabled={isPreview}>
+          <ChipField id="acceso" label={m.fields.acceso} full disabled={isPreview}>
             <Chips options={d.accesos} value={vals.acceso} onChange={setVal("acceso")} />
           </ChipField>
-          <ChipField id="estacionalidad" label="Disponibilidad de acceso" full disabled={isPreview}>
+          <ChipField id="estacionalidad" label={m.fields.estacionalidad} full disabled={isPreview}>
             <Chips options={d.estacionalidad} value={vals.estacionalidad} onChange={setVal("estacionalidad")} />
           </ChipField>
-          <Field id="aeropuerto" label="Aeropuerto o ciudad de referencia" optional full>
-            <input value={vals.aeropuerto} onChange={set("aeropuerto")} placeholder="Ej.: Aeropuerto de Bariloche, 50 km" disabled={isPreview} />
+          <Field id="aeropuerto" label={m.fields.aeropuerto} optional full>
+            <input value={vals.aeropuerto} onChange={set("aeropuerto")} placeholder={m.fields.aeropuertoPlaceholder} disabled={isPreview} />
           </Field>
         </React.Fragment>);
 
       case 4: return (
         <React.Fragment>
-          <ChipField id="servicios" label="Servicios disponibles" hint="Podés elegir más de uno" full disabled={isPreview}>
+          <ChipField id="servicios" label={m.fields.servicios} hint={m.fields.multipleHint} full disabled={isPreview}>
             <Chips options={d.servicios} value={vals.servicios} onChange={setVal("servicios")} multi hideCheck />
           </ChipField>
-          <ChipField id="construcciones" label="Construcciones existentes" full disabled={isPreview}>
+          <ChipField id="construcciones" label={m.fields.construcciones} full disabled={isPreview}>
             <Chips options={d.construcciones} value={vals.construcciones} onChange={setVal("construcciones")} />
           </ChipField>
         </React.Fragment>);
 
       case 5: return (
         <React.Fragment>
-          <ChipField id="titulo" label="Título de propiedad" full disabled={isPreview}>
+          <ChipField id="titulo" label={m.fields.titulo} full disabled={isPreview}>
             <Chips options={d.titulo} value={vals.titulo} onChange={setVal("titulo")} />
           </ChipField>
-          <ChipField id="usoSuelo" label="Uso de suelo" full disabled={isPreview}>
+          <ChipField id="usoSuelo" label={m.fields.usoSuelo} full disabled={isPreview}>
             <Chips options={d.usoSuelo} value={vals.usoSuelo} onChange={setVal("usoSuelo")} />
           </ChipField>
-          <Field id="legalNotas" label="Restricciones ambientales u observaciones legales" optional full>
-            <input value={vals.legalNotas} onChange={set("legalNotas")} placeholder="Áreas protegidas, gravámenes, etc." disabled={isPreview} />
+          <Field id="legalNotas" label={m.fields.legalNotas} optional full>
+            <input value={vals.legalNotas} onChange={set("legalNotas")} placeholder={m.fields.legalNotasPlaceholder} disabled={isPreview} />
           </Field>
         </React.Fragment>);
 
       case 6: return (
         <React.Fragment>
-          <ChipField id="actividades" label="Actividades posibles en la zona" hint="Podés elegir más de una" full disabled={isPreview}>
+          <ChipField id="actividades" label={m.fields.actividades} hint={m.fields.multipleHintF} full disabled={isPreview}>
             <Chips options={d.actividades} value={vals.actividades} onChange={setVal("actividades")} multi hideCheck />
           </ChipField>
-          <Field id="atractivos" label="Atractivos cercanos" optional full>
-            <input value={vals.atractivos} onChange={set("atractivos")} placeholder="Parques, bodegas, pueblos, hitos" disabled={isPreview} />
+          <Field id="atractivos" label={m.fields.atractivos} optional full>
+            <input value={vals.atractivos} onChange={set("atractivos")} placeholder={m.fields.atractivosPlaceholder} disabled={isPreview} />
           </Field>
-          <ChipField id="demanda" label="Demanda turística de la zona" full disabled={isPreview}>
+          <ChipField id="demanda" label={m.fields.demanda} full disabled={isPreview}>
             <Chips options={d.demanda} value={vals.demanda} onChange={setVal("demanda")} />
           </ChipField>
         </React.Fragment>);
 
       case 7: return (
         <React.Fragment>
-          <ChipField id="modelo" label="Modelo de participación de interés" error={errors.modelo} full disabled={isPreview}>
+          <ChipField id="modelo" label={m.fields.modelo} error={errors.modelo} full disabled={isPreview}>
             <Chips options={d.modelos} value={vals.modelo} onChange={setVal("modelo")} />
           </ChipField>
-          <ChipField id="inversion" label="Disponibilidad de inversión" full disabled={isPreview}>
+          <ChipField id="inversion" label={m.fields.inversion} full disabled={isPreview}>
             <Chips options={d.inversion} value={vals.inversion} onChange={setVal("inversion")} />
           </ChipField>
-          <ChipField id="horizonte" label="Horizonte temporal" full disabled={isPreview}>
+          <ChipField id="horizonte" label={m.fields.horizonte} full disabled={isPreview}>
             <Chips options={d.horizontes} value={vals.horizonte} onChange={setVal("horizonte")} />
           </ChipField>
         </React.Fragment>);
 
       case 8: return (
         <React.Fragment>
-          <Field id="comentarios" label="Comentarios" hint="Contanos qué hace único a tu lugar" optional full>
+          <Field id="comentarios" label={m.fields.comentarios} hint={m.fields.comentariosPlaceholder} optional full>
             <textarea value={vals.comentarios} onChange={set("comentarios")} rows="4"
-              placeholder="Paisaje, acceso, agua, vistas, historia del lugar… lo que quieras compartir." disabled={isPreview}></textarea>
+              placeholder={m.fields.comentariosPlaceholder} disabled={isPreview}></textarea>
           </Field>
           <div className={"field full" + (errors.fotos ? " has-error" : "")}>
-            <span className="field-label" id="fotos-label">Fotos y documentación <span className="field-opt">Opcional</span></span>
+            <span className="field-label" id="fotos-label">{m.uploader.title} <span className="field-opt">{m.optional}</span></span>
             <button type="button" className="uploader" onClick={() => !isPreview && fileRef.current && fileRef.current.click()} aria-labelledby="fotos-label" disabled={isPreview}>
               <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={onFiles} disabled={isPreview} />
               <Icon name="image-up" />
-              <span>Arrastrá o seleccioná fotos del terreno</span>
-              <small>Hasta 8 imágenes · JPG o PNG</small>
+              <span>{m.uploader.action}</span>
+              <small>{m.uploader.specs}</small>
             </button>
             {errors.fotos && <span className="field-error" style={{ display: "block", marginTop: "6px" }} role="alert">{errors.fotos}</span>}
             {files.length > 0 &&
-               <div className="thumbs">
-                 {files.map((f, i) =>
-                   <div className="thumb" key={i} style={{ backgroundImage: `url(${f.url})` }}>
-                     <button type="button" className="thumb-x" onClick={(e) => { e.stopPropagation(); removeFile(i); }} aria-label={"Quitar " + f.name} disabled={isPreview}><Icon name="x" /></button>
-                   </div>
-                 )}
-               </div>
-             }
-            <p className="field-hint">Las fotos no se guardan en el borrador; volvé a adjuntarlas si recargás la página.</p>
+              <div className="thumbs">
+                {files.map((f, i) =>
+                  <div className="thumb" key={i} style={{ backgroundImage: `url(${f.url})` }}>
+                    <button type="button" className="thumb-x" onClick={(e) => { e.stopPropagation(); removeFile(i); }} aria-label={"Remove " + f.name} disabled={isPreview}><Icon name="x" /></button>
+                  </div>
+                )}
+              </div>
+            }
+            <p className="field-hint">{m.uploader.hint}</p>
           </div>
         </React.Fragment>);
 
@@ -504,24 +719,24 @@ function LeadForm({ d, isPreview = false }) {
           {done ?
             <div className="form-card nm-card form-done">
               <span className="form-done-mark" aria-hidden="true"><Icon name="check" /></span>
-              <h3>Gracias, {vals.nombre || "recibimos tu postulación"}.</h3>
-              <p>Recibimos la información de tu terreno en {vals.localidad || "tu zona"}{vals.provincia ? ", " + vals.provincia : ""}. Nuestro equipo la revisará y, si avanza, te contactará para conversar sobre su potencial.</p>
-              <Button variant="secondary" onClick={reset} disabled={isPreview}>Cargar otra postulación</Button>
+              <h3>{m.success.thanks.replace("{nombre}", vals.nombre || m.success.received)}</h3>
+              <p>{m.success.desc.replace("{localidad}", vals.localidad || (locale === 'en' ? "your area" : "tu zona")).replace("{provincia}", vals.provincia ? ", " + vals.provincia : "")}</p>
+              <Button variant="secondary" onClick={reset} disabled={isPreview}>{m.success.button}</Button>
             </div> :
 
             <div className="form-card nm-card">
               {/* progress */}
               <div className="wizard-progress">
                 <div className="wizard-progress-meta">
-                  <span className="wizard-step-count">Paso {step + 1} de {STEPS.length}</span>
+                  <span className="wizard-step-count">{m.nav.step.replace("{step}", String(step + 1)).replace("{total}", String(STEPS.length))}</span>
                   <span className="wizard-step-title">{STEPS[step]}</span>
                 </div>
-                <div className="wizard-bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={"Progreso: " + pct + "%"}>
+                <div className="wizard-bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={"Progress: " + pct + "%"}>
                   <span style={{ width: pct + "%" }}></span>
                 </div>
               </div>
 
-              <div className="wizard-panel" ref={panelRef} role="group" aria-label={"Paso " + (step + 1) + ": " + STEPS[step]}>
+              <div className="wizard-panel" ref={panelRef} role="group" aria-label={m.nav.step.replace("{step}", String(step + 1)).replace("{total}", String(STEPS.length)) + ": " + STEPS[step]}>
                 {renderStep()}
               </div>
 
@@ -535,15 +750,15 @@ function LeadForm({ d, isPreview = false }) {
               <div className="wizard-nav">
                 <div className="wizard-nav-left">
                   {step > 0 &&
-                    <button type="button" className="btn-text" onClick={back} disabled={isPreview || loading}><Icon name="arrow-left" />Atrás</button>
+                    <button type="button" className="btn-text" onClick={back} disabled={isPreview || loading}><Icon name="arrow-left" />{m.nav.back}</button>
                   }
                 </div>
                 <div className="wizard-nav-right">
-                  {savedAt && <span className="wizard-saved" aria-hidden="true"><Icon name="check" />Borrador guardado</span>}
+                  {savedAt && <span className="wizard-saved" aria-hidden="true"><Icon name="check" />{m.nav.draftSaved}</span>}
                   {step < STEPS.length - 1 ?
-                    <Button variant="primary" icon="arrow-right" onClick={next} disabled={isPreview || loading}>Continuar</Button> :
+                    <Button variant="primary" icon="arrow-right" onClick={next} disabled={isPreview || loading}>{m.nav.continue}</Button> :
                     <Button variant="primary" icon={loading ? undefined : "arrow-right"} onClick={submit} disabled={isPreview || loading}>
-                      {loading ? "Enviando..." : "Enviar postulación"}
+                      {loading ? m.nav.submitting : m.nav.submit}
                     </Button>}
                 </div>
               </div>

@@ -1,0 +1,50 @@
+{
+  "skipLink": "Saltar al contenido",
+  "nav": {
+    "cta": "Postular ubicación"
+  },
+  "hero": {
+    "scrollHint": "Conocer",
+    "scrollHintAria": "Bajar a conocer NÓMADE"
+  },
+  "toast": {
+    "contact": "Escribinos a sernomade@protonmail.com — te respondemos pronto.",
+    "interest": "“{label}” — gracias por tu interés. Te contactaremos pronto."
+  },
+  "partners": {
+    "cta_label": "Quiero ser Partner"
+  },
+  "destinations": {
+    "exploring": "En exploración",
+    "book": "Ir a reservar",
+    "partnerMeta": "Reservá a través de nuestros partners de alojamiento.",
+    "region": "Región",
+    "allRegions": "Todas las regiones",
+    "orderBy": "Ordenar",
+    "byRegion": "Por región",
+    "byName": "Nombre (A–Z)",
+    "destination": "destino",
+    "destinations": "destinos",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "viewDestination": "Ver destino",
+    "close": "Cerrar",
+    "zoomIn": "Tocá para acercar",
+    "zoomOut": "Alejar imagen",
+    "exploreCursor": "Mové el cursor para explorar"
+  },
+  "footer": {
+    "project": "El proyecto",
+    "whatis": "Qué es NÓMADE",
+    "experience": "La experiencia",
+    "destinations": "Destinos",
+    "model": "El modelo",
+    "join": "Sumarse",
+    "submitLand": "Postular mi terreno",
+    "partners": "NÓMADE Partners",
+    "waitingList": "Lista de futuros huéspedes",
+    "contact": "Contacto",
+    "designedBy": "Diseñado y desarrollado por"
+  },
+  "loading": "Cargando NÓMADE..."
+}

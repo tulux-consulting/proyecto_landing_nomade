@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Icon } from './Icon.jsx';
 import { Btn } from './Btn.jsx';
 import { resolveImg } from './Helpers.jsx';
+import { useI18n } from '../../../lib/i18n/i18nContext.jsx';
 
 let openOverlaysCount = 0;
 
@@ -10,6 +11,7 @@ function lockScroll() {
   openOverlaysCount++;
   if (openOverlaysCount === 1) {
     document.body.style.overflow = "hidden";
+    document.body.classList.add("body-overlay-open");
   }
 }
 
@@ -18,6 +20,7 @@ function unlockScroll() {
   openOverlaysCount = Math.max(0, openOverlaysCount - 1);
   if (openOverlaysCount === 0) {
     document.body.style.overflow = "";
+    document.body.classList.remove("body-overlay-open");
   }
 }
 
@@ -79,6 +82,7 @@ export function Modal({ kicker, title, subtitle, onClose, children, footer, wide
 }
 
 export function Confirm({ title, message, confirmLabel, danger, icon, onConfirm, onClose }) {
+  const { t } = useI18n();
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
@@ -95,8 +99,8 @@ export function Confirm({ title, message, confirmLabel, danger, icon, onConfirm,
         <h3>{title}</h3>
         <p>{message}</p>
         <div className="confirm-foot">
-          <Btn variant="ghost" onClick={onClose}>Cancelar</Btn>
-          <button className={"btn-bo " + (danger ? "btn-danger-bo" : "btn-primary-bo")} onClick={onConfirm}>{confirmLabel || "Confirmar"}</button>
+          <Btn variant="ghost" onClick={onClose}>{t('common.actions.cancel')}</Btn>
+          <button className={"btn-bo " + (danger ? "btn-danger-bo" : "btn-primary-bo")} onClick={onConfirm}>{confirmLabel || t('common.actions.confirm')}</button>
         </div>
       </div>
     </div>

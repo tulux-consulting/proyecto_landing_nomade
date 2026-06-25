@@ -30,6 +30,7 @@ export const UserRepository = {
         email: u.email || '',
         role: u.role || 'user',
         is_active: u.activo !== undefined ? u.activo : (u.is_active !== undefined ? u.is_active : true),
+        preferred_language: u.preferred_language || 'es',
         created_at: u.fecha || u.created_at,
         updated_at: u.updated_at
       }));
@@ -83,6 +84,7 @@ export const UserRepository = {
         email: user.email,
         role: user.role,
         is_active: user.is_active,
+        preferred_language: user.preferred_language || 'es',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -95,6 +97,7 @@ export const UserRepository = {
         username: user.username,
         role: user.role,
         activo: user.is_active,
+        preferred_language: user.preferred_language || 'es',
         fecha: new Date().toISOString()
       });
 
@@ -131,7 +134,8 @@ export const UserRepository = {
         email: patch.email !== undefined ? patch.email : rawUser.email,
         username: patch.username !== undefined ? patch.username : rawUser.username,
         role: patch.role !== undefined ? patch.role : rawUser.role,
-        activo: patch.is_active !== undefined ? patch.is_active : rawUser.activo
+        activo: patch.is_active !== undefined ? patch.is_active : rawUser.activo,
+        preferred_language: patch.preferred_language !== undefined ? patch.preferred_language : rawUser.preferred_language
       };
 
       BO.update('usuarios', id, updatedRaw);
@@ -143,6 +147,7 @@ export const UserRepository = {
         username: updatedRaw.username || '',
         role: updatedRaw.role || 'user',
         is_active: updatedRaw.activo,
+        preferred_language: updatedRaw.preferred_language || 'es',
         created_at: updatedRaw.fecha,
         updated_at: new Date().toISOString()
       };
