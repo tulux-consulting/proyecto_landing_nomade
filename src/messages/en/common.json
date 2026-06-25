@@ -1,0 +1,359 @@
+{
+  "actions": {
+    "save": "Save",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading...",
+    "search": "Search",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "add": "Add"
+  },
+  "notReported": "Not reported",
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "new": "New",
+    "pending": "Pending review",
+    "contacted": "Contacted",
+    "negotiation": "In negotiation",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "archived": "Archived"
+  },
+  "modules": {
+    "dashboard": "Dashboard",
+    "postulaciones": "Applications",
+    "partners": "Partners",
+    "huespedes": "Guest list",
+    "destinos": "Destinations",
+    "contenido": "Site content",
+    "ajustes": "Settings"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "user": "User"
+  },
+  "errors": {
+    "generic": "An unexpected error occurred.",
+    "network": "Connection error. Please try again.",
+    "required": "This field is required.",
+    "invalidEmail": "Invalid email address format."
+  },
+  "dashboard": {
+    "salutation": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "desc": "This is the NÓMADE internal panel. From here you manage what comes from the web. Choose a module to begin.",
+    "eyebrow": "Backoffice",
+    "openModule": "Open module",
+    "pendingCount": "{count} pending",
+    "unit": {
+      "record": "record",
+      "records": "records",
+      "waitingList": "on waiting list",
+      "destinations": "destinations",
+      "available": "available",
+      "sections": "editable sections",
+      "user": "active user",
+      "users": "active users"
+    },
+    "moduleDescriptions": {
+      "dashboard": "Dashboard",
+      "postulaciones": "People applying with a piece of land to become a destination.",
+      "partners": "Establishments looking to add experiences to the network.",
+      "huespedes": "People interested in staying and where the interest comes from.",
+      "destinos": "The lodging experiences of the NÓMADE network.",
+      "contenido": "Manage landing page content without touching code.",
+      "ajustes": "Panel access users."
+    }
+  },
+  "postulaciones": {
+    "title": "Applications",
+    "eyebrow": "Module",
+    "desc": "People applying with a piece of land to become a NÓMADE destination. Review, contact and move them through the evaluation process.",
+    "searchPlaceholder": "Search by name, email or location...",
+    "filterEstado": "Filter by status",
+    "allEstados": "All statuses",
+    "filterProvincia": "Filter by province",
+    "allProvincias": "All provinces",
+    "searchProvincia": "Search province...",
+    "filterArchived": "Archived",
+    "active": "Active",
+    "archived": "Archived",
+    "noApplications": "No applications",
+    "noApplicationsDesc": "There are no applications matching the search or active filters.",
+    "table": {
+      "applicant": "Applicant",
+      "location": "Location",
+      "landscape": "Landscape",
+      "size": "Size",
+      "status": "Status",
+      "received": "Received"
+    },
+    "deleteTitle": "Delete application",
+    "deleteConfirm": "Delete permanently",
+    "deleteMessage": "You are going to permanently delete the application of {name} {lastname}. This action cannot be undone.",
+    "toasts": {
+      "statusUpdated": "Status updated to “{status}”.",
+      "archived": "Application archived.",
+      "restored": "Application restored.",
+      "deleted": "Application deleted permanently.",
+      "loadingError": "Error loading applications.",
+      "connError": "Error connecting to server.",
+      "loading": "Loading applications..."
+    },
+    "modal": {
+      "kicker": "Application",
+      "tabs": {
+        "resumen": "Summary",
+        "terreno": "Land",
+        "legal": "Legal",
+        "turismo": "Tourism",
+        "fotos": "Photos",
+        "notas": "Notes"
+      },
+      "footer": {
+        "restore": "Restore",
+        "archive": "Archive",
+        "delete": "Delete permanently"
+      },
+      "sections": {
+        "processStatus": "Process status",
+        "personalData": "Personal data",
+        "personalFields": {
+          "name": "First name",
+          "lastname": "Last name",
+          "email": "Email",
+          "phone": "Phone",
+          "relation": "Relation to land"
+        },
+        "location": "Location",
+        "locationFields": {
+          "province": "Province",
+          "locality": "Town or locality",
+          "distance": "Distance to city",
+          "map": "Map / coordinates",
+          "viewMap": "View on Google Maps →"
+        },
+        "comments": "Applicant comments",
+        "landInfo": "Land information",
+        "landFields": {
+          "size": "Size",
+          "topography": "Topography",
+          "landscape": "Landscape type",
+          "water": "Water body",
+          "views": "Predominant views",
+          "vegetation": "Vegetation"
+        },
+        "access": "Access and services",
+        "accessFields": {
+          "type": "Access type",
+          "availability": "Access availability",
+          "constructions": "Existing constructions",
+          "services": "Available services"
+        },
+        "legal": "Legal aspects",
+        "legalFields": {
+          "deed": "Property deed",
+          "use": "Land use",
+          "restrictions": "Environmental restrictions",
+          "remarks": "Legal remarks"
+        },
+        "tourism": "Tourism",
+        "tourismFields": {
+          "activities": "Possible activities",
+          "attractions": "Nearby attractions",
+          "demand": "Tourism demand in the area"
+        },
+        "participation": "Participation",
+        "participationFields": {
+          "model": "Interest model",
+          "investment": "Investment availability",
+          "horizon": "Time horizon"
+        },
+        "photos": "Land photographs",
+        "documentation": "Documentation",
+        "noDocs": "The applicant did not attach documentation.",
+        "internalRemarks": "Internal remarks"
+      },
+      "notes": {
+        "noNotes": "No remarks yet.",
+        "placeholder": "Add an internal remark...",
+        "addBtn": "Add remark"
+      },
+      "gallery": {
+        "noPhotos": "No photographs",
+        "noPhotosDesc": "The applicant did not attach images."
+      }
+    }
+  },
+  "imageManager": {
+    "cover": "Cover",
+    "dropTextLine1": "Drag an image",
+    "dropTextLine2": "or click to upload",
+    "urlPlaceholder": "...or paste an image URL",
+    "addBtn": "Add",
+    "exampleGallery": "Example gallery",
+    "addFromGallery": "Add from gallery"
+  },
+  "partners": {
+    "title": "Partners",
+    "eyebrow": "Module",
+    "desc": "Establishments looking to add their experiences to the NÓMADE network. They arrive from the website's Partner form and direct contacts.",
+    "searchPlaceholder": "Search by establishment, email or location...",
+    "filterEstado": "Filter by status",
+    "allEstados": "All statuses",
+    "filterTipo": "Filter by type",
+    "allTipos": "All types",
+    "searchTipo": "Search type...",
+    "filterArchived": "Archived",
+    "active": "Active",
+    "archived": "Archived",
+    "noPartners": "No partners",
+    "noPartnersDesc": "No establishments match the search or current filters.",
+    "table": {
+      "establishment": "Establishment",
+      "type": "Type",
+      "location": "Location",
+      "status": "Status",
+      "received": "Received"
+    },
+    "deleteTitle": "Delete partner",
+    "deleteConfirm": "Delete permanently",
+    "deleteMessage": "You are about to permanently delete “{nombre}”. This action cannot be undone.",
+    "toasts": {
+      "statusUpdated": "Status updated to “{status}”.",
+      "archived": "Partner archived.",
+      "restored": "Partner restored.",
+      "deleted": "Partner permanently deleted.",
+      "loadingError": "Error loading partners.",
+      "connError": "Connection error. Please try again.",
+      "loading": "Loading partners..."
+    },
+    "modal": {
+      "kicker": "Partner",
+      "tabs": {
+        "resumen": "Summary",
+        "notas": "Notes"
+      },
+      "footer": {
+        "restore": "Restore",
+        "archive": "Archive",
+        "delete": "Delete permanently"
+      },
+      "sections": {
+        "processStatus": "Process status",
+        "details": "Establishment details",
+        "contact": "Contact",
+        "about": "About the establishment",
+        "internalRemarks": "Internal remarks"
+      },
+      "fields": {
+        "type": "Type",
+        "taxId": "Tax ID",
+        "capacity": "Capacity",
+        "yearsOperating": "Years operating",
+        "province": "Province",
+        "locality": "Locality",
+        "email": "Email",
+        "phone": "Phone",
+        "website": "Website",
+        "new": "New",
+        "year": "year",
+        "years": "years"
+      }
+    }
+  },
+  "huespedes": {
+    "title": "Guests list",
+    "eyebrow": "Module",
+    "desc": "People who want to be the first to know when we open new destinations — and where the interest is coming from.",
+    "tabs": {
+      "listado": "List",
+      "metricas": "Metrics"
+    },
+    "searchPlaceholder": "Search by email or origin...",
+    "filterEstado": "Filter by status",
+    "allEstados": "All statuses",
+    "filterPais": "Filter by country",
+    "allPaises": "All countries",
+    "searchPais": "Search country...",
+    "filterDispositivo": "Filter by device",
+    "allDispositivos": "All devices",
+    "noGuests": "No guests",
+    "noGuestsDesc": "No people match the search or filters.",
+    "table": {
+      "email": "Email",
+      "origin": "Origin",
+      "device": "Device",
+      "status": "Status",
+      "system": "System",
+      "joined": "Joined"
+    },
+    "metrics": {
+      "waitingList": "On waiting list",
+      "new30Days": "New (30 days)",
+      "topProvince": "Province with most interest",
+      "topProvinceFoot": "{count} people",
+      "countriesReached": "Countries reached",
+      "charts": {
+        "byProv": "By province",
+        "byProvSub": "Where interest is concentrated within the country.",
+        "byPais": "By country",
+        "byPaisSub": "International reach of the list.",
+        "byCity": "By city",
+        "byCitySub": "Cities of greatest interest.",
+        "byDev": "By device",
+        "byDevSub": "How they arrive at the website."
+      }
+    },
+    "modal": {
+      "kicker": "Guest on list",
+      "statusLabel": "Status:",
+      "deleteBtn": "Remove from list",
+      "sections": {
+        "origin": "Origin",
+        "device": "Device",
+        "adminRemarks": "Administrative remarks"
+      },
+      "fields": {
+        "country": "Country",
+        "province": "Province / Region",
+        "city": "Approximate city",
+        "type": "Device type",
+        "os": "Operating system",
+        "browser": "Browser",
+        "date": "Date",
+        "placeholderNotes": "Write notes or remarks about this guest...",
+        "notesFooter": "Notes are automatically saved on blur."
+      }
+    },
+    "deleteConfirm": {
+      "title": "Delete guest",
+      "message": "Are you sure you want to delete this guest from the list? This action cannot be undone.",
+      "confirm": "Delete permanently"
+    },
+    "toasts": {
+      "loadingError": "Error loading guests list.",
+      "statusUpdated": "Status updated to “{status}”.",
+      "statusUpdateError": "Error updating status.",
+      "notesSaved": "Remarks saved.",
+      "notesSaveError": "Error saving remarks.",
+      "deleted": "Guest permanently deleted.",
+      "deleteError": "Error deleting guest.",
+      "loading": "Loading guests list..."
+    }
+  }
+}

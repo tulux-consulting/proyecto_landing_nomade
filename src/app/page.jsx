@@ -1,6 +1,5 @@
 'use client';
 
-// NÓMADE — public landing page in Next.js (App Router).
 import React, { useState, useEffect } from 'react';
 import { NOMADE } from '../data/content.js';
 import { ContenidoRepository } from '../repositories/index.ts';
@@ -12,10 +11,11 @@ import { Landowners, Process } from '../components/landing/Sections3.jsx';
 import { Partners, FutureGuests, Footer } from '../components/landing/Sections4.jsx';
 import dynamic from 'next/dynamic';
 import { Spinner } from '../components/panel/ui/Feedback.jsx';
+import { useI18n } from '../lib/i18n/i18nContext.jsx';
 
 const LeadForm = dynamic(() => import('../components/landing/LeadForm.jsx').then((m) => m.LeadForm), {
   ssr: false,
-  loading: () => <Spinner message="Cargando evaluación..." size="sm" />
+  loading: () => <Spinner message="Cargando..." size="sm" />
 });
 
 const PartnerModal = dynamic(() => import('../components/landing/PartnerModal.jsx').then((m) => m.PartnerModal), {
@@ -23,21 +23,22 @@ const PartnerModal = dynamic(() => import('../components/landing/PartnerModal.js
 });
 
 export default function LandingPage() {
+  const { locale, t } = useI18n();
   const [content, setContent] = useState(null);
   const [toast, setToast] = useState(null);
   const [partnerOpen, setPartnerOpen] = useState(false);
   useLucide();
 
   useEffect(() => {
-    ContenidoRepository.getPublished().then((data) => {
+    ContenidoRepository.getPublished(locale).then((data) => {
       setContent(data);
     });
-  }, []);
+  }, [locale]);
 
   if (!content) {
     return (
       <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1d1d1b' }}>
-        <Spinner message="Cargando NÓMADE..." onDark={true} size="lg" />
+        <Spinner message={t('landing.loading')} onDark={true} size="lg" />
       </div>
     );
   }
@@ -46,9 +47,9 @@ export default function LandingPage() {
 
   const cta = (label) => {
     setToast(
-      label === "Contacto" ?
-        "Escribinos a sernomade@protonmail.com — te respondemos pronto." :
-        `“${label}” — gracias por tu interés. Te contactaremos pronto.`
+      label === "Contacto" || label === "Contact" ?
+        t('landing.toast.contact') :
+        t('landing.toast.interest', { label })
     );
     clearTimeout(window.__t);
     window.__t = setTimeout(() => setToast(null), 3800);
@@ -116,7 +117,7 @@ export default function LandingPage() {
           }
         }}
       >
-        Saltar al contenido
+        {t('landing.skipLink')}
       </a>
       <Nav />
       <main id="main">
@@ -128,7 +129,7 @@ export default function LandingPage() {
         <Model d={D.model} />
         <Landowners d={D.landowners} />
         <Process d={D.process} />
-        <LeadForm d={NOMADE.form} />
+        <LeadForm d={NOMADE[locale].form} />
         <Partners d={D.partners} onCta={cta} onPartner={() => setPartnerOpen(true)} />
         <FutureGuests d={D.guests} />
       </main>

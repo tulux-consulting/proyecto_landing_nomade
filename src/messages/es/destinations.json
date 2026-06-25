@@ -1,0 +1,93 @@
+{
+  "title": "Destinos",
+  "desc": "Las experiencias de hospedaje de la red NÓMADE.",
+  "new": "Nuevo destino",
+  "edit": "Editar destino",
+  "eyebrow": "Módulo",
+  "searchPlaceholder": "Buscar por destino o complejo…",
+  "filterEstado": "Filtrar por estado",
+  "allEstados": "Todos los estados",
+  "filterArchived": "Archivados",
+  "active": "Activos",
+  "archived": "Archivados",
+  "noDestinations": "Sin destinos",
+  "noDestinationsDesc": "Creá el primer destino de la red con «Nuevo destino».",
+  "deleteTitle": "Eliminar destino",
+  "deleteConfirm": "Eliminar definitivamente",
+  "deleteMessage": "Vas a eliminar “{nombre}” y todas sus fotos. Esta acción no se puede deshacer.",
+  "fields": {
+    "name": "Nombre del destino",
+    "complex": "Complejo / Nombre del alojamiento",
+    "location": "Ubicación (ej: Río Negro · Lagos y bosque)",
+    "shortDescription": "Descripción corta",
+    "description": "Descripción detallada",
+    "reservationUrl": "URL de reserva (Airbnb/Booking)",
+    "status": "Estado",
+    "coverImage": "Imagen de portada",
+    "photos": "Fotos de galería",
+    "sourceType": "Origen de postulación",
+    "sourceId": "ID de origen"
+  },
+  "translationTab": {
+    "title": "Traducción al Inglés (EN)",
+    "kicker": "Campos localizados",
+    "desc": "Agregá la versión en inglés de los campos principales para que se muestren cuando el visitante seleccione este idioma.",
+    "name": "Nombre en Inglés",
+    "location": "Ubicación en Inglés",
+    "shortDescription": "Descripción corta en Inglés",
+    "description": "Descripción detallada en Inglés"
+  },
+  "states": {
+    "draft": "Borrador",
+    "pending_review": "Pendiente de revisión",
+    "published": "Disponible (Publicado)",
+    "unavailable": "No disponible",
+    "archived": "Archivado"
+  },
+  "toasts": {
+    "saved": "Destino guardado correctamente.",
+    "error": "Error al guardar el destino.",
+    "archived": "Destino archivado.",
+    "restored": "Destino restaurado.",
+    "deleted": "Destino eliminado definitivamente.",
+    "loading": "Cargando destinos..."
+  },
+  "form": {
+    "editSubtitle": "Actualizá la información de este destino de la red.",
+    "newSubtitle": "Sumá una nueva experiencia de hospedaje a la red NÓMADE.",
+    "enabled": "Destino habilitado",
+    "disabled": "Destino deshabilitado",
+    "enabledDesc": "Visible en la landing como destino disponible.",
+    "disabledDesc": "Oculto para los visitantes hasta que lo habilites.",
+    "tabs": {
+      "es": "Español (ES)",
+      "en": "English (EN)"
+    },
+    "fields": {
+      "province": "Provincia / Región",
+      "provinceHint": "Ej.: Buenos Aires o Río Negro",
+      "provincePlaceholder": "Ej.: Buenos Aires",
+      "landscape": "Tipo de paisaje / Entorno",
+      "landscapeHint": "Ej.: Dique o Lagos y bosque andino",
+      "landscapePlaceholder": "Ej.: Dique",
+      "descriptionHint": "Texto que se muestra en la landing.",
+      "descriptionPlaceholder": "Describí la experiencia y el entorno del destino…",
+      "complexHint": "El nombre propio del lugar. Ej.: Complejo Arcoíris.",
+      "complexPlaceholder": "Ej.: Complejo Arcoíris",
+      "reservationUrlHint": "A dónde lleva «Reservar» en la landing.",
+      "photosHint": "La primera imagen es la portada. Arrastrá para subir, pegá una URL o elegí de la galería."
+    },
+    "translationTab": {
+      "complexLabel": "Complejo / Nombre del alojamiento (EN)",
+      "complexHint": "Versión en inglés del nombre del complejo.",
+      "complexPlaceholder": "Ej.: Rainbow Complex",
+      "provinceLabel": "Provincia / Región (EN)",
+      "provinceHint": "Ej.: Patagonia o Buenos Aires",
+      "provincePlaceholder": "Ej.: Patagonia",
+      "landscapeLabel": "Tipo de paisaje / Entorno (EN)",
+      "landscapeHint": "Ej.: Lakes and Andean forest",
+      "landscapePlaceholder": "Ej.: Lakes and forest",
+      "descriptionPlaceholder": "Describí la experiencia y el entorno del destino en inglés…"
+    }
+  }
+}

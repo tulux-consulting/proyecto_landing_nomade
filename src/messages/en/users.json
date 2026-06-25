@@ -1,0 +1,52 @@
+{
+  "title": "Settings",
+  "desc": "Administration of authorized accounts to access the NÓMADE admin panel.",
+  "table": {
+    "title": "Panel Users",
+    "user": "User",
+    "role": "Role",
+    "state": "Status",
+    "actions": "Actions"
+  },
+  "form": {
+    "new": "New user",
+    "edit": "Edit user",
+    "name": "First and Last Name",
+    "username": "Username",
+    "usernameHint": "Unique, no spaces. Allows letters, numbers, dots, and hyphens.",
+    "email": "Email",
+    "role": "Role",
+    "password": "Temporary password",
+    "passwordHint": "Minimum 6 characters",
+    "preferredLanguage": "Preferred language",
+    "save": "Create user",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "errors": {
+      "name": "Please enter a name.",
+      "username": "Please enter a username.",
+      "usernameSpaces": "Username cannot contain spaces.",
+      "usernameChars": "Allowed characters: letters, numbers, dots, hyphens, and underscores.",
+      "email": "Invalid email.",
+      "role": "Please choose a role.",
+      "password": "Password must be at least 6 characters."
+    }
+  },
+  "delete": {
+    "title": "Delete user",
+    "confirm": "Delete",
+    "message": "You are going to delete {name} (@{username}). They will permanently lose access to the panel."
+  },
+  "toasts": {
+    "loadedError": "Error loading users.",
+    "created": "User created.",
+    "updated": "User updated.",
+    "activated": "User activated.",
+    "deactivated": "User deactivated.",
+    "deleted": "User deleted.",
+    "deletedError": "Error deleting user.",
+    "stateError": "Error changing user state.",
+    "deactivateAction": "Deactivate",
+    "activateAction": "Activate"
+  }
+}

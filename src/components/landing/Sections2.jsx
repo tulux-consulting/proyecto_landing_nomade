@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Eyebrow, useLucide } from './primitives.jsx';
 import { resolveImg } from '../panel/ui/Helpers.jsx';
 import { DestinosRepository } from '../../repositories/index.ts';
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
 
 // NÓMADE — 5 Destinations worth discovering (potential) · 6 How we create destinations (model)
 
 function DestinoModal({ destino, onClose }) {
+  const { t } = useI18n();
   useLucide();
   const [idx, setIdx] = useState(0);
   const [zoom, setZoom] = useState(false);
@@ -47,7 +49,7 @@ function DestinoModal({ destino, onClose }) {
   return (
     <div className="destino-modal" role="dialog" aria-modal="true" aria-label={destino.name} onClick={onClose}>
       <div className="destino-dialog" onClick={(e) => e.stopPropagation()}>
-        <button className="destino-close" onClick={onClose} aria-label="Cerrar"><Icon name="x" /></button>
+        <button className="destino-close" onClick={onClose} aria-label={t('landing.destinations.close')}><Icon name="x" /></button>
 
         <div className="destino-carousel">
           <div
@@ -57,7 +59,7 @@ function DestinoModal({ destino, onClose }) {
             onMouseLeave={() => setZoom(false)}
             role="button"
             tabIndex={0}
-            aria-label={zoom ? "Alejar imagen" : "Acercar imagen"}>
+            aria-label={zoom ? t('landing.destinations.zoomOut') : t('landing.destinations.zoomIn')}>
 
             {photos.map((src, i) =>
               <div
@@ -74,12 +76,12 @@ function DestinoModal({ destino, onClose }) {
               </div>
             )}
             <span className="destino-zoom-hint" aria-hidden="true">
-              <Icon name={zoom ? "zoom-out" : "zoom-in"} />{zoom ? "Mové el cursor para explorar" : "Tocá para acercar"}
+              <Icon name={zoom ? "zoom-out" : "zoom-in"} />{zoom ? t('landing.destinations.exploreCursor') : t('landing.destinations.zoomIn')}
             </span>
             {n > 1 &&
               <React.Fragment>
-                <button className="destino-arrow prev" onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label="Imagen anterior"><Icon name="chevron-left" /></button>
-                <button className="destino-arrow next" onClick={(e) => { e.stopPropagation(); go(1); }} aria-label="Imagen siguiente"><Icon name="chevron-right" /></button>
+                <button className="destino-arrow prev" onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label={t('landing.destinations.previous')}><Icon name="chevron-left" /></button>
+                <button className="destino-arrow next" onClick={(e) => { e.stopPropagation(); go(1); }} aria-label={t('landing.destinations.next')}><Icon name="chevron-right" /></button>
                 <span className="destino-counter" aria-hidden="true">{idx + 1} / {n}</span>
               </React.Fragment>
             }
@@ -103,14 +105,14 @@ function DestinoModal({ destino, onClose }) {
         </div>
 
         <div className="destino-body">
-          <span className="destino-tag">En exploración</span>
+          <span className="destino-tag">{t('landing.destinations.exploring')}</span>
           <h3 className="destino-name">{destino.name}</h3>
           <p className="destino-geo">{destino.geo}</p>
           <p className="destino-desc">{destino.desc}</p>
           {destino.book && (
             <div className="destino-actions">
-              <a className="destino-cta" href={destino.book} target="_blank" rel="noopener noreferrer">Ir a reservar<Icon name="arrow-up-right" /></a>
-              <span className="destino-meta">Reservá a través de nuestros partners de alojamiento.</span>
+              <a className="destino-cta" href={destino.book} target="_blank" rel="noopener noreferrer">{t('landing.destinations.book')}<Icon name="arrow-up-right" /></a>
+              <span className="destino-meta">{t('landing.destinations.partnerMeta')}</span>
             </div>
           )}
         </div>
@@ -120,6 +122,7 @@ function DestinoModal({ destino, onClose }) {
 }
 
 function DestinosExplorer({ destinos, onOpen, isPreview }) {
+  const { t } = useI18n();
   const [zone, setZone] = useState("");
   const [sort, setSort] = useState("region");
   const [edges, setEdges] = useState({ start: true, end: false });
@@ -164,31 +167,31 @@ function DestinosExplorer({ destinos, onOpen, isPreview }) {
       <div className="dexp-controls">
         <div className="dexp-selects">
           <label className="dexp-select">
-            <span className="dexp-select-label">Región</span>
+            <span className="dexp-select-label">{t('landing.destinations.region')}</span>
             <span className="dexp-select-field">
               <select value={zone} onChange={(e) => setZone(e.target.value)} aria-label="Filtrar por región">
-                <option value="">Todas las regiones</option>
+                <option value="">{t('landing.destinations.allRegions')}</option>
                 {zones.map((z) => <option key={z} value={z}>{z}</option>)}
               </select>
               <Icon name="chevron-down" />
             </span>
           </label>
           <label className="dexp-select">
-            <span className="dexp-select-label">Ordenar</span>
+            <span className="dexp-select-label">{t('landing.destinations.orderBy')}</span>
             <span className="dexp-select-field">
               <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Ordenar destinos">
-                <option value="region">Por región</option>
-                <option value="nombre">Nombre (A–Z)</option>
+                <option value="region">{t('landing.destinations.byRegion')}</option>
+                <option value="nombre">{t('landing.destinations.byName')}</option>
               </select>
               <Icon name="chevron-down" />
             </span>
           </label>
         </div>
         <div className="dexp-nav">
-          <span className="dexp-count">{shown.length} {shown.length === 1 ? "destino" : "destinos"}</span>
+          <span className="dexp-count">{shown.length} {shown.length === 1 ? t('landing.destinations.destination') : t('landing.destinations.destinations')}</span>
           <div className="dexp-arrows">
-            <button className="dexp-arrow" onClick={() => scrollBy(-1)} disabled={edges.start} aria-label="Anterior"><Icon name="chevron-left" /></button>
-            <button className="dexp-arrow" onClick={() => scrollBy(1)} disabled={edges.end} aria-label="Siguiente"><Icon name="chevron-right" /></button>
+            <button className="dexp-arrow" onClick={() => scrollBy(-1)} disabled={edges.start} aria-label={t('landing.destinations.previous')}><Icon name="chevron-left" /></button>
+            <button className="dexp-arrow" onClick={() => scrollBy(1)} disabled={edges.end} aria-label={t('landing.destinations.next')}><Icon name="chevron-right" /></button>
           </div>
         </div>
       </div>
@@ -199,10 +202,10 @@ function DestinosExplorer({ destinos, onOpen, isPreview }) {
             <span className="dcard-img" style={{ backgroundImage: `url(${d.photos[0] || ''})`, backgroundColor: "#3a4a3d" }} aria-hidden="true"></span>
             <span className="dcard-scrim" aria-hidden="true"></span>
             <span className="dcard-body">
-              <span className="dcard-tag">En exploración</span>
+              <span className="dcard-tag">{t('landing.destinations.exploring')}</span>
               <span className="dcard-name">{d.name}</span>
               <span className="dcard-geo">{d.geo}</span>
-              <span className="dcard-go">Ver destino<Icon name="arrow-up-right" /></span>
+              <span className="dcard-go">{t('landing.destinations.viewDestination')}<Icon name="arrow-up-right" /></span>
 
             </span>
           </button>
@@ -213,6 +216,7 @@ function DestinosExplorer({ destinos, onOpen, isPreview }) {
 }
 
 function Destinations(props) {
+  const { locale, t } = useI18n();
   const d = props.d || props;
   const isPreview = props.isPreview || false;
   const [openDestino, setOpenDestino] = useState(null);
@@ -242,11 +246,23 @@ function Destinations(props) {
                 }
               });
             }
+
+            let name = destino.nombre;
+            let geo = destino.ubicacion;
+            let desc = destino.descripcion;
+
+            if (locale === 'en' && destino.translations?.en) {
+              const en = destino.translations.en;
+              if (en.nombre) name = en.nombre;
+              if (en.ubicacion) geo = en.ubicacion;
+              if (en.descripcion) desc = en.descripcion;
+            }
+
             return {
               id: destino.id,
-              name: destino.nombre,
-              geo: destino.ubicacion,
-              desc: destino.descripcion,
+              name: name,
+              geo: geo,
+              desc: desc,
               photos: photos,
               book: destino.reserva || ''
             };
@@ -265,7 +281,7 @@ function Destinations(props) {
       }
     });
     return () => { active = false; };
-  }, [d.regions]);
+  }, [d.regions, locale]);
 
   const mapFallback = (regions) => {
     if (!regions) return [];

@@ -1,0 +1,102 @@
+{
+  "title": "Site content",
+  "desc": "Edit texts and images of the landing page. The preview on the right reflects changes instantly; «Publish» puts them online.",
+  "editor": {
+    "unsaved": "Unsaved changes",
+    "saved": "All saved/published",
+    "discard": "Discard",
+    "saveDraft": "Save Draft",
+    "publish": "Publish",
+    "editingLanguage": "Editing language",
+    "add": "Add"
+  },
+  "preview": {
+    "title": "Preview",
+    "url": "nomade.com"
+  },
+  "sections": {
+    "hero": "Hero",
+    "whatis": "What is NÓMADE",
+    "experience": "The Experience",
+    "split": "Bifurcation Section (Split)",
+    "destinations": "Destinations",
+    "model": "The Model",
+    "landowners": "Landowners",
+    "process": "The Process",
+    "partners": "Partners",
+    "guests": "Waitlist",
+    "footer": "Footer"
+  },
+  "fields": {
+    "eyebrow": "Eyebrow",
+    "title": "Title",
+    "subtitle": "Subtitle",
+    "lead": "Lead text / Description",
+    "cta": "Button text",
+    "image": "Image",
+    "backgroundImage": "Background image",
+    "icon": "Icon (e.g. compass, map, waypoints)",
+    "description": "Description",
+    "kicker": "Top label (Kicker)",
+    "target": "Target ID (e.g. propietarios, destinos)",
+    "note": "Disclaimer / Note",
+    "mapEyebrow": "Carousel Eyebrow",
+    "mapTitle": "Carousel Title",
+    "mapLead": "Carousel Description",
+    "disclaimer": "Carousel Caption",
+    "landscapeName": "Landscape Name",
+    "stepNumber": "Number (e.g. 01)",
+    "valueTitle": "Value Title",
+    "placeholder": "Email Placeholder",
+    "successMessage": "Success message",
+    "copyright": "Copyright",
+    "tagline": "Tagline",
+    "titulo": "Title",
+    "subtitulo": "Subtitle",
+    "h2": "Title",
+    "imagen": "Image",
+    "cap": "Landscape Name",
+    "img": "Image",
+    "n": "Number (e.g. 01)",
+    "h": "Title",
+    "p": "Description"
+  },
+  "repeat": {
+    "point": "Value point",
+    "points": "value points",
+    "pillar": "Experience",
+    "pillars": "experiences",
+    "option": "Option",
+    "options": "options",
+    "landscape": "Landscape",
+    "landscapes": "landscapes",
+    "step": "Step",
+    "steps": "steps",
+    "value": "Alliance value",
+    "values": "alliance values"
+  },
+  "hints": {
+    "imagen": "Full screen photo behind the title.",
+    "target": "E.g.: landowners, destinations"
+  },
+  "sectionDescs": {
+    "hero": "The main landing hero section.",
+    "whatis": "Introduction and key pillars.",
+    "experience": "Design and wellness pillars.",
+    "split": "Visitor split choice (Landowners vs Guests).",
+    "destinations": "Types of landscapes and regions under exploration.",
+    "model": "Value equation.",
+    "landowners": "Landowner submission options.",
+    "process": "Land selection steps.",
+    "partners": "Partnership opportunities section.",
+    "guests": "Waitlist sign up section for guests.",
+    "footer": "Website footer."
+  },
+  "toasts": {
+    "draftSaved": "Draft saved successfully.",
+    "draftError": "Error saving draft.",
+    "published": "Content published to the landing page.",
+    "publishError": "Error publishing content.",
+    "discarded": "Changes discarded."
+  }
+}

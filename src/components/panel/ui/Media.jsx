@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from './Icon.jsx';
 import { resolveImg } from './Helpers.jsx';
 import { showToast } from './Feedback.jsx';
+import { useI18n } from '../../../lib/i18n/i18nContext.jsx';
 
 export function PhotoGallery({ fotos, empty }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(-1);
   const list = (fotos || []).filter(Boolean);
   useEffect(() => {
@@ -18,7 +20,7 @@ export function PhotoGallery({ fotos, empty }) {
   }, [open, list.length]);
 
   if (list.length === 0) {
-    return <div className="empty" style={{ padding: "40px 20px" }}><span className="empty-ic"><Icon name="image-off" /></span><h3>Sin fotografías</h3><p>{empty || "El postulante no adjuntó imágenes."}</p></div>;
+    return <div className="empty" style={{ padding: "40px 20px" }}><span className="empty-ic"><Icon name="image-off" /></span><h3>{t('common.postulaciones.modal.gallery.noPhotos')}</h3><p>{empty || t('common.postulaciones.modal.gallery.noPhotosDesc')}</p></div>;
   }
   return (
     <React.Fragment>
@@ -43,6 +45,7 @@ export function PhotoGallery({ fotos, empty }) {
 const CURATED_IMG = ["1501785888041-af3ef285b470", "1470071459604-3b5ec3a7fe05", "1500382017468-9049fed747ef", "1426604966848-d7adac402bff", "1454496522488-7a8e488e8606", "1469474968028-56623f02e42e", "1472396961693-142e6e269027", "1433086966358-54859d0ed716", "1518495973542-4542c06a5843", "1441974231531-c6227db76b6e"];
 
 export function ImageManager({ fotos, onChange, max, hideCover }) {
+  const { t } = useI18n();
   const list = (fotos || []).filter(Boolean);
   const [url, setUrl] = useState("");
   const [over, setOver] = useState(false);
@@ -90,7 +93,7 @@ export function ImageManager({ fotos, onChange, max, hideCover }) {
       <div className="imgmgr-grid">
         {list.map((f, i) => (
           <div key={i} className="imgmgr-item" style={{ backgroundImage: "url(" + resolveImg(f) + ")" }}>
-            {i === 0 && !hideCover && <span className="imgmgr-cover">Portada</span>}
+            {i === 0 && !hideCover && <span className="imgmgr-cover">{t('common.imageManager.cover')}</span>}
             <button className="imgmgr-x" onClick={() => removeAt(i)} aria-label="Quitar foto"><Icon name="trash-2" /></button>
           </div>
         ))}
@@ -99,23 +102,23 @@ export function ImageManager({ fotos, onChange, max, hideCover }) {
             onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
             onDrop={(e) => { e.preventDefault(); setOver(false); handleFiles(e.dataTransfer.files); }}>
             <Icon name="image-plus" />
-            <span>Arrastrá una imagen<br />o hacé clic para subir</span>
+            <span>{t('common.imageManager.dropTextLine1')}<br />{t('common.imageManager.dropTextLine2')}</span>
             <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={(e) => handleFiles(e.target.files)} />
           </div>
         )}
       </div>
       <div className="imgmgr-url">
-        <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="…o pegá una URL de imagen" style={{ flex: 1, fontFamily: "var(--sans)", fontSize: 13.5, color: "var(--fg1)", background: "var(--bg-raised)", border: "1px solid var(--line-strong)", borderRadius: "var(--radius-md)", padding: "10px 13px", outline: "none" }}
+        <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder={t('common.imageManager.urlPlaceholder')} style={{ flex: 1, fontFamily: "var(--sans)", fontSize: 13.5, color: "var(--fg1)", background: "var(--bg-raised)", border: "1px solid var(--line-strong)", borderRadius: "var(--radius-md)", padding: "10px 13px", outline: "none" }}
           onKeyDown={(e) => { if (e.key === "Enter") { add(url.trim()); setUrl(""); } }} />
         <button type="button" className="btn-bo btn-ghost-bo btn-sm" onClick={() => { add(url.trim()); setUrl(""); }}>
-          <Icon name="plus" />Agregar
+          <Icon name="plus" />{t('common.imageManager.addBtn')}
         </button>
       </div>
       <div>
-        <p className="muted" style={{ fontSize: 12, margin: "0 0 7px" }}>Galería de ejemplo</p>
+        <p className="muted" style={{ fontSize: 12, margin: "0 0 7px" }}>{t('common.imageManager.exampleGallery')}</p>
         <div className="imgmgr-gallery">
           {CURATED_IMG.filter((g) => list.indexOf(g) < 0).slice(0, 8).map((g) => (
-            <button key={g} style={{ backgroundImage: "url(" + resolveImg(g) + ")" }} onClick={() => add(g)} aria-label="Agregar de la galería"></button>
+            <button key={g} style={{ backgroundImage: "url(" + resolveImg(g) + ")" }} onClick={() => add(g)} aria-label={t('common.imageManager.addFromGallery')}></button>
           ))}
         </div>
       </div>

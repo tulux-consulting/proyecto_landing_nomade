@@ -3,6 +3,7 @@ import { Icon } from './Icon.jsx';
 import { Btn } from './Btn.jsx';
 import { BO } from '../../../lib/store.js';
 import { relDays } from './Helpers.jsx';
+import { useI18n } from '../../../lib/i18n/i18nContext.jsx';
 
 export function useStore() {
   const [, force] = useState(0);
@@ -45,8 +46,9 @@ export function DGroup({ title, children }) {
 }
 
 export function DxCell({ label, children, empty }) {
+  const { t } = useI18n();
   const isEmpty = empty || children == null || children === "" || children === "—";
-  return <div className={"dx-cell" + (isEmpty ? " empty" : "")}><dt>{label}</dt><dd>{isEmpty ? "No informado" : children}</dd></div>;
+  return <div className={"dx-cell" + (isEmpty ? " empty" : "")}><dt>{label}</dt><dd>{isEmpty ? t('common.notReported') : children}</dd></div>;
 }
 
 export function DxGrid({ children }) { return <dl className="dx-grid">{children}</dl>; }
@@ -71,11 +73,12 @@ export function BarChart({ data, color }) {
 }
 
 export function Notes({ notas, onAdd }) {
+  const { t } = useI18n();
   const [txt, setTxt] = useState("");
   const add = () => { if (txt.trim()) { onAdd(txt.trim()); setTxt(""); } };
   return (
     <div className="notes">
-      {(notas || []).length === 0 && <p className="muted" style={{ fontSize: 13 }}>Sin observaciones todavía.</p>}
+      {(notas || []).length === 0 && <p className="muted" style={{ fontSize: 13 }}>{t('common.postulaciones.modal.notes.noNotes')}</p>}
       {(notas || []).map((n) => (
         <div className="note" key={n.id}>
           <p>{n.texto}</p>
@@ -83,9 +86,9 @@ export function Notes({ notas, onAdd }) {
         </div>
       ))}
       <div className="note-add">
-        <textarea value={txt} onChange={(e) => setTxt(e.target.value)} placeholder="Agregar una observación interna…"
+        <textarea value={txt} onChange={(e) => setTxt(e.target.value)} placeholder={t('common.postulaciones.modal.notes.placeholder')}
           onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) add(); }} />
-        <Btn variant="primary" sm onClick={add}>Añadir observación</Btn>
+        <Btn variant="primary" sm onClick={add}>{t('common.postulaciones.modal.notes.addBtn')}</Btn>
       </div>
     </div>
   );

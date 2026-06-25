@@ -18,7 +18,8 @@ function mapFromDb(row: any): Destino {
     imagen: row.cover_image_url || '',
     fotos: row.photos || [],
     reserva: row.reservation_url || '',
-    archivado: row.archivado || false
+    archivado: row.archivado || false,
+    translations: row.translations || {}
   };
 }
 
@@ -45,6 +46,7 @@ function mapToDb(payload: Partial<Destino>): any {
   if (payload.fotos !== undefined) out.photos = payload.fotos;
   if (payload.reserva !== undefined) out.reservation_url = payload.reserva;
   if (payload.archivado !== undefined) out.archivado = payload.archivado;
+  if (payload.translations !== undefined) out.translations = payload.translations;
   return out;
 }
 

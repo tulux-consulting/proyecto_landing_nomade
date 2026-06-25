@@ -1,0 +1,93 @@
+{
+  "title": "Destinations",
+  "desc": "The hospitality and wellness experiences of the NÓMADE network.",
+  "new": "New destination",
+  "edit": "Edit destination",
+  "eyebrow": "Module",
+  "searchPlaceholder": "Search by destination or complex...",
+  "filterEstado": "Filter by status",
+  "allEstados": "All statuses",
+  "filterArchived": "Archived",
+  "active": "Active",
+  "archived": "Archived",
+  "noDestinations": "No destinations",
+  "noDestinationsDesc": "Create the first destination of the network using «New destination».",
+  "deleteTitle": "Delete destination",
+  "deleteConfirm": "Delete permanently",
+  "deleteMessage": "You are about to permanently delete “{nombre}” and all its photos. This action cannot be undone.",
+  "fields": {
+    "name": "Destination name",
+    "complex": "Complex / Lodging name",
+    "location": "Location (e.g. Río Negro · Lakes and forest)",
+    "shortDescription": "Short description",
+    "description": "Detailed description",
+    "reservationUrl": "Reservation URL (Airbnb/Booking)",
+    "status": "Status",
+    "coverImage": "Cover image",
+    "photos": "Gallery photos",
+    "sourceType": "Application origin",
+    "sourceId": "Source ID"
+  },
+  "translationTab": {
+    "title": "English Translation (EN)",
+    "kicker": "Localized fields",
+    "desc": "Add the English version of the main fields to be displayed when the visitor selects this language.",
+    "name": "Name in English",
+    "location": "Location in English",
+    "shortDescription": "Short description in English",
+    "description": "Detailed description in English"
+  },
+  "states": {
+    "draft": "Draft",
+    "pending_review": "Pending review",
+    "published": "Available (Published)",
+    "unavailable": "Unavailable",
+    "archived": "Archived"
+  },
+  "toasts": {
+    "saved": "Destination saved successfully.",
+    "error": "Error saving destination.",
+    "archived": "Destination archived.",
+    "restored": "Destination restored.",
+    "deleted": "Destination permanently deleted.",
+    "loading": "Loading destinations..."
+  },
+  "form": {
+    "editSubtitle": "Update the information of this destination of the network.",
+    "newSubtitle": "Add a new lodging experience to the NÓMADE network.",
+    "enabled": "Destination enabled",
+    "disabled": "Destination disabled",
+    "enabledDesc": "Visible on the landing page as an available destination.",
+    "disabledDesc": "Hidden from visitors until you enable it.",
+    "tabs": {
+      "es": "Spanish (ES)",
+      "en": "English (EN)"
+    },
+    "fields": {
+      "province": "Province / Region",
+      "provinceHint": "E.g.: Buenos Aires or Río Negro",
+      "provincePlaceholder": "E.g.: Buenos Aires",
+      "landscape": "Landscape type / Environment",
+      "landscapeHint": "E.g.: Reservoir or Lakes and Andean forest",
+      "landscapePlaceholder": "E.g.: Reservoir",
+      "descriptionHint": "Text displayed on the landing page.",
+      "descriptionPlaceholder": "Describe the experience and environment of the destination...",
+      "complexHint": "The complex name. E.g.: Rainbow Complex.",
+      "complexPlaceholder": "E.g.: Rainbow Complex",
+      "reservationUrlHint": "Where the 'Book now' button points to on the landing page.",
+      "photosHint": "The first image is the cover. Drag to upload, paste a URL or choose from gallery."
+    },
+    "translationTab": {
+      "complexLabel": "Complex / Lodging name (EN)",
+      "complexHint": "English version of the complex name.",
+      "complexPlaceholder": "E.g.: Rainbow Complex",
+      "provinceLabel": "Province / Region (EN)",
+      "provinceHint": "E.g.: Patagonia or Buenos Aires",
+      "provincePlaceholder": "E.g.: Patagonia",
+      "landscapeLabel": "Landscape / Environment (EN)",
+      "landscapeHint": "E.g.: Lakes and Andean forest",
+      "landscapePlaceholder": "E.g.: Lakes and forest",
+      "descriptionPlaceholder": "Describe the experience and environment of the destination..."
+    }
+  }
+}

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Eyebrow, Button, useReveal, scrollToId } from './primitives.jsx';
 import { resolveImg } from '../panel/ui/Helpers.jsx';
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
 // NÓMADE — 1 Hero · 3 What is NÓMADE · 4 The Experience · 4.5 Audience split
 
 function Hero(props) {
+  const { t } = useI18n();
   const d = props.d || props;
   const eyebrow = d.eyebrow;
   const imgUrl = resolveImg(d.imagen || d.img);
@@ -35,8 +37,8 @@ function Hero(props) {
           </div>
         </div>
       </div>
-      <button className="scroll-hint" onClick={() => scrollToId("que-es")} aria-label="Bajar a conocer NÓMADE">
-        <span>Conocer</span><Icon name="chevron-down" />
+      <button className="scroll-hint" onClick={() => scrollToId("que-es")} aria-label={t('landing.hero.scrollHintAria')}>
+        <span>{t('landing.hero.scrollHint')}</span><Icon name="chevron-down" />
       </button>
     </header>);
 }

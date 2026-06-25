@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Icon, Eyebrow, Button, useLucide, scrollToId } from './primitives.jsx';
 import { HuespedesRepository } from '../../repositories/index';
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
 // NÓMADE — 10 NÓMADE Partners · 11 Future guests waitlist · 12 Footer
 
 function Partners(props) {
@@ -83,6 +84,7 @@ function getBrowser() {
 
 function FutureGuests(props) {
   const d = props.d || props;
+  const { t } = useI18n();
   useLucide();
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
@@ -93,7 +95,7 @@ function FutureGuests(props) {
     e.preventDefault();
     if (loading) return;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError("Revisá el formato del email.");
+      setError(t('common.errors.invalidEmail'));
       return;
     }
     setError("");
@@ -137,7 +139,7 @@ function FutureGuests(props) {
       setDone(true);
     } catch (err) {
       console.error(err);
-      setError("Hubo un error al registrarte. Por favor intentá de nuevo.");
+      setError(t('common.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -162,11 +164,11 @@ function FutureGuests(props) {
                 value={email}
                 disabled={loading}
                 onChange={(e) => { setEmail(e.target.value); setError(""); }}
-                placeholder={loading ? "Enviando..." : d.placeholder}
+                placeholder={loading ? t('common.actions.saving') : d.placeholder}
                 aria-label="Email" />
 
               <button className="btn btn-ivory" disabled={loading} type="submit">
-                {loading ? "Enviando..." : d.cta}
+                {loading ? t('common.actions.saving') : d.cta}
                 {!loading && <Icon name="arrow-right" />}
               </button>
             </div>
@@ -182,6 +184,7 @@ function FutureGuests(props) {
 function Footer(props) {
   const d = props.d || props;
   const onCta = props.onCta;
+  const { t } = useI18n();
   const tagline = d.tagline || "Una red de hospitalidad y bienestar. Experiencias extraordinarias, estándares consistentes, en ubicaciones cuidadosamente seleccionadas.";
   const copyright = d.copyright || "© 2026 NÓMADE — todos los derechos reservados.";
 
@@ -194,22 +197,22 @@ function Footer(props) {
             <p className="foot-tag">{tagline}</p>
           </div>
           <div className="foot-col">
-            <h4>El proyecto</h4>
-            <button className="foot-link" onClick={() => scrollToId("que-es")}>Qué es NÓMADE</button>
-            <button className="foot-link" onClick={() => scrollToId("experiencia")}>La experiencia</button>
-            <button className="foot-link" onClick={() => scrollToId("destinos")}>Destinos</button>
-            <button className="foot-link" onClick={() => scrollToId("modelo")}>El modelo</button>
+            <h4>{t('landing.footer.project')}</h4>
+            <button className="foot-link" onClick={() => scrollToId("que-es")}>{t('landing.footer.whatis')}</button>
+            <button className="foot-link" onClick={() => scrollToId("experiencia")}>{t('landing.footer.experience')}</button>
+            <button className="foot-link" onClick={() => scrollToId("destinos")}>{t('landing.footer.destinations')}</button>
+            <button className="foot-link" onClick={() => scrollToId("modelo")}>{t('landing.footer.model')}</button>
           </div>
           <div className="foot-col">
-            <h4>Sumarse</h4>
-            <button className="foot-link" onClick={() => scrollToId("formulario")}>Postular mi terreno</button>
-            <button className="foot-link" onClick={() => scrollToId("socios")}>NÓMADE Partners</button>
-            <button className="foot-link" onClick={() => scrollToId("huespedes")}>Lista de futuros huéspedes</button>
-            <button className="foot-link" onClick={() => onCta?.("Contacto")}>Contacto</button>
+            <h4>{t('landing.footer.join')}</h4>
+            <button className="foot-link" onClick={() => scrollToId("formulario")}>{t('landing.footer.submitLand')}</button>
+            <button className="foot-link" onClick={() => scrollToId("socios")}>{t('landing.footer.partners')}</button>
+            <button className="foot-link" onClick={() => scrollToId("huespedes")}>{t('landing.footer.waitingList')}</button>
+            <button className="foot-link" onClick={() => onCta?.("Contacto")}>{t('landing.footer.contact')}</button>
           </div>
         </div>
         <div className="foot-bottom">
-          <span>{copyright}<br />Diseñado y desarrollado por <a href="https://tulux.vercel.app/" target="_blank" style={{ color: "#e0d9cf", textDecoration: "underline" }}>Tulux</a>.</span>
+          <span>{copyright}<br />{t('landing.footer.designedBy')} <a href="https://tulux.vercel.app/" target="_blank" style={{ color: "#e0d9cf", textDecoration: "underline" }}>Tulux</a>.</span>
         </div>
       </div>
     </footer>);

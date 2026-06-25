@@ -3,9 +3,11 @@ import { BO } from '../../lib/store.js';
 import { PostulacionesRepository } from '../../repositories/index';
 import { PostulacionModal } from './PostulacionModal.jsx';
 import { Icon, useLucide, fmtDate, relDays, Badge, TagRow, ModuleHead, Search, Select, DataTable, Pagination, Empty, Confirm, SearchableSelect, Spinner } from './ui.jsx';
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
 
 function Postulaciones({ onToast }) {
   useLucide();
+  const { t, locale, tValue } = useI18n();
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
@@ -17,7 +19,7 @@ function Postulaciones({ onToast }) {
       setAll(data || []);
     } catch (e) {
       console.error('Error al cargar postulaciones:', e);
-      onToast('Error al conectar con el servidor.');
+      onToast(t('common.postulaciones.toasts.connError'));
     } finally {
       setLoading(false);
     }
@@ -29,7 +31,7 @@ function Postulaciones({ onToast }) {
 
   const ctrl = useListController(all, {
     searchKeys: ["nombre", "apellido", "email", "provincia", "localidad"],
-    perPage: 8, defaultSort: { key: "fecha", dir: "desc" }
+    perPage: 5, defaultSort: { key: "fecha", dir: "desc" }
   });
 
   const estadoFilter = ctrl.filters.estado || "__all";
@@ -39,23 +41,23 @@ function Postulaciones({ onToast }) {
   const provincias = useMemo(() => Array.from(new Set(all.map((r) => r.provincia))).sort(), [all]);
 
   const columns = [
-    { key: "nombre", label: "Postulante", sortable: true, render: (r) => (
+    { key: "nombre", label: t('common.postulaciones.table.applicant'), sortable: true, render: (r) => (
       <span className="cell-name"><span className="td-strong">{r.nombre} {r.apellido}</span><span className="td-sub">{r.email}</span></span>
     ) },
-    { key: "provincia", label: "Ubicación", sortable: true, render: (r) => (
-      <span className="cell-name"><span>{r.localidad}</span><span className="td-sub">{r.provincia}</span></span>
+    { key: "provincia", label: t('common.postulaciones.table.location'), sortable: true, render: (r) => (
+      <span className="cell-name"><span>{r.localidad}</span><span className="td-sub">{tValue(r.provincia)}</span></span>
     ) },
-    { key: "paisaje", label: "Paisaje", render: (r) => <TagRow items={r.paisaje} max={2} /> },
-    { key: "tamano", label: "Tamaño", render: (r) => <span className="muted">{r.tamano}</span> },
-    { key: "estado", label: "Estado", sortable: true, render: (r) => <Badge status={r.estado} /> },
-    { key: "fecha", label: "Recibida", sortable: true, render: (r) => <span className="td-mono" title={fmtDate(r.fecha)}>{relDays(r.fecha)}</span> }
+    { key: "paisaje", label: t('common.postulaciones.table.landscape'), render: (r) => <TagRow items={tValue(r.paisaje)} max={2} /> },
+    { key: "tamano", label: t('common.postulaciones.table.size'), render: (r) => <span className="muted">{tValue(r.tamano)}</span> },
+    { key: "estado", label: t('common.postulaciones.table.status'), sortable: true, render: (r) => <Badge status={r.estado} /> },
+    { key: "fecha", label: t('common.postulaciones.table.received'), sortable: true, render: (r) => <span className="td-mono" title={fmtDate(r.fecha)}>{relDays(r.fecha, locale)}</span> }
   ];
 
   const rec = useMemo(() => openId ? all.find((r) => r.id === openId) : null, [openId, all]);
 
   const setEstado = async (e) => {
     await PostulacionesRepository.update(openId, { estado: e });
-    onToast("Estado actualizado a “" + e + "”.");
+    onToast(t('common.postulaciones.toasts.statusUpdated', { status: tValue(e) }));
     loadData();
   };
 
@@ -69,41 +71,41 @@ function Postulaciones({ onToast }) {
   const toggleArch = async () => {
     const next = !rec.archivado;
     await PostulacionesRepository.update(openId, { archivado: next });
-    onToast(next ? "Postulación archivada." : "Postulación restaurada.");
+    onToast(next ? t('common.postulaciones.toasts.archived') : t('common.postulaciones.toasts.restored'));
     loadData();
   };
 
   const doDelete = async () => {
     await PostulacionesRepository.delete(openId);
-    onToast("Postulación eliminada definitivamente.");
+    onToast(t('common.postulaciones.toasts.deleted'));
     setConfirmDel(false);
     setOpenId(null);
     loadData();
   };
 
   if (loading) {
-    return <Spinner message="Cargando postulaciones..." />;
+    return <Spinner message={t('common.postulaciones.toasts.loading')} />;
   }
 
   return (
     <div className="main-inner">
-      <ModuleHead eyebrow="Módulo" title="Postulaciones"
-        desc="Personas que postulan un terreno para convertirse en un destino NÓMADE. Revisá, contactá y movelas por el proceso de evaluación." />
+      <ModuleHead eyebrow={t('common.postulaciones.eyebrow')} title={t('common.postulaciones.title')}
+        desc={t('common.postulaciones.desc')} />
 
       <div className="toolbar">
-        <Search value={ctrl.q} onChange={ctrl.setQ} placeholder="Buscar por nombre, email o ubicación…" />
-        <Select ariaLabel="Filtrar por estado" value={estadoFilter} onChange={(v) => ctrl.setFilter("estado", v)}
-          options={[{ value: "__all", label: "Todos los estados" }, ...BO.ESTADOS]} />
-        <SearchableSelect ariaLabel="Filtrar por provincia" value={provFilter} onChange={(v) => ctrl.setFilter("provincia", v)}
-          options={provincias} allLabel="Todas las provincias" placeholder="Buscar provincia…" />
-        <Select ariaLabel="Archivadas" value={archFilter} onChange={(v) => ctrl.setFilter("__archived", v)}
-          options={[{ value: "active", label: "Activas" }, { value: "archived", label: "Archivadas" }]} />
+        <Search value={ctrl.q} onChange={ctrl.setQ} placeholder={t('common.postulaciones.searchPlaceholder')} />
+        <Select ariaLabel={t('common.postulaciones.filterEstado')} value={estadoFilter} onChange={(v) => ctrl.setFilter("estado", v)}
+          options={[{ value: "__all", label: t('common.postulaciones.allEstados') }, ...BO.ESTADOS.map(st => ({ value: st, label: tValue(st) }))]} />
+        <SearchableSelect ariaLabel={t('common.postulaciones.filterProvincia')} value={provFilter} onChange={(v) => ctrl.setFilter("provincia", v)}
+          options={provincias} allLabel={t('common.postulaciones.allProvincias')} placeholder={t('common.postulaciones.searchProvincia')} />
+        <Select ariaLabel={t('common.postulaciones.filterArchived')} value={archFilter} onChange={(v) => ctrl.setFilter("__archived", v)}
+          options={[{ value: "active", label: t('common.postulaciones.active') }, { value: "archived", label: t('common.postulaciones.archived') }]} />
       </div>
 
       <div className="panel-card">
         {ctrl.total === 0 ? (
-          <Empty icon="clipboard-list" title="Sin postulaciones">
-            No hay postulaciones que coincidan con la búsqueda o los filtros actuales.
+          <Empty icon="clipboard-list" title={t('common.postulaciones.noApplications')}>
+            {t('common.postulaciones.noApplicationsDesc')}
           </Empty>
         ) : (
           <React.Fragment>
@@ -120,8 +122,8 @@ function Postulaciones({ onToast }) {
       )}
 
       {confirmDel && rec && (
-        <Confirm danger title="Eliminar postulación" confirmLabel="Eliminar definitivamente"
-          message={"Vas a eliminar la postulación de " + rec.nombre + " " + rec.apellido + ". Esta acción no se puede deshacer."}
+        <Confirm danger title={t('common.postulaciones.deleteTitle')} confirmLabel={t('common.postulaciones.deleteConfirm')}
+          message={t('common.postulaciones.deleteMessage', { name: rec.nombre, lastname: rec.apellido })}
           onConfirm={doDelete} onClose={() => setConfirmDel(false)} />
       )}
     </div>
