@@ -1,0 +1,52 @@
+{
+  "title": "Ajustes",
+  "desc": "Administración de cuentas autorizadas para acceder al panel de administración de NÓMADE.",
+  "table": {
+    "title": "Usuarios del panel",
+    "user": "Usuario",
+    "role": "Rol",
+    "state": "Estado",
+    "actions": "Acciones"
+  },
+  "form": {
+    "new": "Nuevo usuario",
+    "edit": "Editar usuario",
+    "name": "Nombre y Apellido",
+    "username": "Usuario (Username)",
+    "usernameHint": "Único, sin espacios. Permite letras, números, puntos y guiones.",
+    "email": "Email",
+    "role": "Rol",
+    "password": "Contraseña temporal",
+    "passwordHint": "Mínimo 6 caracteres",
+    "preferredLanguage": "Idioma preferido",
+    "save": "Crear usuario",
+    "saveChanges": "Guardar cambios",
+    "cancel": "Cancelar",
+    "errors": {
+      "name": "Ingresá un nombre.",
+      "username": "Ingresá un usuario.",
+      "usernameSpaces": "El usuario no puede contener espacios.",
+      "usernameChars": "Caracteres permitidos: letras, números, puntos, guiones y guiones bajos.",
+      "email": "Email inválido.",
+      "role": "Elegí un rol.",
+      "password": "La contraseña debe tener al menos 6 caracteres."
+    }
+  },
+  "delete": {
+    "title": "Eliminar usuario",
+    "confirm": "Eliminar",
+    "message": "Vas a eliminar a {name} (@{username}). Perderá permanentemente el acceso al panel."
+  },
+  "toasts": {
+    "loadedError": "Error al cargar los usuarios.",
+    "created": "Usuario creado.",
+    "updated": "Usuario actualizado.",
+    "activated": "Usuario activado.",
+    "deactivated": "Usuario desactivado.",
+    "deleted": "Usuario eliminado.",
+    "deletedError": "Error al eliminar usuario.",
+    "stateError": "Error al cambiar estado del usuario.",
+    "deactivateAction": "Desactivar",
+    "activateAction": "Activar"
+  }
+}

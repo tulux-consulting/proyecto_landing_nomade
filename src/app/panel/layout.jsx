@@ -6,16 +6,30 @@ import { panelIsAuthed, clearPanelSession } from '../../lib/auth.js';
 import { BO } from '../../lib/store.js';
 import { useStore, showToast, ToastHost, Spinner } from '../../components/panel/ui.jsx';
 import { Sidebar, MobileTop } from '../../components/panel/Shell.jsx';
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
 
 
 export default function PanelLayout({ children }) {
   useStore();
+  const { locale, changeLocale } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
   const [navOpen, setNavOpen] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (navOpen) {
+      document.body.classList.add('body-nav-open');
+    } else {
+      document.body.classList.remove('body-nav-open');
+    }
+    return () => {
+      document.body.classList.remove('body-nav-open');
+    };
+  }, [navOpen]);
 
 
   useEffect(() => {
@@ -63,7 +77,7 @@ export default function PanelLayout({ children }) {
           try {
             const { data: profile, error: profileError } = await supabase
               .from('profiles')
-              .select('is_active, full_name, role')
+              .select('is_active, full_name, role, preferred_language')
               .eq('id', currentSession.user.id)
               .single();
 
@@ -77,6 +91,11 @@ export default function PanelLayout({ children }) {
             } else {
               const isAdmin = profile.role === 'admin';
 
+              // Sync database preferred_language to active UI locale
+              if (profile.preferred_language && profile.preferred_language !== locale) {
+                await changeLocale(profile.preferred_language);
+              }
+
               // Centralized authorization guard: normal users cannot access Ajustes (/panel/ajustes)
               if (pathname.startsWith('/panel/ajustes') && !isAdmin) {
                 setAuthed(false);
@@ -89,6 +108,7 @@ export default function PanelLayout({ children }) {
                 nombre: profile.full_name || currentSession.user.email.split('@')[0],
                 email: currentSession.user.email,
                 role: profile.role,
+                preferred_language: profile.preferred_language,
                 permisos: isAdmin
                   ? ['dashboard', 'postulaciones', 'partners', 'huespedes', 'destinos', 'contenido', 'ajustes']
                   : ['dashboard', 'postulaciones', 'partners', 'huespedes', 'destinos', 'contenido'],
@@ -191,7 +211,7 @@ export default function PanelLayout({ children }) {
 
       <div className="main">
         <MobileTop onBurger={() => setNavOpen(true)} />
-        <main style={{ padding: '1.5rem', width: '100%', height: '100%' }}>
+        <main className="panel-main-content">
           {children}
         </main>
       </div>

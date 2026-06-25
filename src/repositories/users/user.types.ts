@@ -5,6 +5,7 @@ export interface UserProfile {
   email: string;
   role: 'admin' | 'user';
   is_active: boolean;
+  preferred_language?: string;
   created_at?: string;
   updated_at?: string;
 }

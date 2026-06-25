@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { I18nProvider } from '../lib/i18n/i18nContext.jsx';
 import '../styles/tokens.css';
 import '../styles/site.css';
 import '../styles/landing.css';
@@ -46,12 +47,14 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body>
         <Suspense fallback={null}>
-          {children}
+          <I18nProvider>
+            {children}
+          </I18nProvider>
         </Suspense>
       </body>
     </html>

@@ -8,10 +8,11 @@ import { Partners, FutureGuests, Footer } from '../landing/Sections4.jsx';
 import { Icon, useLucide, useStore, Btn, ModuleHead, FField, ImageManager, Spinner } from './ui.jsx';
 import dynamic from 'next/dynamic';
 import { NOMADE } from '../../data/content.js';
+import { useI18n } from '../../lib/i18n/i18nContext.jsx';
 
 const LeadForm = dynamic(() => import('../landing/LeadForm.jsx').then((m) => m.LeadForm), {
   ssr: false,
-  loading: () => <Spinner message="Cargando formulario..." size="sm" inline={true} />
+  loading: () => <Spinner message="Cargando..." size="sm" inline={true} />
 });
 
 // ============================================================
@@ -117,9 +118,15 @@ const CMS_SCHEMA = [
 ];
 
 function CMSField({ field, value, onChange }) {
+  const { t } = useI18n();
+  const labelText = t('cms.fields.' + field.k);
+  const resolvedLabel = labelText.startsWith('cms.fields.') ? field.label : labelText;
+  
+  const hintText = field.hint ? (t('cms.hints.' + field.k).startsWith('cms.hints.') ? field.hint : t('cms.hints.' + field.k)) : undefined;
+
   if (field.type === "image") {
     return (
-      <FField label={field.label} full hint={field.hint}>
+      <FField label={resolvedLabel} full hint={hintText}>
         <div className="cms-img-single">
           <ImageManager fotos={value ? [value] : []} max={1} hideCover onChange={(arr) => onChange(arr[0] || "")} />
         </div>
@@ -127,7 +134,7 @@ function CMSField({ field, value, onChange }) {
     );
   }
   return (
-    <FField label={field.label} full={field.type === "textarea"} hint={field.hint}>
+    <FField label={resolvedLabel} full={field.type === "textarea"} hint={hintText}>
       {field.type === "textarea"
         ? <textarea value={value || ""} onChange={(e) => onChange(e.target.value)} rows="3" />
         : <input value={value || ""} onChange={(e) => onChange(e.target.value)} />}
@@ -136,6 +143,10 @@ function CMSField({ field, value, onChange }) {
 }
 
 function CMSSection({ section, data, open, onToggle, onChange }) {
+  const { t } = useI18n();
+  const titleText = t('cms.sections.' + section.key);
+  const resolvedTitle = titleText.startsWith('cms.sections.') ? section.label : titleText;
+
   const setField = (k, v) => onChange({ ...data, [k]: v });
   const setItem = (rk, i, k, v) => { const arr = (data[rk] || []).slice(); arr[i] = { ...arr[i], [k]: v }; onChange({ ...data, [rk]: arr }); };
   const addItem = (rk, blank) => onChange({ ...data, [rk]: (data[rk] || []).concat([blank]) });
@@ -144,11 +155,29 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
   const summary = () => {
     if (section.repeat) {
       const n = (data[section.repeat.k] || []).length;
-      const lbl = section.repeat.plural || section.repeat.label || section.label;
-      return n + " " + lbl.toLowerCase();
+      
+      let lbl = section.repeat.label;
+      if (section.repeat.k === "points") {
+        lbl = n === 1 ? t('cms.repeat.point') : t('cms.repeat.points');
+      } else if (section.repeat.k === "pillars") {
+        lbl = n === 1 ? t('cms.repeat.pillar') : t('cms.repeat.pillars');
+      } else if (section.repeat.k === "options") {
+        lbl = n === 1 ? t('cms.repeat.option') : t('cms.repeat.options');
+      } else if (section.repeat.k === "types") {
+        lbl = n === 1 ? t('cms.repeat.landscape') : t('cms.repeat.landscapes');
+      } else if (section.repeat.k === "steps") {
+        lbl = n === 1 ? t('cms.repeat.step') : t('cms.repeat.steps');
+      } else if (section.repeat.k === "value") {
+        lbl = n === 1 ? t('cms.repeat.value') : t('cms.repeat.values');
+      }
+      return n + " " + lbl;
     }
+    
+    const descText = t('cms.sectionDescs.' + section.key);
+    const resolvedDesc = descText.startsWith('cms.sectionDescs.') ? section.desc : descText;
+
     const first = section.fields[0];
-    if (!data[first.k]) return section.desc;
+    if (!data[first.k]) return resolvedDesc;
     const str = String(data[first.k]);
     const dotIndex = str.indexOf('.');
     if (dotIndex !== -1) {
@@ -159,22 +188,48 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
 
   const isSecondSubSec = (k) => ["mapEyebrow", "mapH", "mapLead", "disclaimer"].includes(k);
 
+  const getAddBtnLabel = () => {
+    let lbl = section.repeat.label;
+    if (section.repeat.k === "points") {
+      lbl = t('cms.repeat.point');
+    } else if (section.repeat.k === "pillars") {
+      lbl = t('cms.repeat.pillar');
+    } else if (section.repeat.k === "options") {
+      lbl = t('cms.repeat.option');
+    } else if (section.repeat.k === "types") {
+      lbl = t('cms.repeat.landscape');
+    } else if (section.repeat.k === "steps") {
+      lbl = t('cms.repeat.step');
+    } else if (section.repeat.k === "value") {
+      lbl = t('cms.repeat.value');
+    }
+    return t('cms.editor.add') + " " + lbl.toLowerCase();
+  };
+
   return (
     <div className={"cms-section" + (open ? " open" : "")}>
       <div className="cms-section-head" onClick={onToggle}>
         <span className="cms-ic"><Icon name={section.icon} /></span>
-        <div><h3>{section.label}</h3><p className="cms-meta">{summary()}</p></div>
+        <div><h3>{resolvedTitle}</h3><p className="cms-meta">{summary()}</p></div>
         <span className="cms-chevron"><Icon name="chevron-down" /></span>
       </div>
       {open && (
         <div className="cms-body">
-          {section.images && section.images.map((im) => (
-            <FField key={im.k} label={im.label} full hint={im.hint}>
-              <div className="cms-img-single">
-                <ImageManager fotos={data[im.k] ? [data[im.k]] : []} max={1} hideCover onChange={(arr) => setField(im.k, arr[0] || "")} />
-              </div>
-            </FField>
-          ))}
+          {section.images && section.images.map((im) => {
+            const imLabelText = t('cms.fields.' + im.k);
+            const resolvedImLabel = imLabelText.startsWith('cms.fields.') ? im.label : imLabelText;
+            const imHintText = im.hint ? (t('cms.hints.' + im.k).startsWith('cms.hints.') ? im.hint : t('cms.hints.' + im.k)) : undefined;
+            // The schema declares k: "imagen" but the data uses 'img' for experience and landowners. Let's resolve the exact data key.
+            const dataKey = (im.k === "imagen" && (data.img !== undefined || section.key === "experience" || section.key === "landowners")) ? "img" : im.k;
+            const imgValue = data[dataKey] || data[im.k] || "";
+            return (
+              <FField key={im.k} label={resolvedImLabel} full hint={imHintText}>
+                <div className="cms-img-single">
+                  <ImageManager fotos={imgValue ? [imgValue] : []} max={1} hideCover onChange={(arr) => setField(dataKey, arr[0] || "")} />
+                </div>
+              </FField>
+            );
+          })}
           {section.fields.length > 0 && (
             <div className="f-grid">
               {section.fields.filter(f => !isSecondSubSec(f.k)).map((f) => 
@@ -193,7 +248,7 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
                 </div>
               ))}
               <Btn variant="ghost" icon="plus" sm onClick={() => addItem(section.repeat.k, Object.fromEntries(section.repeat.item.map((f) => [f.k, ""])))}>
-                Añadir {section.repeat.label.toLowerCase()}
+                {getAddBtnLabel()}
               </Btn>
             </div>
           )}
@@ -214,28 +269,39 @@ function CMSSection({ section, data, open, onToggle, onChange }) {
 }
 
 function Contenido({ onToast }) {
+  const { t, locale } = useI18n();
   useStore();
   useLucide();
   const [savedContent, setSavedContent] = useState(null);
   const [draft, setDraft] = useState(null);
   const [openKey, setOpenKey] = useState("hero");
+  const [editingLocale, setEditingLocale] = useState('es');
+  const [actionBusy, setActionBusy] = useState(false);
   const previewRef = useRef(null);
 
+  // Sync editingLocale to user's selected UI locale on mount
   useEffect(() => {
-    ContenidoRepository.getDraft().then((data) => {
+    if (locale === 'es' || locale === 'en') {
+      setEditingLocale(locale);
+    }
+  }, [locale]);
+
+  useEffect(() => {
+    ContenidoRepository.getDraft(editingLocale).then((data) => {
       setSavedContent(data);
       setDraft(data);
     });
-  }, []);
+  }, [editingLocale]);
 
   if (!draft) {
-    return <Spinner message="Cargando contenido..." />;
+    return <Spinner message={t('common.actions.loading')} />;
   }
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedContent);
   const setSection = (key, data) => setDraft((d) => ({ ...d, [key]: data }));
 
   const toggle = (key) => {
+    if (actionBusy) return;
     const next = openKey === key ? null : key;
     setOpenKey(next);
     if (next) scrollPreview(next);
@@ -261,57 +327,101 @@ function Contenido({ onToast }) {
   };
 
   const saveDraft = async () => {
+    if (actionBusy) return;
+    setActionBusy(true);
     try {
-      const updated = await ContenidoRepository.updateDraft(draft);
+      const updated = await ContenidoRepository.updateDraft(draft, editingLocale);
       setSavedContent(updated);
-      onToast("Borrador guardado correctamente.");
+      onToast(t('cms.toasts.draftSaved'));
     } catch (e) {
-      onToast("Error al guardar borrador.");
+      onToast(t('cms.toasts.draftError'));
+    } finally {
+      setActionBusy(false);
     }
   };
 
   const publish = async () => {
+    if (actionBusy) return;
+    setActionBusy(true);
     try {
-      const updated = await ContenidoRepository.publish(draft);
+      const updated = await ContenidoRepository.publish(draft, editingLocale);
       setSavedContent(updated);
-      onToast("Contenido publicado en la landing.");
+      onToast(t('cms.toasts.published'));
     } catch (e) {
-      onToast("Error al publicar contenido.");
+      onToast(t('cms.toasts.publishError'));
+    } finally {
+      setActionBusy(false);
     }
   };
 
   const discard = () => {
-    setDraft(savedContent);
-    onToast("Cambios descartados.");
+    if (actionBusy) return;
+    setActionBusy(true);
+    try {
+      setDraft(savedContent);
+      onToast(t('cms.toasts.discarded'));
+    } finally {
+      setActionBusy(false);
+    }
   };
 
   return (
     <div className="main-inner">
-      <ModuleHead eyebrow="Módulo" title="Contenido del sitio"
-        desc="Editá los textos y las imágenes de la landing. La vista previa de la derecha refleja tus cambios al instante; «Publicar» los deja en línea." />
+      <ModuleHead eyebrow={locale === 'en' ? "Module" : "Módulo"} title={t('cms.title')}
+        desc={t('cms.desc')} />
 
       <div className="cms-split">
-        <div className="cms-editor">
-          <div className="cms-actionbar">
+        <div className="cms-editor" style={{ position: 'relative' }}>
+          {actionBusy && (
+            <div className="cms-overlay-spinner" style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(var(--bg-rgb, 255, 255, 255), 0.6)',
+              backdropFilter: 'blur(1px)',
+              zIndex: 100,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-lg)'
+            }}>
+              <Spinner message={t('common.actions.loading')} size="lg" />
+            </div>
+          )}
+          <div className="cms-actionbar" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px', pointerEvents: actionBusy ? 'none' : 'auto', opacity: actionBusy ? 0.7 : 1 }}>
+            <div className="cms-lang-select" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginRight: '16px' }}>
+              <span style={{ fontSize: '13px', color: 'var(--fg3)', fontWeight: '500' }}>{t('cms.editor.editingLanguage')}:</span>
+              <select 
+                value={editingLocale} 
+                onChange={(e) => setEditingLocale(e.target.value)}
+                disabled={actionBusy}
+                style={{ background: 'var(--bg2)', border: '1px solid var(--line)', color: 'var(--fg1)', borderRadius: '4px', padding: '4px 8px', fontSize: '13px', cursor: actionBusy ? 'not-allowed' : 'pointer' }}
+              >
+                <option value="es">Español (ES)</option>
+                <option value="en">English (EN)</option>
+              </select>
+            </div>
             {dirty
-              ? <span className="cms-dirty"><Icon name="dot" />Cambios sin guardar</span>
-              : <span className="cms-saved"><Icon name="check-circle-2" />Todo guardado/publicado</span>}
-            <div className="cms-actionbar-buttons">
-              <Btn variant="ghost" sm onClick={discard} title="Descartar cambios">Descartar</Btn>
-              <Btn variant="ghost" sm onClick={saveDraft} title="Guardar borrador sin publicar">Guardar Borrador</Btn>
-              <Btn variant="primary" sm onClick={publish}>Publicar</Btn>
+              ? <span className="cms-dirty"><Icon name="dot" />{t('cms.editor.unsaved')}</span>
+              : <span className="cms-saved"><Icon name="check-circle-2" />{t('cms.editor.saved')}</span>}
+            <div className="toolbar-spacer" style={{ flex: 1 }}></div>
+            <div className="cms-actionbar-buttons" style={{ display: 'flex', gap: '8px' }}>
+              <Btn variant="ghost" sm onClick={discard} disabled={actionBusy} title={t('cms.toasts.discarded')}>{t('cms.editor.discard')}</Btn>
+              <Btn variant="ghost" sm onClick={saveDraft} disabled={actionBusy} title={t('cms.editor.saveDraft')}>{t('cms.editor.saveDraft')}</Btn>
+              <Btn variant="primary" sm onClick={publish} disabled={actionBusy} title={t('cms.toasts.published')}>{t('cms.editor.publish')}</Btn>
             </div>
           </div>
-          {CMS_SCHEMA.map((s) => (
-            <CMSSection key={s.key} section={s} data={draft[s.key] || {}} open={openKey === s.key}
-              onToggle={() => toggle(s.key)} onChange={(data) => setSection(s.key, data)} />
-          ))}
+          <div style={{ pointerEvents: actionBusy ? 'none' : 'auto', opacity: actionBusy ? 0.6 : 1 }}>
+            {CMS_SCHEMA.map((s) => (
+              <CMSSection key={s.key} section={s} data={draft[s.key] || {}} open={openKey === s.key}
+                onToggle={() => toggle(s.key)} onChange={(data) => setSection(s.key, data)} />
+            ))}
+          </div>
         </div>
 
         <div className="cms-preview-wrap">
           <div className="cms-preview-head">
             <span className="dot"><i></i><i></i><i></i></span>
-            <span>Vista previa · nomade.com</span>
+            <span>{t('cms.preview.title')} · {t('cms.preview.url')}</span>
           </div>
           <div className="cms-preview" ref={previewRef} style={{ background: 'var(--bg)' }}>
             <Hero d={draft.hero} />
@@ -322,7 +432,7 @@ function Contenido({ onToast }) {
             <Model d={draft.model} />
             <Landowners d={draft.landowners} />
             <Process d={draft.process} />
-            <LeadForm d={NOMADE.form} isPreview={true} />
+            <LeadForm d={NOMADE[editingLocale].form} isPreview={true} />
             <Partners d={draft.partners} onCta={() => {}} onPartner={() => {}} />
             <FutureGuests d={draft.guests} />
             <Footer d={draft.footer} />

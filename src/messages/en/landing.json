@@ -1,0 +1,50 @@
+{
+  "skipLink": "Skip to content",
+  "nav": {
+    "cta": "Submit location"
+  },
+  "hero": {
+    "scrollHint": "Discover",
+    "scrollHintAria": "Scroll down to discover NÓMADE"
+  },
+  "toast": {
+    "contact": "Write us at sernomade@protonmail.com — we'll get back to you soon.",
+    "interest": "“{label}” — thank you for your interest. We'll contact you soon."
+  },
+  "partners": {
+    "cta_label": "Join as a Partner"
+  },
+  "destinations": {
+    "exploring": "Exploring",
+    "book": "Book now",
+    "partnerMeta": "Book through our accommodation partners.",
+    "region": "Region",
+    "allRegions": "All regions",
+    "orderBy": "Sort by",
+    "byRegion": "By region",
+    "byName": "Name (A–Z)",
+    "destination": "destination",
+    "destinations": "destinations",
+    "previous": "Previous",
+    "next": "Next",
+    "viewDestination": "View destination",
+    "close": "Close",
+    "zoomIn": "Tap to zoom",
+    "zoomOut": "Zoom out",
+    "exploreCursor": "Move cursor to explore"
+  },
+  "footer": {
+    "project": "The project",
+    "whatis": "What is NÓMADE",
+    "experience": "The experience",
+    "destinations": "Destinations",
+    "model": "The model",
+    "join": "Join us",
+    "submitLand": "Submit my land",
+    "partners": "NÓMADE Partners",
+    "waitingList": "Future guests list",
+    "contact": "Contact",
+    "designedBy": "Designed and developed by"
+  },
+  "loading": "Loading NÓMADE..."
+}

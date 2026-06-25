@@ -115,6 +115,41 @@
   text-align: center
 }
 
+.side-lang {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  margin-bottom: 12px;
+}
+
+.side-lang-icon {
+  color: rgba(255, 255, 255, 0.4);
+  width: 16px;
+}
+
+.side-lang-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  flex: 1;
+}
+
+.side-lang select {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--ivory);
+  font-size: 12px;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  outline: none;
+}
+
+.side-lang select option {
+  background-color: var(--bg);
+  color: var(--charcoal);
+}
+
 .side-foot {
   border-top: 1px solid var(--line-on-dark);
   padding-top: 12px;
@@ -201,6 +236,12 @@
   min-width: 0;
   display: flex;
   flex-direction: column
+}
+
+.panel-main-content {
+  padding: 1.5rem;
+  width: 100%;
+  height: 100%;
 }
 
 .main-inner {
@@ -541,11 +582,16 @@ table.tbl {
 
 .tbl tbody tr {
   cursor: pointer;
-  transition: background var(--dur-fast)
+  transition: background var(--dur-fast);
+  height: 70px;
 }
 
 .tbl tbody tr:hover {
   background: var(--ivory-warm)
+}
+
+.tbl tbody tr.empty-row:hover {
+  background: transparent;
 }
 
 .tbl tbody tr:last-child td {
@@ -749,6 +795,12 @@ table.tbl {
   background: var(--forest);
   color: var(--ivory);
   border-color: var(--forest)
+}
+
+.pager-btn.active:hover {
+  background: var(--forest-deep);
+  color: var(--ivory);
+  border-color: var(--forest-deep)
 }
 
 .pager-btn:disabled {
@@ -1136,6 +1188,12 @@ table.tbl {
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 34px
+}
+
+.f-field select option,
+.selectwrap select option {
+  color: var(--charcoal);
+  background: var(--bg-raised);
 }
 
 .f-field input::placeholder,
@@ -3214,9 +3272,26 @@ table.tbl {
     position: fixed;
     left: 0;
     top: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
     transform: translateX(-100%);
     transition: transform var(--dur-base) var(--ease-out);
     box-shadow: var(--shadow-xl)
+  }
+
+  .app.nav-open {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body.body-nav-open,
+  body.body-overlay-open {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 
   .app.nav-open .side {
@@ -3243,46 +3318,90 @@ table.tbl {
     align-items: flex-start
   }
 
+  .panel-main-content {
+    padding: 0.75rem;
+  }
+
+  .main-inner {
+    padding: 1rem 0.5rem;
+  }
+
   .cms-split {
-    grid-template-columns: 1fr
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
   }
 
   .cms-preview-wrap {
-    position: static
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .cms-preview {
     height: auto;
-    max-height: 520px
+    max-height: 520px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .cms-actionbar {
-    flex-wrap: nowrap;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
   }
 
   .cms-actionbar .cms-dirty,
   .cms-actionbar .cms-saved {
     min-width: 0;
     width: auto;
-    flex: 0 1 auto;
+    flex: 1 1 auto;
   }
 
   .cms-actionbar-buttons {
-    flex: 0 0 auto;
-    justify-content: flex-end;
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    display: flex;
+    gap: 6px;
+    width: 100%;
   }
 
+  .cms-actionbar-buttons button {
+    flex: 1;
+    font-size: 12px;
+    padding: 6px 8px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar .search,
   .toolbar .ssel,
   .toolbar .selectwrap,
   .toolbar .selectwrap select {
-    width: 100%
+    width: 100%;
+    max-width: none;
   }
 
   .toolbar .ssel-btn {
     max-width: none;
     width: 100%;
     justify-content: space-between
+  }
+
+  .modal-head h2,
+  .dx-cover-meta h2,
+  .drawer-head-text h2,
+  .confirm h3 {
+    word-break: break-all;
+    overflow-wrap: break-word;
   }
 }
 

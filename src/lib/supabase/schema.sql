@@ -12,6 +12,7 @@ create table if not exists public.profiles (
   email text not null,
   role text not null default 'user' check (role in ('admin', 'user')),
   is_active boolean not null default true,
+  preferred_language text not null default 'es' check (preferred_language in ('es', 'en')),
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -335,7 +336,8 @@ create table if not exists public.destinos (
   -- Campos para compatibilidad y mapeo
   complejo text,
   archivado boolean not null default false,
-  ubicacion text
+  ubicacion text,
+  translations jsonb default '{}'::jsonb
 );
 
 -- RLS Configuration

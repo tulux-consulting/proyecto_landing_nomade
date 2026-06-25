@@ -10,4 +10,5 @@ export interface Destino {
   fotos: string[];
   reserva: string;
   archivado: boolean;
+  translations?: Record<string, any>;
 }

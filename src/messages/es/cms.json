@@ -1,0 +1,102 @@
+{
+  "title": "Contenido del sitio",
+  "desc": "Editá los textos y las imágenes de la landing. La vista previa de la derecha refleja tus cambios al instante; «Publicar» los deja en línea.",
+  "editor": {
+    "unsaved": "Cambios sin guardar",
+    "saved": "Todo guardado/publicado",
+    "discard": "Descartar",
+    "saveDraft": "Guardar Borrador",
+    "publish": "Publicar",
+    "editingLanguage": "Idioma de edición",
+    "add": "Añadir"
+  },
+  "preview": {
+    "title": "Vista previa",
+    "url": "nomade.com"
+  },
+  "sections": {
+    "hero": "Hero",
+    "whatis": "Qué es NÓMADE",
+    "experience": "La Experiencia",
+    "split": "Sección de Bifurcación (Split)",
+    "destinations": "Destinos",
+    "model": "El Modelo",
+    "landowners": "Propietarios",
+    "process": "El Proceso",
+    "partners": "Partners",
+    "guests": "Lista de Espera",
+    "footer": "Footer"
+  },
+  "fields": {
+    "eyebrow": "Eyebrow",
+    "title": "Título",
+    "subtitle": "Subtítulo",
+    "lead": "Texto de apoyo / Descripción",
+    "cta": "Texto del botón",
+    "image": "Imagen",
+    "backgroundImage": "Imagen de fondo",
+    "icon": "Icono (ej. compass, map, waypoints)",
+    "description": "Descripción",
+    "kicker": "Etiqueta superior (Kicker)",
+    "target": "ID Destino (ej: propietarios, destinos)",
+    "note": "Aclaración / Leyenda",
+    "mapEyebrow": "Eyebrow del Carousel",
+    "mapTitle": "Título del Carousel",
+    "mapLead": "Descripción del Carousel",
+    "disclaimer": "Leyenda del Carousel",
+    "landscapeName": "Nombre del Paisaje",
+    "stepNumber": "Número (ej. 01)",
+    "valueTitle": "Título del Valor",
+    "placeholder": "Placeholder del Email",
+    "successMessage": "Mensaje de éxito",
+    "copyright": "Copyright",
+    "tagline": "Tagline",
+    "titulo": "Título",
+    "subtitulo": "Subtítulo",
+    "h2": "Título",
+    "imagen": "Imagen",
+    "cap": "Nombre del Paisaje",
+    "img": "Imagen",
+    "n": "Número (ej. 01)",
+    "h": "Título",
+    "p": "Descripción"
+  },
+  "repeat": {
+    "point": "Punto de valor",
+    "points": "puntos de valor",
+    "pillar": "Experiencia",
+    "pillars": "experiencias",
+    "option": "Opción",
+    "options": "opciones",
+    "landscape": "Paisaje",
+    "landscapes": "paisajes",
+    "step": "Paso",
+    "steps": "pasos",
+    "value": "Valor de alianza",
+    "values": "valores de alianza"
+  },
+  "hints": {
+    "imagen": "Foto a pantalla completa detrás del título.",
+    "target": "Ej: propietarios, destinos"
+  },
+  "sectionDescs": {
+    "hero": "El encabezado principal de la portada.",
+    "whatis": "Introducción y pilares clave.",
+    "experience": "Pilares del diseño y bienestar.",
+    "split": "Decisión del visitante (Propietarios vs Huéspedes).",
+    "destinations": "Tipos de paisajes y regiones en exploración.",
+    "model": "Ecuación de valor.",
+    "landowners": "Opciones de postulación de tierras.",
+    "process": "Pasos de selección del terreno.",
+    "partners": "Sección para operadores del rubro.",
+    "guests": "Sección de suscripción para huéspedes.",
+    "footer": "Pie de página de la landing."
+  },
+  "toasts": {
+    "draftSaved": "Borrador guardado correctamente.",
+    "draftError": "Error al guardar borrador.",
+    "published": "Contenido publicado en la landing.",
+    "publishError": "Error al publicar contenido.",
+    "discarded": "Cambios descartados."
+  }
+}

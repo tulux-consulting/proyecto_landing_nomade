@@ -57,8 +57,10 @@ export function SearchableSelect({ value, onChange, options, allLabel, placehold
   }, []);
 
   const all = allLabel || "Todos";
-  const opts = options.filter((o) => o.toLowerCase().includes(q.toLowerCase()));
-  const current = (!value || value === "__all") ? all : value;
+  const mappedOpts = (options || []).map((o) => typeof o === "string" ? { value: o, label: o } : o);
+  const opts = mappedOpts.filter((o) => (o.label || "").toLowerCase().includes(q.toLowerCase()));
+  const currentOpt = mappedOpts.find(o => o.value === value);
+  const current = (!value || value === "__all") ? all : (currentOpt ? currentOpt.label : value);
   const has = value && value !== "__all";
   return (
     <div className="ssel" ref={ref}>
@@ -74,8 +76,8 @@ export function SearchableSelect({ value, onChange, options, allLabel, placehold
           <div className="ssel-list">
             <button className={"ssel-opt" + (!has ? " on" : "")} onClick={() => { onChange("__all"); setOpen(false); setQ(""); }}>{all}</button>
             {opts.map((o) => (
-              <button key={o} className={"ssel-opt" + (o === value ? " on" : "")} onClick={() => { onChange(o); setOpen(false); setQ(""); }}>
-                <span>{o}</span>{counts && counts[o] != null && <span className="ssel-c">{counts[o]}</span>}
+              <button key={o.value} className={"ssel-opt" + (o.value === value ? " on" : "")} onClick={() => { onChange(o.value); setOpen(false); setQ(""); }}>
+                <span>{o.label}</span>{counts && counts[o.value] != null && <span className="ssel-c">{counts[o.value]}</span>}
               </button>
             ))}
             {opts.length === 0 && <div className="ssel-empty">Sin resultados</div>}

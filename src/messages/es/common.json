@@ -1,0 +1,359 @@
+{
+  "actions": {
+    "save": "Guardar",
+    "saveChanges": "Guardar cambios",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "deleting": "Eliminando...",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "loading": "Cargando...",
+    "search": "Buscar",
+    "archive": "Archivar",
+    "unarchive": "Desarchivar",
+    "add": "Añadir"
+  },
+  "notReported": "No informado",
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "new": "Nuevo",
+    "pending": "Pendiente de revisión",
+    "contacted": "Contactado",
+    "negotiation": "En negociación",
+    "approved": "Aprobado",
+    "rejected": "Rechazado",
+    "archived": "Archivado"
+  },
+  "modules": {
+    "dashboard": "Panel",
+    "postulaciones": "Postulaciones",
+    "partners": "Partners",
+    "huespedes": "Lista de huéspedes",
+    "destinos": "Destinos",
+    "contenido": "Contenido del sitio",
+    "ajustes": "Ajustes"
+  },
+  "roles": {
+    "admin": "Administrador",
+    "user": "Usuario"
+  },
+  "errors": {
+    "generic": "Ocurrió un error inesperado.",
+    "network": "Error de conexión. Intente nuevamente.",
+    "required": "Este campo es requerido.",
+    "invalidEmail": "Formato de correo electrónico inválido."
+  },
+  "dashboard": {
+    "salutation": {
+      "morning": "Buenos días",
+      "afternoon": "Buenas tardes",
+      "evening": "Buenas noches"
+    },
+    "desc": "Este es el panel interno de NÓMADE. Desde acá gestionás lo que llega desde la web. Elegí un módulo para empezar.",
+    "eyebrow": "Backoffice",
+    "openModule": "Abrir módulo",
+    "pendingCount": "{count} sin revisar",
+    "unit": {
+      "record": "registro",
+      "records": "registros",
+      "waitingList": "en lista de espera",
+      "destinations": "destinos",
+      "available": "disponibles",
+      "sections": "secciones editables",
+      "user": "usuario activo",
+      "users": "usuarios activos"
+    },
+    "moduleDescriptions": {
+      "dashboard": "Panel",
+      "postulaciones": "Personas que postulan un terreno para convertirse en destino.",
+      "partners": "Establecimientos que quieren sumar experiencias a la red.",
+      "huespedes": "Personas interesadas en hospedarse y de dónde proviene el interés.",
+      "destinos": "Las experiencias de hospedaje de la red NÓMADE.",
+      "contenido": "Administrá el contenido de la landing sin tocar código.",
+      "ajustes": "Usuarios de acceso al panel."
+    }
+  },
+  "postulaciones": {
+    "title": "Postulaciones",
+    "eyebrow": "Módulo",
+    "desc": "Personas que postulan un terreno para convertirse en un destino NÓMADE. Revisá, contactá y movelas por el proceso de evaluación.",
+    "searchPlaceholder": "Buscar por nombre, email o ubicación…",
+    "filterEstado": "Filtrar por estado",
+    "allEstados": "Todos los estados",
+    "filterProvincia": "Filtrar por provincia",
+    "allProvincias": "Todas las provincias",
+    "searchProvincia": "Buscar provincia…",
+    "filterArchived": "Archivadas",
+    "active": "Activas",
+    "archived": "Archivadas",
+    "noApplications": "Sin postulaciones",
+    "noApplicationsDesc": "No hay postulaciones que coincidan con la búsqueda o los filtros actuales.",
+    "table": {
+      "applicant": "Postulante",
+      "location": "Ubicación",
+      "landscape": "Paisaje",
+      "size": "Tamaño",
+      "status": "Estado",
+      "received": "Recibida"
+    },
+    "deleteTitle": "Eliminar postulación",
+    "deleteConfirm": "Eliminar definitivamente",
+    "deleteMessage": "Vas a eliminar la postulación de {name} {lastname}. Esta acción no se puede deshacer.",
+    "toasts": {
+      "statusUpdated": "Estado actualizado a “{status}”.",
+      "archived": "Postulación archivada.",
+      "restored": "Postulación restaurada.",
+      "deleted": "Postulación eliminada definitivamente.",
+      "loadingError": "Error al cargar postulaciones.",
+      "connError": "Error al conectar con el servidor.",
+      "loading": "Cargando postulaciones..."
+    },
+    "modal": {
+      "kicker": "Postulación",
+      "tabs": {
+        "resumen": "Resumen",
+        "terreno": "Terreno",
+        "legal": "Legal",
+        "turismo": "Turismo",
+        "fotos": "Fotos",
+        "notas": "Notas"
+      },
+      "footer": {
+        "restore": "Restaurar",
+        "archive": "Archivar",
+        "delete": "Eliminar definitivamente"
+      },
+      "sections": {
+        "processStatus": "Estado del proceso",
+        "personalData": "Datos personales",
+        "personalFields": {
+          "name": "Nombre",
+          "lastname": "Apellido",
+          "email": "Email",
+          "phone": "Teléfono",
+          "relation": "Relación con el terreno"
+        },
+        "location": "Ubicación",
+        "locationFields": {
+          "province": "Provincia",
+          "locality": "Localidad o paraje",
+          "distance": "Distancia a ciudad",
+          "map": "Mapa / coordenadas",
+          "viewMap": "Ver en Google Maps →"
+        },
+        "comments": "Comentarios del postulante",
+        "landInfo": "Información del terreno",
+        "landFields": {
+          "size": "Tamaño",
+          "topography": "Topografía",
+          "landscape": "Tipo de paisaje",
+          "water": "Cuerpo de agua",
+          "views": "Vistas predominantes",
+          "vegetation": "Vegetación"
+        },
+        "access": "Acceso y servicios",
+        "accessFields": {
+          "type": "Tipo de acceso",
+          "availability": "Disponibilidad de acceso",
+          "constructions": "Construcciones existentes",
+          "services": "Servicios disponibles"
+        },
+        "legal": "Aspectos legales",
+        "legalFields": {
+          "deed": "Título de propiedad",
+          "use": "Uso del suelo",
+          "restrictions": "Restricciones ambientales",
+          "remarks": "Observaciones legales"
+        },
+        "tourism": "Turismo",
+        "tourismFields": {
+          "activities": "Actividades posibles",
+          "attractions": "Atractivos cercanos",
+          "demand": "Demanda turística de la zona"
+        },
+        "participation": "Participación",
+        "participationFields": {
+          "model": "Modelo de interés",
+          "investment": "Disponibilidad de inversión",
+          "horizon": "Horizonte temporal"
+        },
+        "photos": "Fotografías del terreno",
+        "documentation": "Documentación",
+        "noDocs": "El postulante no adjuntó documentación.",
+        "internalRemarks": "Observaciones internas"
+      },
+      "notes": {
+        "noNotes": "Sin observaciones todavía.",
+        "placeholder": "Agregar una observación interna…",
+        "addBtn": "Añadir observación"
+      },
+      "gallery": {
+        "noPhotos": "Sin fotografías",
+        "noPhotosDesc": "El postulante no adjuntó imágenes."
+      }
+    }
+  },
+  "imageManager": {
+    "cover": "Portada",
+    "dropTextLine1": "Arrastrá una imagen",
+    "dropTextLine2": "o hacé clic para subir",
+    "urlPlaceholder": "…o pegá una URL de imagen",
+    "addBtn": "Agregar",
+    "exampleGallery": "Galería de ejemplo",
+    "addFromGallery": "Agregar de la galería"
+  },
+  "partners": {
+    "title": "Partners",
+    "eyebrow": "Módulo",
+    "desc": "Establecimientos que quieren sumar sus experiencias a la red NÓMADE. Llegan desde el formulario Partner de la web y desde contactos directos.",
+    "searchPlaceholder": "Buscar por establecimiento, email o ubicación…",
+    "filterEstado": "Filtrar por estado",
+    "allEstados": "Todos los estados",
+    "filterTipo": "Filtrar por tipo",
+    "allTipos": "Todos los tipos",
+    "searchTipo": "Buscar tipo…",
+    "filterArchived": "Archivados",
+    "active": "Activos",
+    "archived": "Archivados",
+    "noPartners": "Sin partners",
+    "noPartnersDesc": "No hay establecimientos que coincidan con la búsqueda o los filtros actuales.",
+    "table": {
+      "establishment": "Establecimiento",
+      "type": "Tipo",
+      "location": "Ubicación",
+      "status": "Estado",
+      "received": "Recibido"
+    },
+    "deleteTitle": "Eliminar partner",
+    "deleteConfirm": "Eliminar definitivamente",
+    "deleteMessage": "Vas a eliminar a “{nombre}”. Esta acción no se puede deshacer.",
+    "toasts": {
+      "statusUpdated": "Estado actualizado a “{status}”.",
+      "archived": "Partner archivado.",
+      "restored": "Partner restaurado.",
+      "deleted": "Partner eliminado definitivamente.",
+      "loadingError": "Error al cargar partners.",
+      "connError": "Error al conectar con el servidor.",
+      "loading": "Cargando partners..."
+    },
+    "modal": {
+      "kicker": "Partner",
+      "tabs": {
+        "resumen": "Resumen",
+        "notas": "Notas"
+      },
+      "footer": {
+        "restore": "Restaurar",
+        "archive": "Archivar",
+        "delete": "Eliminar definitivamente"
+      },
+      "sections": {
+        "processStatus": "Estado del proceso",
+        "details": "Datos del establecimiento",
+        "contact": "Contacto",
+        "about": "Sobre el establecimiento",
+        "internalRemarks": "Observaciones internas"
+      },
+      "fields": {
+        "type": "Tipo",
+        "taxId": "Número fiscal",
+        "capacity": "Capacidad",
+        "yearsOperating": "Años operando",
+        "province": "Provincia",
+        "locality": "Localidad",
+        "email": "Email",
+        "phone": "Teléfono",
+        "website": "Sitio web",
+        "new": "Nuevo",
+        "year": "año",
+        "years": "años"
+      }
+    }
+  },
+  "huespedes": {
+    "title": "Lista de huéspedes",
+    "eyebrow": "Módulo",
+    "desc": "Personas que quieren ser las primeras en enterarse cuando abramos nuevos destinos — y de dónde proviene el interés.",
+    "tabs": {
+      "listado": "Listado",
+      "metricas": "Métricas"
+    },
+    "searchPlaceholder": "Buscar por email u origen…",
+    "filterEstado": "Filtrar por estado",
+    "allEstados": "Todos los estados",
+    "filterPais": "Filtrar por país",
+    "allPaises": "Todos los países",
+    "searchPais": "Buscar país…",
+    "filterDispositivo": "Filtrar por dispositivo",
+    "allDispositivos": "Todos los dispositivos",
+    "noGuests": "Sin huéspedes",
+    "noGuestsDesc": "No hay personas que coincidan con la búsqueda o los filtros.",
+    "table": {
+      "email": "Email",
+      "origin": "Origen",
+      "device": "Dispositivo",
+      "status": "Estado",
+      "system": "Sistema",
+      "joined": "Sumado"
+    },
+    "metrics": {
+      "waitingList": "En lista de espera",
+      "new30Days": "Nuevos (30 días)",
+      "topProvince": "Provincia con más interés",
+      "topProvinceFoot": "{count} personas",
+      "countriesReached": "Países alcanzados",
+      "charts": {
+        "byProv": "Por provincia",
+        "byProvSub": "Dónde se concentra el interés dentro del país.",
+        "byPais": "Por país",
+        "byPaisSub": "Alcance internacional de la lista.",
+        "byCity": "Por ciudad",
+        "byCitySub": "Las ciudades de mayor interés.",
+        "byDev": "Por dispositivo",
+        "byDevSub": "Cómo llegan a la web."
+      }
+    },
+    "modal": {
+      "kicker": "Huésped en lista",
+      "statusLabel": "Estado:",
+      "deleteBtn": "Eliminar de lista",
+      "sections": {
+        "origin": "Origen",
+        "device": "Dispositivo",
+        "adminRemarks": "Observaciones administrativas"
+      },
+      "fields": {
+        "country": "País",
+        "province": "Provincia / Región",
+        "city": "Ciudad aproximada",
+        "type": "Tipo",
+        "os": "Sistema operativo",
+        "browser": "Navegador",
+        "date": "Fecha",
+        "placeholderNotes": "Escribí notas u observaciones sobre este huésped...",
+        "notesFooter": "Las notas se guardan automáticamente al perder el foco (blur)."
+      }
+    },
+    "deleteConfirm": {
+      "title": "Eliminar huésped",
+      "message": "¿Estás seguro de que querés eliminar a este huésped de la lista? Esta acción no se puede deshacer.",
+      "confirm": "Eliminar definitivamente"
+    },
+    "toasts": {
+      "loadingError": "Error al cargar la lista de huéspedes.",
+      "statusUpdated": "Estado actualizado a “{status}”.",
+      "statusUpdateError": "Error al actualizar el estado.",
+      "notesSaved": "Observaciones guardadas.",
+      "notesSaveError": "Error al guardar observaciones.",
+      "deleted": "Huésped eliminado definitivamente.",
+      "deleteError": "Error al eliminar el huésped.",
+      "loading": "Cargando lista de huéspedes..."
+    }
+  }
+}
